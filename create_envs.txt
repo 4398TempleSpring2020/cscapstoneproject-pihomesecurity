@@ -1,0 +1,16 @@
+Virtual Environment Setup:
+
+1) Create environment directory (Python 3)
+   virtualenv project_environment - p /usr/bin/python3
+
+2) Activate environment
+   source ./project_envrionment/bin/activate
+
+3) install project dependencies from list (optional):
+   pip install -r requirements.txt
+
+4) Save project dependencies:
+   pip freeze --local >> requirements.txt
+
+5) Exit virtual environment:
+   deactivate
