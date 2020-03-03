@@ -10,7 +10,7 @@ Virtual Environment Setup:
    pip install -r requirements.txt
 
 4) Save project dependencies:
-   pip freeze --local >> requirements.txt
+   pip freeze --local > requirements.txt
 
 5) Exit virtual environment:
    deactivate
