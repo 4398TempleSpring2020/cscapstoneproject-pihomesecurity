@@ -12,7 +12,7 @@ To install any dependencies follow the instructions below:
  source ./environments/pi_env/bin/activate
 
 3) install dependencies with:
- pip3 install -r requirements.txt
+ pip3 install -r requirements.txt --upgrade
  where the requirements file can be found within the environments folder.
 
 ## Saving Dependencies

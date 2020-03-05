@@ -1,3 +1,5 @@
 **/*~
 **/*.o
-**/pi_env/*
+**/bin
+**/lib
+**/pyvenv.cfg
