@@ -46,7 +46,7 @@ deactivate () {
 # unset irrelevant variables
 deactivate nondestructive
 
-VIRTUAL_ENV="/home/luke/projects/microphone/environments/pi_env"
+VIRTUAL_ENV='/home/pi/Desktop/cscapstoneproject-pihomesecurity/environments/pi_env'
 export VIRTUAL_ENV
 
 _OLD_VIRTUAL_PATH="$PATH"

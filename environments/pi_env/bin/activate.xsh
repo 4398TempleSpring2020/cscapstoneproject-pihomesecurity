@@ -28,7 +28,7 @@ def _deactivate(args):
 _deactivate(["nondestructive"])
 aliases["deactivate"] = _deactivate
 
-$VIRTUAL_ENV = r"/home/luke/projects/microphone/environments/pi_env"
+$VIRTUAL_ENV = r"/home/pi/Desktop/cscapstoneproject-pihomesecurity/environments/pi_env"
 
 $_OLD_VIRTUAL_PATH = $PATH
 $PATH = $PATH[:]
