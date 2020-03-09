@@ -26,7 +26,7 @@
         android:layout_marginTop="18dp"
         android:ems="10"
         android:hint="@string/prompt_password"
-        android:inputType="textEmailAddress"
+        android:inputType="textPassword"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/editText" />
 
