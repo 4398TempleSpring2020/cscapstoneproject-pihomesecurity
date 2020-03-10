@@ -65,7 +65,7 @@
         app:srcCompat="@drawable/shield" />
 
     <Button
-        android:id="@+id/button2"
+        android:id="@+id/registerButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="160dp"
@@ -85,12 +85,12 @@
         app:layout_constraintTop_toBottomOf="@+id/editText5" />
 
     <Button
-        android:id="@+id/button3"
+        android:id="@+id/loginButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="29dp"
         android:layout_marginTop="22dp"
         android:text="Login"
         app:layout_constraintStart_toEndOf="@+id/textView"
-        app:layout_constraintTop_toBottomOf="@+id/button2" />
+        app:layout_constraintTop_toBottomOf="@+id/registerButton" />
 </androidx.constraintlayout.widget.ConstraintLayout>
