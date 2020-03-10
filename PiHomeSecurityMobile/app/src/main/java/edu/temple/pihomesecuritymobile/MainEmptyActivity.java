@@ -15,8 +15,9 @@ public class MainEmptyActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main_empty);
         Intent intent;
-
-        if(true){
+        sharePref = getSharedPreferences("PREF_NAME",MODE_PRIVATE);
+        Boolean set = sharePref.getBoolean("Registered",false);
+        if(!set){
             intent = new Intent(this,RegisterActivity.class);
             startActivity(intent);
         } else{
