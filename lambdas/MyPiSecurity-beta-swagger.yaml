@@ -71,10 +71,3 @@ paths:
   Empty:
     type: "object"
     title: "Empty Schema"
-  InputPostModel:
-    type: "object"
-    properties:
-      tables:
-        type: "string"
-      columns:
-        type: "string"
