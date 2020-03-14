@@ -34,6 +34,7 @@ public class RegisterActivity extends AppCompatActivity {
                 if(form != null){
                     sharePref.edit().putBoolean("Registered",true).apply();
                     Intent intent = new Intent(RegisterActivity.this,MainActivity.class);
+                    intent.putExtra("form",form);
                     startActivity(intent);
                 }
             }
@@ -43,13 +44,18 @@ public class RegisterActivity extends AppCompatActivity {
     public String[] createRegisterForm(){
         EditText homeID = findViewById(R.id.editText4);
         EditText homeAddr = findViewById(R.id.editText3);
-        EditText userID = findViewById(R.id.editText5);
-        if(homeID.getText().toString().equals("") && homeAddr.getText().toString().equals("") && userID.getText().toString().equals("")){
+        EditText password = findViewById(R.id.editText5);
+        EditText confirm = findViewById(R.id.editText6);
+        if(homeID.getText().toString().equals("") && homeAddr.getText().toString().equals("") && password.getText().toString().equals("")){
             Toast.makeText(getApplicationContext(),"Some fields have been left empty", Toast.LENGTH_SHORT).show();
             return null;
         }
+        if(confirm.getText().toString().equals(password.getText().toString())){
+            Toast.makeText(getApplicationContext(),"Passwords do not match", Toast.LENGTH_SHORT).show();
+            return null;
+        }
         Toast.makeText(getApplicationContext(),"Registering", Toast.LENGTH_SHORT).show();
-        String[] registerForm = {homeID.getText().toString(),homeAddr.getText().toString(),userID.getText().toString()};
+        String[] registerForm = {homeID.getText().toString(),homeAddr.getText().toString(),password.getText().toString()};
         return registerForm;
     }
 

@@ -27,6 +27,7 @@ public class LoginActivity extends AppCompatActivity {
                 if(form != null){
                     sharePref.edit().putBoolean("Registered",true).apply();
                     Intent intent = new Intent(LoginActivity.this,MainActivity.class);
+                    intent.putExtra("form",form);
                     startActivity(intent);
                 }
             }
