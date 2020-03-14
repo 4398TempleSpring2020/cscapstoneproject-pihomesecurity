@@ -50,7 +50,7 @@ public class RegisterActivity extends AppCompatActivity {
             Toast.makeText(getApplicationContext(),"Some fields have been left empty", Toast.LENGTH_SHORT).show();
             return null;
         }
-        if(confirm.getText().toString().equals(password.getText().toString())){
+        if(!confirm.getText().toString().equals(password.getText().toString())){
             Toast.makeText(getApplicationContext(),"Passwords do not match", Toast.LENGTH_SHORT).show();
             return null;
         }

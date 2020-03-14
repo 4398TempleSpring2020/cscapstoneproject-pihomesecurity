@@ -1,6 +1,7 @@
 package edu.temple.pihomesecuritymobile;
 
 import android.os.Bundle;
+import android.widget.Toast;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
@@ -10,7 +11,9 @@ import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
 
-public class MainActivity extends AppCompatActivity {
+import edu.temple.pihomesecuritymobile.ui.home.HomeFragment;
+
+public class MainActivity extends AppCompatActivity implements HomeFragment.soundButtonListener {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -27,4 +30,8 @@ public class MainActivity extends AppCompatActivity {
         NavigationUI.setupWithNavController(navView, navController);
     }
 
+    @Override
+    public void soundAlarm() {
+        Toast.makeText(getApplicationContext(),"Sounding Alarm", Toast.LENGTH_SHORT).show();
+    }
 }
