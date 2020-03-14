@@ -5,7 +5,7 @@ import org.json.JSONObject;
 /**
  * Request is a class that will be used to hold request related information needed for a POST request
  */
-public class Request {
+class Request {
     private String url;
     private String method;
     private JSONObject body = new JSONObject();
@@ -14,15 +14,15 @@ public class Request {
      * Setter method for the url
      * @param url: the url as a String
      */
-    public void setUrl(String url) {
+    void setUrl(String url) {
         this.url = url;
     }
 
     /**
      * Getter method for the url
-     * @return: url as a String
+     * @return url as a String
      */
-    public String getUrl() {
+    String getUrl() {
         return url;
     }
 
@@ -30,15 +30,15 @@ public class Request {
      * Setter method for the method type
      * @param method: method type as a Sting
      */
-    public void setMethod(String method) {
+    void setMethod(String method) {
         this.method = method;
     }
 
     /**
      * Getter method for the method type
-     * @return: method type as a Sting
+     * @return method type as a Sting
      */
-    public String getMethod() {
+    String getMethod() {
         return method;
     }
 
@@ -46,15 +46,15 @@ public class Request {
      * Setter method for the JSON body
      * @param body: body of the POST as JSONObject
      */
-    public void setBody(JSONObject body) {
+    void setBody(JSONObject body) {
         this.body = body;
     }
 
     /**
      * Getter method for the body JSON
-     * @return: body of the POST as JSONObject
+     * @return body of the POST as JSONObject
      */
-    public JSONObject getBody() {
+    JSONObject getBody() {
         return this.body;
     }
 }
