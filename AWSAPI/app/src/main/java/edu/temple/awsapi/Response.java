@@ -54,7 +54,11 @@ class Response {
      */
     void setBody(String body) {
         try {
-            Log.d("Before replace: ", "" + body);
+            if (body.equals("")) {
+                return;
+            }
+            //Log.d("Before replace: ", "" + body);
+
             body = body.replaceAll("\'", "\"");
 
             body = body.replaceAll("\",\\s\"", ", \"");
@@ -71,16 +75,16 @@ class Response {
             body = body.replaceAll("\\{\"", "{");
             body = body.replaceAll("\\{", "{\"");
 
-            Log.d("After replace: ", "" + body);
+            //Log.d("After replace: ", "" + body);
 
             body = fixDate(body);
             if (body.contains("},")) {
                 //  token.replaceAll("");
                 this.bodyarray = new JSONArray(body);
-                Log.d("JSONArray count: ", "" + bodyarray.length());
+                //Log.d("JSONArray count: ", "" + bodyarray.length());
             } else {
                 String token = body.substring(1, body.length()-1);
-                Log.d("After substring: ", "" + token);
+                //Log.d("After substring: ", "" + token);
                 this.body = new JSONObject(token);
             }
         } catch (JSONException e) {
@@ -93,7 +97,12 @@ class Response {
      * @return body of the POST as JSONObject
      */
     JSONObject getBody() {
-        return this.body;
+        if (this.body != null) {
+            return this.body;
+        } else {
+            Log.d("Null body", "JSONObject is empty");
+            return null;
+        }
     }
 
     /**
@@ -101,7 +110,12 @@ class Response {
      * @return body of the POST as JSONArray
      */
     JSONArray getBodyArray() {
-        return this.bodyarray;
+        if (this.bodyarray != null) {
+            return this.bodyarray;
+        } else {
+            Log.d("Null array", "JSONArray is empty");
+            return null;
+        }
     }
 
     /**
@@ -109,10 +123,12 @@ class Response {
      * @return body of the POST as String
      */
     String getBodyString() {
-        if (body != null) {
+        if (this.body != null) {
             return this.body.toString();
-        } else {
+        } else if (this.bodyarray!=null) {
             return this.bodyarray.toString();
+        } else {
+            return "No body to show";
         }
     }
 
@@ -129,15 +145,15 @@ class Response {
             return body;
         }
         for (int i = 1; i<tokens.length; i++) {
-            Log.d("date tokens before: ", "" + tokens[i]);
+            //Log.d("date tokens before: ", "" + tokens[i]);
             String[] tokens_temp = tokens[i].split("\\)");
             String[] date_tokens = tokens_temp[0].split(", ");
             date_tokens[0] = date_tokens[0].substring(1);
             newDate = date_tokens[1] + "-" + date_tokens[2] + "-" + date_tokens[0];
-            Log.d("date: ", "" + newDate);
+            //Log.d("date: ", "" + newDate);
             tokens[i] = "";
             tokens[i] = newDate + tokens_temp[1];
-            Log.d("date added back: ", "" + tokens[i]);
+            //Log.d("date added back: ", "" + tokens[i]);
 
         }
         newBody += tokens[0];
@@ -145,7 +161,7 @@ class Response {
             newBody += tokens[i];
         }
 
-        Log.d("After date fix: ", "" + newBody);
+        //Log.d("After date fix: ", "" + newBody);
         return newBody;
     }
 }

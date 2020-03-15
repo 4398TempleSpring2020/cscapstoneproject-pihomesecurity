@@ -1,6 +1,7 @@
 package edu.temple.awsapi;
 
 
+import android.content.Context;
 import android.os.AsyncTask;
 import android.util.Log;
 
@@ -21,6 +22,7 @@ public class ContentManager {
     //the base url
     final private String base_url = "https://jlt49k4n90.execute-api.us-east-2.amazonaws.com/beta";
     private static Response response = new Response();
+    private AsyncListener activity;
 
     //resource paths
     final private String show_record_resource="/show";
@@ -35,6 +37,9 @@ public class ContentManager {
     final private String[] update_keys = new String[] {"table", "column", "newColVal", "row", "rowVal"};
     final private String[] delete_keys = new String[] {"table", "column", "value"};
 
+    public ContentManager(Context context) {
+        this.activity = (AsyncListener)context;
+    }
     /**
      * This method is the one that gets called from the Activity that needs to make a POST/GET request
      * @param method: "GET" or "POST"
@@ -76,7 +81,7 @@ public class ContentManager {
                 outputStreamWriter.flush();
                 outputStreamWriter.close();
 
-                Log.d("RESPONSE CODE", "response code: " + con.getResponseCode());
+                //Log.d("RESPONSE CODE", "response code: " + con.getResponseCode());
             }
 
             //get the response from the API
@@ -108,7 +113,7 @@ public class ContentManager {
      * The connection to the API needs to be down in an AsyncTask because android does not like it
      * when you do network connection stuff on the same thread as UI stuff
      */
-    protected static class Downloader extends AsyncTask<Request, Void, String> {
+    private class Downloader extends AsyncTask<Request, Void, String> {
 
         /**
          * This gets ran in background asynchronously to start network stuff.
@@ -137,11 +142,18 @@ public class ContentManager {
                 //Log.d("STATUSCODE", "status code: " + response.getStatusCode());
                 //Log.d("MESSAGE", "message: " + response.getMessage());
                 //Log.d("RESPONSE", "body: " + response.getBodyString());
-                MainActivity.doAfterAsync(response);
+                activity.doAfterAsync(response);
             } catch (JSONException e) {
                 e.printStackTrace();
             }
         }
+    }
+
+    /**
+     * Interface required to get the data returned
+     */
+    public interface AsyncListener{
+        void doAfterAsync(Response nresponse);
     }
 
     /**
