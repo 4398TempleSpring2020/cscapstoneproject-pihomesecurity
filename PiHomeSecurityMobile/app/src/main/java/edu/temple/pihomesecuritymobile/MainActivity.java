@@ -11,9 +11,11 @@ import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
 
+import edu.temple.pihomesecuritymobile.ui.dashboard.DashboardFragment;
 import edu.temple.pihomesecuritymobile.ui.home.HomeFragment;
+import edu.temple.pihomesecuritymobile.ui.notifications.NotificationsFragment;
 
-public class MainActivity extends AppCompatActivity implements HomeFragment.soundButtonListener {
+public class MainActivity extends AppCompatActivity implements HomeFragment.soundButtonListener, DashboardFragment.onFragListener, NotificationsFragment.onFragListener {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

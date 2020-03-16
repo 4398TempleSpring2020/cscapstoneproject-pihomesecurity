@@ -1,5 +1,6 @@
 package edu.temple.pihomesecuritymobile.ui.notifications;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -19,6 +20,24 @@ import edu.temple.pihomesecuritymobile.R;
 public class NotificationsFragment extends Fragment {
 
     private NotificationsViewModel notificationsViewModel;
+    Context parent;
+    onFragListener mList;
+
+    @Override
+    public void onCreate(Bundle savedInstanceState){
+        super.onCreate(savedInstanceState);
+    }
+
+    @Override
+    public void onAttach(Context context){
+        super.onAttach(context);
+        this.parent = context;
+        if(context instanceof onFragListener){
+            mList = (onFragListener) context;
+        } else {
+            throw new RuntimeException(context.toString() + "must implement soundButtonListener");
+        }
+    }
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
@@ -39,5 +58,15 @@ public class NotificationsFragment extends Fragment {
             }
         });
         return root;
+    }
+
+    @Override
+    public void onDetach(){
+        super.onDetach();
+        mList = null;
+    }
+
+    public interface onFragListener{
+
     }
 }
