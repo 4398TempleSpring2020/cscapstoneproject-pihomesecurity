@@ -6,22 +6,23 @@ from time import sleep
 import os
 
 class Camera(sensor_interface):
-    camera
-    isActive
-    duration
-    frequency
+    camera = None
+    isActive = None
+    duration = None
+    frequency = None
+
 
     def initiate(self):
-        if this.isActive:
+        if self.isActive:
             print('Initiating Camera')
             path = os.getcwd()
 
-            count = floor(frequency * duration)
-            rest = floor(1000/count)
+            count = int(self.frequency * self.duration)
+            rest = int(1000/count)
             for i in range(count):
                 cur_path = path + 'image_' + str(i) + '.jpg'
                 print('\tCapturing [' + cur_path + ']')
-                camera.capture(cur_path)
+                self.camera.capture(cur_path)
                 sleep(rest)
             return True
         else:
@@ -31,10 +32,10 @@ class Camera(sensor_interface):
     def connect(self):
         try:
             print('Camera Connecting')
-            this.camera = PiCamera()
+            self.camera = picamera.PiCamera()
             # Take out this if no rotation is needed
             camera.rotation = 180
-            this.isActive = True
+            self.isActive = True
         except picamera.PiCameraError:
             print('Camera Error')
             raise
@@ -43,7 +44,6 @@ class Camera(sensor_interface):
         pass
 
     def __init__(self, duration, frequency):
-        this.duration = duration
-        this.frequency = frequency
-        this.isActive = False
-        pass
+        self.duration = duration
+        self.frequency = frequency
+        self.isActive = False

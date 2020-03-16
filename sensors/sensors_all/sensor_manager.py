@@ -1,10 +1,20 @@
-from camera import Camera
+#from camera import Camera
+#from microphone import Microphone
 
-class sensor_manager():
-    camera
+class Sensor_Manager():
+    sensors = []
 
-    def __init__(self):
-        this.camera = Camera(1, 5)
-        this.camera.connect()
-        this.camera.initiate()
-        pass
+    def add_sensor(self, sensor):
+        self.sensors.append(sensor)
+
+    def connect_all(self):
+        for sensor in self.sensors:
+            sensor.connect()
+
+    def initiate_all(self):
+        for sensor in self.sensors:
+            sensor.initiate()
+
+    def test_all(self):
+        for sensor in self.sensors:
+            sensor.test()
