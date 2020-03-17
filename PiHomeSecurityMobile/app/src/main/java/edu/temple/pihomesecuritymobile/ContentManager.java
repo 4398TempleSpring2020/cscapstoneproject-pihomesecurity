@@ -221,7 +221,7 @@ public class ContentManager {
      * @param columns: columns to insert values in
      * @param values: values to be inserted
      */
-    protected void insertStatement(String table, String columns, String values) {
+    protected String insertStatement(String table, String columns, String values) {
         JSONObject params = new JSONObject();
         try {
             params.put(insert_keys[0], table);
@@ -230,7 +230,7 @@ public class ContentManager {
         } catch (JSONException e) {
             e.printStackTrace();
         }
-        requestData("POST", insert_resource, params);
+        return requestData("POST", insert_resource, params);
     }
 
     /**
@@ -240,7 +240,7 @@ public class ContentManager {
      * @param columnMatch: column to match value with
      * @param valueMatch: value to match
      */
-    protected void deleteStatement(String table, String columnMatch, String valueMatch) {
+    protected String deleteStatement(String table, String columnMatch, String valueMatch) {
         JSONObject params = new JSONObject();
         try {
             params.put(delete_keys[0], table);
@@ -249,7 +249,7 @@ public class ContentManager {
         } catch (JSONException e) {
             e.printStackTrace();
         }
-        requestData("POST", delete_resource, params);
+        return requestData("POST", delete_resource, params);
     }
 
     /**
@@ -261,7 +261,7 @@ public class ContentManager {
      * @param columnMatch: column to match value with
      * @param valueMatch: value to match
      */
-    protected void updateStatement(String table, String newColumn, String newValue, String columnMatch, String valueMatch) {
+    protected String updateStatement(String table, String newColumn, String newValue, String columnMatch, String valueMatch) {
         JSONObject params = new JSONObject();
         try {
             params.put(update_keys[0], "Employee");
@@ -272,7 +272,7 @@ public class ContentManager {
         } catch (JSONException e) {
             e.printStackTrace();
         }
-        requestData("POST", update_resource, params);
+        return requestData("POST", update_resource, params);
     }
 }
 
