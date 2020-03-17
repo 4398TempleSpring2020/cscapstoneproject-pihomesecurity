@@ -79,9 +79,10 @@ public class RegisterActivity extends AppCompatActivity {
             return null;
         }
         // see if pin matches and if home address exists in database
-        String result = contentManager.selectIDStatement("HomeAccount", "AccountPin, AccountID", "HomeAccountAddress", "'" + homeAddr.getText().toString() + "'");
+        String result = contentManager.selectIDStatement("HomeAccount", "AccountPin, AccountID, NumOfUsers", "HomeAccountAddress", "'" + homeAddr.getText().toString() + "'");
         Log.d("TEST_REG_LOOKUP", "" + result);
         String accountID;
+        int numUsers;
         try {
             JSONObject jsonObject = new JSONObject(result);
             if (jsonObject.getInt("statusCode")==contentManager.records_not_exist) {
@@ -95,8 +96,12 @@ public class RegisterActivity extends AppCompatActivity {
                 return null;
             }
             accountID = response.getBody().getString("AccountID");
+            numUsers = Integer.parseInt(response.getBody().getString("NumOfUsers"));
         } catch (JSONException e) {
             e.printStackTrace();
+            return null;
+        } catch(NumberFormatException nfe) {
+            nfe.printStackTrace();
             return null;
         }
 
@@ -107,7 +112,11 @@ public class RegisterActivity extends AppCompatActivity {
 
         result = contentManager.insertStatement("UserAccounts", "AccountID, Username, UserPassword, UserPhoneNumber, MasterUserFlag, PhoneId",
                 "'" + accountID + "','" + username.getText().toString() + "','" + password.getText().toString() + "'," + phoneNum + ",'" + "1" + "','" + deviceId + "'");
-        Log.d("result", "" + result);
+        Log.d("result", "insert: " + result);
+        numUsers +=1;
+        Log.d("numusers", Integer.toString(numUsers));
+        result = contentManager.updateStatement("HomeAccount", "NumOfUsers", "'" + numUsers + "'", "AccountID", accountID);
+        Log.d("result", "update: " + result);
         String[] registerForm = {username.getText().toString(),homeAddr.getText().toString(),password.getText().toString(), homePin.getText().toString()};
         return registerForm;
     }

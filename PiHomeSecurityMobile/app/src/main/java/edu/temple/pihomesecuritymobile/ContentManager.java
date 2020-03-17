@@ -25,7 +25,7 @@ public class ContentManager {
     //the base url
     final private String base_url = "https://jlt49k4n90.execute-api.us-east-2.amazonaws.com/beta";
     private static Response response = new Response();
-    private AsyncListener activity;
+    private static AsyncListener activity;
 
     //resource paths
     final private String show_record_resource="/show";
@@ -122,7 +122,7 @@ public class ContentManager {
      * The connection to the API needs to be down in an AsyncTask because android does not like it
      * when you do network connection stuff on the same thread as UI stuff
      */
-    private class Downloader extends AsyncTask<Request, Void, String> {
+    private static class Downloader extends AsyncTask<Request, Void, String> {
 
         /**
          * This gets ran in background asynchronously to start network stuff.
@@ -264,11 +264,11 @@ public class ContentManager {
     protected String updateStatement(String table, String newColumn, String newValue, String columnMatch, String valueMatch) {
         JSONObject params = new JSONObject();
         try {
-            params.put(update_keys[0], "Employee");
-            params.put(update_keys[1], "EmployeeName");
-            params.put(update_keys[2], "'New Employee'");
-            params.put(update_keys[3], "EmployeeID");
-            params.put(update_keys[4], "1");
+            params.put(update_keys[0], table);
+            params.put(update_keys[1], newColumn);
+            params.put(update_keys[2], newValue);
+            params.put(update_keys[3], columnMatch);
+            params.put(update_keys[4], valueMatch);
         } catch (JSONException e) {
             e.printStackTrace();
         }
