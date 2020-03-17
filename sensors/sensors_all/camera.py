@@ -1,7 +1,7 @@
 #!usr/bin/python3
 
 from sensor_interface import sensor_interface
-from picamera import *
+from picamera import PiCamera
 from time import sleep
 import os
 
@@ -10,7 +10,6 @@ class Camera(sensor_interface):
     isActive = None
     duration = None
     frequency = None
-
 
     def initiate(self):
         if self.isActive:
@@ -36,9 +35,10 @@ class Camera(sensor_interface):
             # Take out this if no rotation is needed
             camera.rotation = 180
             self.isActive = True
-        except picamera.PiCameraError:
+            return True
+        except:
             print('Camera Error')
-            raise
+            return False
     
     def test(self):
         pass
