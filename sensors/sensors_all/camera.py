@@ -14,30 +14,26 @@ class Camera(sensor_interface):
     def initiate(self):
         if self.isActive:
             print('Initiating Camera')
-            path = os.getcwd()
-
-            count = int(self.frequency * self.duration)
-            rest = int(1000/count)
-            for i in range(count):
-                cur_path = path + 'image_' + str(i) + '.jpg'
+            for i in range(self.duration):
+                cur_path = './image_' + str(i) + '.jpg'
                 print('\tCapturing [' + cur_path + ']')
                 self.camera.capture(cur_path)
-                sleep(rest)
+                sleep(1)
             return True
         else:
             print('Camera Failed')
             return False
     
     def connect(self):
+        print('Camera Connecting')
         try:
-            print('Camera Connecting')
-            self.camera = picamera.PiCamera()
+            self.camera = PiCamera()
             # Take out this if no rotation is needed
-            camera.rotation = 180
+            self.camera.rotation = 180
             self.isActive = True
             return True
         except:
-            print('Camera Error')
+            print("camera error")
             return False
     
     def test(self):
