@@ -48,8 +48,14 @@ public class RegisterActivity extends AppCompatActivity {
         });
     }
 
+    /**
+     * Primary method to do registration stuff in
+     * ensures each entry text field is filled out correctly, home address exists in database already,
+     * and that pin matches home address pin, and then sends registration data to the database
+     * @return String array of user data
+     */
     public String[] createRegisterForm(){
-        Response response = new Response();
+        Response response;
         EditText username = findViewById(R.id.editText4);
         EditText homeAddr = findViewById(R.id.editText3);
         EditText password = findViewById(R.id.editText5);
@@ -57,40 +63,48 @@ public class RegisterActivity extends AppCompatActivity {
         EditText homePin = findViewById(R.id.pinText);
         EditText phoneNumber = findViewById(R.id.phoneNumText);
         long phoneNum;
+        //ensure each field is filled out
         if(username.getText().toString().equals("") && homeAddr.getText().toString().equals("") && password.getText().toString().equals("")
                 && homePin.getText().toString().equals("") && phoneNumber.getText().toString().equals("")){
             Toast.makeText(getApplicationContext(),"Some fields have been left empty", Toast.LENGTH_SHORT).show();
             return null;
         }
+        //ensure password and confirm password match
         if(!confirm.getText().toString().equals(password.getText().toString())){
             Toast.makeText(getApplicationContext(),"Passwords do not match", Toast.LENGTH_SHORT).show();
             return null;
         }
+        //ensure phone number is correct length
         if (phoneNumber.getText().toString().length()!=10) {
             Toast.makeText(getApplicationContext(),"Please enter a valid phone number with no dashes or symbols.", Toast.LENGTH_SHORT).show();
             return null;
         }
         try {
+            //try to cast phone number to long
             phoneNum = Long.parseLong(phoneNumber.getText().toString());
-            Log.d("Phone number", "" + Long.toString(phoneNum));
+            //Log.d("Phone number", "" + Long.toString(phoneNum));
         } catch(NumberFormatException nfe) {
             Toast.makeText(getApplicationContext(),"Please enter a valid phone number.", Toast.LENGTH_SHORT).show();
             Log.d("NumberFormatException", "" + nfe.toString());
             return null;
         }
-        // see if pin matches and if home address exists in database
+        //check if home address exists in database, will use LIKE instead of = in lambda so only street address needs to match
         String result = contentManager.selectIDStatement("HomeAccount", "AccountPin, AccountID, NumOfUsers", "HomeAccountAddress", "'" + homeAddr.getText().toString() + "'");
-        Log.d("TEST_REG_LOOKUP", "" + result);
+        Log.d("LOOKUP_ADDRESS", "" + result);
+        //put result into a response object
+        response = contentManager.makeResponse(result);
+        //see if we got a status code signaling home address does not exist
+        if (response.getStatusCode()==contentManager.records_not_exist) {
+            Toast.makeText(getApplicationContext(),"Home address not registered", Toast.LENGTH_SHORT).show();
+            return null;
+        } else if (response==null) {
+            Log.d("null", "response is null; error");
+            return null;
+        }
         String accountID;
         int numUsers;
         try {
-            JSONObject jsonObject = new JSONObject(result);
-            if (jsonObject.getInt("statusCode")==contentManager.records_not_exist) {
-                Toast.makeText(getApplicationContext(),"Home address not registered", Toast.LENGTH_SHORT).show();
-                return null;
-            }
-            response.setBody(jsonObject.getString("body"));
-            //Log.d("pin", "" + response.getBody().getString("AccountPin"));
+            //check that the pin number matches what the Home Account Pin equals
             if(!homePin.getText().toString().equals(response.getBody().getString("AccountPin"))){
                 Toast.makeText(getApplicationContext(),"Incorrect pin used", Toast.LENGTH_SHORT).show();
                 return null;
@@ -105,18 +119,25 @@ public class RegisterActivity extends AppCompatActivity {
             return null;
         }
 
+        //get device id for database entry
         String deviceId = android.provider.Settings.Secure.getString(getContentResolver(), android.provider.Settings.Secure.ANDROID_ID);
+        if (deviceId == null) {
+            deviceId = "";
+        }
 
         Toast.makeText(getApplicationContext(),"Registering", Toast.LENGTH_SHORT).show();
         //Log.d("Response result", "Pin and ID: " + response.getBodyString());
 
+        //insert new user into database
         result = contentManager.insertStatement("UserAccounts", "AccountID, Username, UserPassword, UserPhoneNumber, MasterUserFlag, PhoneId",
                 "'" + accountID + "','" + username.getText().toString() + "','" + password.getText().toString() + "'," + phoneNum + ",'" + "1" + "','" + deviceId + "'");
-        Log.d("result", "insert: " + result);
+        //Log.d("result", "insert: " + result);
+        //increment number of users for home account
         numUsers +=1;
-        Log.d("numusers", Integer.toString(numUsers));
+        //Log.d("numusers", Integer.toString(numUsers));
+        //update home account with new number of users
         result = contentManager.updateStatement("HomeAccount", "NumOfUsers", "'" + numUsers + "'", "AccountID", accountID);
-        Log.d("result", "update: " + result);
+        //Log.d("result", "update: " + result);
         String[] registerForm = {username.getText().toString(),homeAddr.getText().toString(),password.getText().toString(), homePin.getText().toString()};
         return registerForm;
     }

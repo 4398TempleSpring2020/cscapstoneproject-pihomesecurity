@@ -24,7 +24,6 @@ public class ContentManager {
     final public int records_not_exist = 411;
     //the base url
     final private String base_url = "https://jlt49k4n90.execute-api.us-east-2.amazonaws.com/beta";
-    private static Response response = new Response();
     private static AsyncListener activity;
 
     //resource paths
@@ -141,23 +140,33 @@ public class ContentManager {
          */
         @Override
         protected void onPostExecute(String result) {
-            try {
-                super.onPostExecute(result);
-                //convert the string to a JSONObject
-                if (activity != null) {
-                    JSONObject jsonObject = new JSONObject(result);
-                    response.setStatusCode(jsonObject.getInt("statusCode"));
-                    response.setMessage(jsonObject.getString("message"));
-                    response.setBody(jsonObject.getString("body"));
-                    //Log.d("STATUSCODE", "status code: " + response.getStatusCode());
-                    //Log.d("MESSAGE", "message: " + response.getMessage());
-                    //Log.d("RESPONSE", "body: " + response.getBodyString());
-                    activity.doAfterAsync(response);
-                }
-            } catch (JSONException e) {
-                e.printStackTrace();
+            super.onPostExecute(result);
+            //convert the string to a JSONObject
+            if (activity != null) {
+                activity.doAfterAsync(makeResponse(result));
             }
         }
+    }
+
+    /**
+     * can create a response object and populate the fields with a result from the server
+     * @param result: string returned from POST
+     * @return new response object with result in appropriate fields
+     */
+    protected static Response makeResponse(String result) {
+        Response rsp = new Response();
+        try {
+                JSONObject jsonObject = new JSONObject(result);
+                rsp.setStatusCode(jsonObject.getInt("statusCode"));
+                rsp.setMessage(jsonObject.getString("message"));
+                rsp.setBody(jsonObject.getString("body"));
+                //Log.d("STATUSCODE", "status code: " + response.getStatusCode());
+                //Log.d("MESSAGE", "message: " + response.getMessage());
+                //Log.d("RESPONSE", "body: " + response.getBodyString());
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return rsp;
     }
 
     /**
