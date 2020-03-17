@@ -21,6 +21,7 @@ import edu.temple.pihomesecuritymobile.models.Response;
  * ContentManager is the class that deals with connecting to the API and sending POST/GET requests
  */
 public class ContentManager {
+    final public int records_not_exist = 411;
     //the base url
     final private String base_url = "https://jlt49k4n90.execute-api.us-east-2.amazonaws.com/beta";
     private static Response response = new Response();
@@ -39,6 +40,8 @@ public class ContentManager {
     final private String[] update_keys = new String[] {"table", "column", "newColVal", "row", "rowVal"};
     final private String[] delete_keys = new String[] {"table", "column", "value"};
 
+    public ContentManager() { }
+
     public ContentManager(Context context) {
         this.activity = (AsyncListener)context;
     }
@@ -48,14 +51,18 @@ public class ContentManager {
      * @param resource: To know which resource path to call cause they all have their own lambda functions
      * @param body: the JSONObject that is gonna get passed through the POST method
      */
-    private void requestData(String method, String resource, JSONObject body) {
+    private String requestData(String method, String resource, JSONObject body) {
         //our Request object contains all the stuff we need to do a successful POST method
         Request request = new Request();
         request.setMethod(method);
         request.setUrl(base_url + resource);
         request.setBody(body);
         Downloader downloader = new Downloader(); //Instantiation of the Async task
-        downloader.execute(request);
+        try {
+            return downloader.execute(request).get();
+        } catch (Exception e) {
+            return "error with executing request: " + e.toString();
+        }
     }
 
     /**
@@ -137,14 +144,16 @@ public class ContentManager {
             try {
                 super.onPostExecute(result);
                 //convert the string to a JSONObject
-                JSONObject jsonObject = new JSONObject(result);
-                response.setStatusCode(jsonObject.getInt("statusCode"));
-                response.setMessage(jsonObject.getString("message"));
-                response.setBody(jsonObject.getString("body"));
-                //Log.d("STATUSCODE", "status code: " + response.getStatusCode());
-                //Log.d("MESSAGE", "message: " + response.getMessage());
-                //Log.d("RESPONSE", "body: " + response.getBodyString());
-                activity.doAfterAsync(response);
+                if (activity != null) {
+                    JSONObject jsonObject = new JSONObject(result);
+                    response.setStatusCode(jsonObject.getInt("statusCode"));
+                    response.setMessage(jsonObject.getString("message"));
+                    response.setBody(jsonObject.getString("body"));
+                    //Log.d("STATUSCODE", "status code: " + response.getStatusCode());
+                    //Log.d("MESSAGE", "message: " + response.getMessage());
+                    //Log.d("RESPONSE", "body: " + response.getBodyString());
+                    activity.doAfterAsync(response);
+                }
             } catch (JSONException e) {
                 e.printStackTrace();
             }
@@ -163,8 +172,8 @@ public class ContentManager {
      * Returns a list of tables in the database, isn't really meant for us
      * SQL used in lambda: SHOW TABLES;
      */
-    void showTables() {
-        requestData("GET", "", new JSONObject());
+    String showTables() {
+        return requestData("GET", "", new JSONObject());
     }
 
     /**
@@ -173,7 +182,7 @@ public class ContentManager {
      * @param table: table to get records from
      * @param columns: columns to show
      */
-    void selectStatement(String table, String columns) {
+    String selectStatement(String table, String columns) {
         JSONObject params = new JSONObject();
         try {
             params.put(show_all_keys[0], table);
@@ -181,7 +190,7 @@ public class ContentManager {
         } catch (JSONException e) {
             e.printStackTrace();
         }
-        requestData("POST", "", params);
+        return requestData("POST", "", params);
     }
 
     /**
@@ -192,7 +201,7 @@ public class ContentManager {
      * @param columnMatch: column that value will match
      * @param valueMatch: value to match
      */
-    void selectIDStatement(String table, String columns, String columnMatch, String valueMatch) {
+    String selectIDStatement(String table, String columns, String columnMatch, String valueMatch) {
         JSONObject params = new JSONObject();
         try {
             params.put(show_record_keys[0], table);
@@ -202,7 +211,7 @@ public class ContentManager {
         } catch (JSONException e) {
             e.printStackTrace();
         }
-        requestData("POST", show_record_resource, params);
+        return requestData("POST", show_record_resource, params);
     }
 
     /**
