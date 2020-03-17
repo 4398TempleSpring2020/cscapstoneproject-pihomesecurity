@@ -253,11 +253,11 @@ public class ContentManager {
     protected void updateStatement(String table, String newColumn, String newValue, String columnMatch, String valueMatch) {
         JSONObject params = new JSONObject();
         try {
-            params.put(update_keys[0], "Employee");
-            params.put(update_keys[1], "EmployeeName");
-            params.put(update_keys[2], "'New Employee'");
-            params.put(update_keys[3], "EmployeeID");
-            params.put(update_keys[4], "1");
+            params.put(update_keys[0], table);
+            params.put(update_keys[1], newColumn);
+            params.put(update_keys[2], newValue);
+            params.put(update_keys[3], columnMatch);
+            params.put(update_keys[4], valueMatch);
         } catch (JSONException e) {
             e.printStackTrace();
         }
