@@ -22,6 +22,11 @@ import edu.temple.pihomesecuritymobile.models.Response;
  */
 public class ContentManager {
     final public int records_not_exist = 411;
+    final public int insertError = 412;
+    final public int deleteError = 414;
+    final public int updateError = 415;
+    final public int selectError = 413;
+
     //the base url
     final private String base_url = "https://jlt49k4n90.execute-api.us-east-2.amazonaws.com/beta";
     private static AsyncListener activity;

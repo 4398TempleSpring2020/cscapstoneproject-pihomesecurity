@@ -126,7 +126,7 @@ public class RegisterActivity extends AppCompatActivity {
             Toast.makeText(getApplicationContext(),"Home address not registered", Toast.LENGTH_SHORT).show();
             return null;
         } else if (response==null) {
-            Log.d("null", "response is null; error");
+            Log.d("null", "lookup response is null; error");
             return null;
         }
         String accountID;
@@ -161,6 +161,17 @@ public class RegisterActivity extends AppCompatActivity {
         result = contentManager.insertStatement("UserAccounts", "AccountID, Username, UserPassword, UserPhoneNumber, MasterUserFlag, PhoneId",
                 "'" + accountID + "','" + newUser + "','" + newPass + "'," + phoneNum + ",'" + "1" + "','" + deviceId + "'");
         //Log.d("result", "insert: " + result);
+        try {
+            int statusCode = new JSONObject(result).getInt("statusCode");
+            if (statusCode == contentManager.insertError){
+                username.setError("Username exists");
+                Toast.makeText(getApplicationContext(),"Username already exists", Toast.LENGTH_SHORT).show();
+                return null;
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+            return null;
+        }
         //increment number of users for home account
         numUsers +=1;
         //Log.d("numusers", Integer.toString(numUsers));
