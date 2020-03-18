@@ -69,8 +69,8 @@ public class RegisterActivity extends AppCompatActivity {
         String pin = homePin.getText().toString().trim();
         long phoneNum;
         //ensure each field is filled out
-        if(newUser.equals("") && address.equals("") && newPass.equals("") && confirm.getText().toString().trim().equals("")
-                && pin.equals("") && phone.equals("")){
+        if(newUser.equals("") || address.equals("") || newPass.equals("") || confirm.getText().toString().trim().equals("")
+                || pin.equals("") || phone.equals("")){
             if (newUser.equals("")) {
                 username.setError("Field is empty");
             }
