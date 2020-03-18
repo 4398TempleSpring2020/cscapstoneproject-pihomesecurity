@@ -13,6 +13,7 @@ import android.widget.Toast;
 
 public class LoginActivity extends AppCompatActivity {
     SharedPreferences sharePref;
+    ContentManager contentManager = new ContentManager();
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -35,13 +36,15 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     private String[] createLoginForm(){
-        EditText HomeAccount = findViewById(R.id.editText);
+        EditText username = findViewById(R.id.editText);
         EditText password = findViewById(R.id.editText2);
-        if(HomeAccount.getText().toString().equals("") || password.getText().toString().equals("")){
-            Toast.makeText(getApplicationContext(),"Some fields have been left empty", Toast.LENGTH_SHORT).show();
+        String user = username.getText().toString().trim();
+        String pass = password.getText().toString().trim();
+        if(pass.equals("") || user.equals("")){
+            Toast.makeText(getApplicationContext(),"Fields have been left empty", Toast.LENGTH_SHORT).show();
             return null;
         }
-        String[] loginForm = {HomeAccount.getText().toString(), password.getText().toString()};
+        String[] loginForm = {user, pass};
         Toast.makeText(getApplicationContext(),"Logging in...", Toast.LENGTH_SHORT).show();
         return loginForm;
     }
