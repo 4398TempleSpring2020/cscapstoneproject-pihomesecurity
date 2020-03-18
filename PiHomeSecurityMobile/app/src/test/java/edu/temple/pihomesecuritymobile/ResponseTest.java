@@ -48,16 +48,16 @@ public class ResponseTest {
             JSONArray json_result1 = response.getBodyArray();
             String result = response.getBodyString();
             assertEquals(jsonArray.length(), json_result1.length());
-            assertEquals(jsonArray.get(0), json_result1.get(0));
-            assertEquals(jsonArray.get(1), json_result1.get(1));
+            assertEquals(jsonArray.get(0).toString(), json_result1.get(0).toString());
+            assertEquals(jsonArray.get(1).toString(), json_result1.get(1).toString());
             assertEquals(jsonArray.toString(), result);
 
             response.setBody(test_strings2);
             JSONArray json_result2 = response.getBodyArray();
             result = response.getBodyString();
             assertEquals(jsonArray.length(), json_result2.length());
-            assertEquals(jsonArray.get(0), json_result2.get(0));
-            assertEquals(jsonArray.get(1), json_result2.get(1));
+            assertEquals(jsonArray.get(0).toString(), json_result2.get(0).toString());
+            assertEquals(jsonArray.get(1).toString(), json_result2.get(1).toString());
             assertEquals(jsonArray.toString(), result);
         } catch (JSONException e) {
             e.printStackTrace();

@@ -40,6 +40,11 @@ public class LoginActivity extends AppCompatActivity {
         });
     }
 
+    /**
+     * Performs all operations relating to login
+     * Checks username and password against database and verifies
+     * @return String array of username, password, and homeaccountID
+     */
     private String[] createLoginForm(){
         EditText username = findViewById(R.id.editText);
         EditText password = findViewById(R.id.editText2);
@@ -56,7 +61,7 @@ public class LoginActivity extends AppCompatActivity {
             return null;
         }
         Response response;
-        String result = contentManager.selectIDStatement("UserAccounts", "UserID, AccountID, Username, UserPassword, MasterUserFlag", "Username", "'" + user + "'");
+        String result = contentManager.selectIDStatement("UserAccounts", "UserID, AccountID, Username, UserPassword, MasterUserFlag, PhoneId", "Username", "'" + user + "'");
         Log.d("LOOKUP_USER", "" + result);
         //put result into a response object
         response = contentManager.makeResponse(result);
@@ -71,6 +76,7 @@ public class LoginActivity extends AppCompatActivity {
         }
         String userID;
         String accountID;
+        String resultDeviceID;
         try {
             if(!pass.equals(response.getBody().getString("UserPassword"))){
                 password.setError("Incorrect password or username");
@@ -80,8 +86,20 @@ public class LoginActivity extends AppCompatActivity {
             }
             userID = response.getBody().getString("UserID");
             accountID = response.getBody().getString("AccountID");
+            resultDeviceID = response.getBody().getString("PhoneId");
         } catch (JSONException e) {
             e.printStackTrace();
+            return null;
+        }
+        String deviceId = android.provider.Settings.Secure.getString(getContentResolver(), android.provider.Settings.Secure.ANDROID_ID);
+        if (deviceId == null) {
+            deviceId = "";
+        }
+
+        //if this device wasn't the phone used to register the user account, deny the login attempt
+        //possibly in future as a stretch goal ask for extra verification if device id does not match
+        if (!deviceId.equals(resultDeviceID)) {
+            Toast.makeText(getApplicationContext(),"Cannot verify device", Toast.LENGTH_SHORT).show();
             return null;
         }
 
