@@ -10,5 +10,5 @@ camera.start_preview()
 sleep(5)
 
 # This code takes the picture
-camera.capture('/home/pi/cscapstoneproject-pihomesecurity/sensors/camera/image.jpg')
+camera.capture('./image.jpg')
 camera.stop_preview()
