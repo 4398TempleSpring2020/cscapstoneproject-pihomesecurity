@@ -1,15 +1,14 @@
 # A lambda function to interact with AWS RDS MySQL
-# inserts a new record into a table in the database
 
 import pymysql
 import sys
 
-REGION = 'region'
+REGION = 'us-east-1'
 
-rds_host  = "rds_host"
-name = "name"
-password = "password"
-db_name = "database"
+rds_host  = "my-pi-database.cxfhfjn3ln5w.us-east-2.rds.amazonaws.com"
+name = "insert_user"
+password = "mypi123"
+db_name = "mypidb"
 
 def lambda_handler(event, context):
     """
@@ -28,8 +27,8 @@ def lambda_handler(event, context):
             cur.execute(insertStatement)
         except Exception as e:
             cur.close()
-            print("Could not insert record:" + str(e))
             return {
+                "statusCode": 412,
                 "error" : str(e)
             }
         cur.close()
