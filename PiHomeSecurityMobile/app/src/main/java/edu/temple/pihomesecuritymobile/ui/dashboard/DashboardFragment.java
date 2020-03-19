@@ -2,6 +2,7 @@ package edu.temple.pihomesecuritymobile.ui.dashboard;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -27,6 +28,7 @@ public class DashboardFragment extends Fragment {
 
     Response rsp;
     ContentManager mngr;
+    JSONObject data;
     Context parent;
     onFragListener mList;
 
@@ -40,8 +42,15 @@ public class DashboardFragment extends Fragment {
         super.onAttach(context);
         this.parent = context;
         mngr = new ContentManager();
+        int incidentID = 0;
         // Place API code to get data to display
-
+        String result = mngr.selectIDStatement("IncidentData","DateRecorded, BadIncidentFlag, AdminComments","IncidentID","'"+incidentID+"'");
+        rsp = mngr.makeResponse(result);
+        if(rsp.getStatusCode()==mngr.records_not_exist){
+            Log.e("DATA", "onAttach: Pulled data Failure");
+        } else {
+            data = rsp.getBody();
+        }
         if(context instanceof onFragListener){
             mList = (onFragListener) context;
         } else {

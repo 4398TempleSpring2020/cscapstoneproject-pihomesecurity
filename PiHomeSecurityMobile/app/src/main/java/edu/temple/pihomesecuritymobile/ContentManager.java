@@ -158,7 +158,7 @@ public class ContentManager {
      * @param result: string returned from POST
      * @return new response object with result in appropriate fields
      */
-    protected static Response makeResponse(String result) {
+    public static Response makeResponse(String result) {
         Response rsp = new Response();
         try {
                 JSONObject jsonObject = new JSONObject(result);
@@ -215,7 +215,7 @@ public class ContentManager {
      * @param columnMatch: column that value will match
      * @param valueMatch: value to match
      */
-    String selectIDStatement(String table, String columns, String columnMatch, String valueMatch) {
+    public String selectIDStatement(String table, String columns, String columnMatch, String valueMatch) {
         JSONObject params = new JSONObject();
         try {
             params.put(show_record_keys[0], table);
