@@ -6,12 +6,12 @@ import sys
 import datetime
 import json
 
-REGION = 'region'
+REGION = 'us-east-1'
 
-rds_host  = "rds_host"
-name = "name"
-password = "password"
-db_name = "database"
+rds_host  = "my-pi-database.cxfhfjn3ln5w.us-east-2.rds.amazonaws.com"
+name = "read_user"
+password = "temple123"
+db_name = "mypidb"
 
 def lambda_handler(event, context):
     """
@@ -28,8 +28,8 @@ def lambda_handler(event, context):
             cur.execute(query)
         except Exception as e:
             cur.close()
-            print(str(e))
             return {
+                "statusCode": 413,
                 "error" : str(e)
             }
         cols = cur.description 
