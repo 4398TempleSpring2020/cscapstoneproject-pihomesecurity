@@ -13,12 +13,20 @@ import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 
+import org.json.JSONObject;
+
+import edu.temple.pihomesecuritymobile.ContentManager;
 import edu.temple.pihomesecuritymobile.R;
+import edu.temple.pihomesecuritymobile.models.Request;
+import edu.temple.pihomesecuritymobile.models.Response;
 
 public class DashboardFragment extends Fragment {
 
     private DashboardViewModel dashboardViewModel;
 
+
+    Response rsp;
+    ContentManager mngr;
     Context parent;
     onFragListener mList;
 
@@ -31,7 +39,9 @@ public class DashboardFragment extends Fragment {
     public void onAttach(Context context){
         super.onAttach(context);
         this.parent = context;
+        mngr = new ContentManager();
         // Place API code to get data to display
+
         if(context instanceof onFragListener){
             mList = (onFragListener) context;
         } else {
