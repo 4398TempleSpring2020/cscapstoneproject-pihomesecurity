@@ -31,6 +31,7 @@ public class DashboardFragment extends Fragment {
     public void onAttach(Context context){
         super.onAttach(context);
         this.parent = context;
+        // Place API code to get data to display
         if(context instanceof onFragListener){
             mList = (onFragListener) context;
         } else {
