@@ -1,15 +1,14 @@
 # A lambda function to interact with AWS RDS MySQL
-# deletes a specific record from a table in the database
 
 import pymysql
 import sys
 
-REGION = 'region'
+REGION = 'us-east-1'
 
-rds_host  = "rds_host"
-name = "name"
-password = "password"
-db_name = "database"
+rds_host  = "my-pi-database.cxfhfjn3ln5w.us-east-2.rds.amazonaws.com"
+name = "delete_user"
+password = "ssh112!"
+db_name = "mypidb"
 
 def lambda_handler(event, context):
     """
@@ -24,23 +23,27 @@ def lambda_handler(event, context):
         column = event['column']
         value = event['value']
         query = "delete from %s where %s = %s" % (table, column, value)
+        #fix the value to have apostrophes if it does not or SQL statement may fail
+        if value[0]!="'":
+            tempValue = "'" + value + "'"
+            value = tempValue
         try:
             cur.execute(query)
         except Exception as e:
             cur.close()
-            print("Could not delete record:" + str(e))
             return {
+                "statusCode": 414,
                 "error" : str(e)
             }
-        query = "select * from %s where %s = %s" % (table, column, value)
-        cur.execute(query)
-        cur.close()
-        cols = cur.description 
-        result = [{cols[index][0]:col for index, col in enumerate(value)} for value in cur.fetchall()]
+        result = ""
+        #query = "select * from %s where %s = %s" % (table, column, value)
+        #cur.execute(query)
+        #cur.close()
+        #cols = cur.description 
+        #result = [{cols[index][0]:col for index, col in enumerate(value)} for value in cur.fetchall()]
         cur.close()
         return {
             'statusCode' : 200,
             'message': "Deleted records successfully",
             'body' : str(result)
         }
-
