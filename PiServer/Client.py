@@ -1,25 +1,34 @@
+import socket
+import sys
 
-import socket, sys
 
-def client_program():
-    host = socket.gethostbyname(str(sys.argv[1]))  # argv[1] --> up address of server. Works locally
-    port = 5000  # port #
+class Client:
+    port = None
+    host = None
 
-    client_socket = socket.socket() 
-    client_socket.connect((host, port))  # connect
+    def __init__(self, host, port):
+        self.host = host
+        self.port = port
 
-    message = input(" -> ") 
+    def connect(self):
+        host = socket.gethostbyname(self.host)  # argv[1] --> up address of server. Works locally
+        port = self.port  # port #
+        client_socket = socket.socket()
+        client_socket.connect((host, port))  # connect
 
-    while message.lower().strip() != 'bye':
-        client_socket.send(message.encode())  # send to server
-        data = client_socket.recv(2048).decode()  # receive data. 2048 byte max
+        message = input(" -> ")
 
-        print('Received from server: ' + data)
+        while message.lower().strip() != 'bye':
+            client_socket.send(message.encode())  # send to server
+            data = client_socket.recv(2048).decode()  # receive data. 2048 byte max
 
-        message = input(" -> ") 
+            print('Received from server: ' + data)
 
-    client_socket.close()  # close connection
+            message = input(" -> ")
+
+        client_socket.close()  # close connection
 
 
 if __name__ == '__main__':
-    client_program()
+    client_test = Client(str(sys.argv[1]), 5000)
+    client_test.connect()
