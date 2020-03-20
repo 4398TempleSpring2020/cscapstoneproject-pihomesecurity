@@ -36,6 +36,9 @@ public class RegisterActivityTest {
     private String pinError;
     private String duplicateError;
     private String duplicateUsername;
+    private String shortAddr;
+    private String address_error;
+
 
     @Rule
     public ActivityTestRule<RegisterActivity> activityRule = new ActivityTestRule<>(RegisterActivity.class);
@@ -44,6 +47,7 @@ public class RegisterActivityTest {
     public void initStrings() {
         emptyString = "";
         spaceString = " ";
+        shortAddr = "1801";
         validWords = "Temple";
         validPhone = "2151234567";
         passwordDiff = "diffpassword";
@@ -57,6 +61,7 @@ public class RegisterActivityTest {
         pinError = "Pin does not match";
         duplicateError = "Username exists";
         duplicateUsername = "danielle";
+        address_error = "Home address length is too short";
     }
 
     @Test
@@ -140,6 +145,20 @@ public class RegisterActivityTest {
         onView(withId(R.id.registerButton)).perform(click());
 
         onView(withId(R.id.phoneNumText)).check(matches(hasErrorText(phoneNumErrorText)));
+    }
+
+    @Test
+    public void testAddressLength() {
+        onView(withId(R.id.editText4)).perform(typeText(validWords), closeSoftKeyboard());
+        onView(withId(R.id.editText3)).perform(typeText(shortAddr), closeSoftKeyboard());
+        onView(withId(R.id.editText5)).perform(typeText(validWords), closeSoftKeyboard());
+        onView(withId(R.id.editText6)).perform(typeText(validWords), closeSoftKeyboard());
+        onView(withId(R.id.pinText)).perform(typeText(validWords), closeSoftKeyboard());
+        onView(withId(R.id.phoneNumText)).perform(typeText(validPhone), closeSoftKeyboard());
+
+        onView(withId(R.id.registerButton)).perform(click());
+
+        onView(withId(R.id.editText3)).check(matches(hasErrorText(address_error)));
     }
 
     @Test

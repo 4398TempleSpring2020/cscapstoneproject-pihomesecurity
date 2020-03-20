@@ -36,6 +36,7 @@ public class ContentManager {
     final private String insert_resource="/insert";
     final private String update_resource="/update";
     final private String delete_resource="/delete";
+    final private String incident_resource="/incidents";
 
     //resource required keys in JSONObject
     final private String[] show_all_keys = new String[] {"table", "columns"};
@@ -287,6 +288,38 @@ public class ContentManager {
             e.printStackTrace();
         }
         return requestData("POST", update_resource, params);
+    }
+
+    /**
+     * Example of POST request to return all incident records in a table with the specified columns
+     * Sometimes this will return a result that contains a JSONArray
+     * so when you turn the string into a Response object, make sure to check if getBody() and getBodyArray()
+     * are null when you call them before you use the returned objects
+     *         String result = contentManager.getIncidents("4");
+     *         Log.d("test", "" + result);
+     *         Response response = contentManager.makeResponse(result);
+     *         Log.d("test", "" + response.getBodyString());
+     *         try {
+     *              if (response.getBody() != null) {
+     *                  Log.d("test", "" + response.getBody().getString("IncidentID"));
+     *              } else {
+     *                  for (int i=0; i<response.getBodyArray().length(); i++) {
+     *                      Log.d("test", "" + response.getBodyArray().getJSONObject(i).getString("IncidentID"));
+     *                  }
+     *              }
+     *         } catch (Exception e) {
+     *
+     *         }
+     * @param homeID: HomeAccountID to get incident data for
+     */
+    public String getIncidents(String homeID) {
+        JSONObject params = new JSONObject();
+        try {
+            params.put("homeID", homeID);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return requestData("POST", incident_resource, params);
     }
 }
 

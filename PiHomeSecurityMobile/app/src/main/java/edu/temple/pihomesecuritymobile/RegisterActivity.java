@@ -115,6 +115,12 @@ public class RegisterActivity extends AppCompatActivity {
             Log.d("NumberFormatException", "" + nfe.toString());
             return null;
         }
+        //since we do like matching in mysql for address, make sure it is at least some length
+        if (address.length()<5) {
+            homeAddr.setError("Home address length is too short");
+            Toast.makeText(getApplicationContext(),"Home address length is too short.", Toast.LENGTH_SHORT).show();
+            return null;
+        }
         //check if home address exists in database, will use LIKE instead of = in lambda so only street address needs to match
         String result = contentManager.selectIDStatement("HomeAccount", "AccountPin, AccountID, NumOfUsers", "HomeAccountAddress", "'" + address + "'");
         Log.d("LOOKUP_ADDRESS", "" + result);
@@ -174,7 +180,7 @@ public class RegisterActivity extends AppCompatActivity {
         }
         //increment number of users for home account
         numUsers +=1;
-        //Log.d("numusers", Integer.toString(numUsers));
+
         //update home account with new number of users
         result = contentManager.updateStatement("HomeAccount", "NumOfUsers", "'" + numUsers + "'", "AccountID", accountID);
         //Log.d("result", "update: " + result);

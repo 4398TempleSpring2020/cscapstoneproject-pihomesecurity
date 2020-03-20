@@ -64,16 +64,13 @@ public class Response {
             body = body.replaceAll("\",\\s\"", ", \"");
             body = body.replaceAll(",\\s\"", "\",\"");
 
-            body = body.replaceAll("\": ", ":");
-            body = body.replaceAll(": \"", ":");
-            body = body.replaceAll(":\"", ":");
-            body = body.replaceAll("\":", ":");
-            body = body.replaceAll(":", "\":\"");
+            body = body.replaceAll(": \"", ":\"");
+            body = body.replaceAll(": ", ":\"");
 
-            body = body.replaceAll("\"\\}", "}");
-            body = body.replaceAll("\\}", "\"}");
-            body = body.replaceAll("\\{\"", "{");
-            body = body.replaceAll("\\{", "{\"");
+            body=body.replace("\"}", "}");
+            body=body.replace("}", "\"}");
+            body=body.replace("{\"", "{");
+            body=body.replace("{", "{\"");
 
             //Log.d("After replace: ", "" + body);
 
