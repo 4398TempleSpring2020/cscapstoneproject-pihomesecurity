@@ -11,6 +11,8 @@ import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
 
+import org.json.JSONObject;
+
 import edu.temple.pihomesecuritymobile.ui.dashboard.DashboardFragment;
 import edu.temple.pihomesecuritymobile.ui.home.HomeFragment;
 import edu.temple.pihomesecuritymobile.ui.notifications.NotificationsFragment;
@@ -30,10 +32,13 @@ public class MainActivity extends AppCompatActivity implements HomeFragment.soun
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment);
         NavigationUI.setupActionBarWithNavController(this, navController, appBarConfiguration);
         NavigationUI.setupWithNavController(navView, navController);
+
     }
 
     @Override
     public void soundAlarm() {
         Toast.makeText(getApplicationContext(),"Sounding Alarm", Toast.LENGTH_SHORT).show();
     }
+
+
 }
