@@ -103,7 +103,7 @@ public class LoginActivity extends AppCompatActivity {
             return null;
         }
 
-        String[] loginForm = {user, pass, accountID};
+        String[] loginForm = {accountID, user, pass};
         Toast.makeText(getApplicationContext(),"Logging in...", Toast.LENGTH_SHORT).show();
         //update last login for user
         result = contentManager.updateStatement("UserAccounts", "LastLogin", "current_timestamp()", "UserID", userID);

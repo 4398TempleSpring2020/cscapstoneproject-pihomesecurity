@@ -1,5 +1,6 @@
 package edu.temple.pihomesecuritymobile;
 
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.widget.Toast;
 
@@ -18,12 +19,18 @@ import edu.temple.pihomesecuritymobile.ui.home.HomeFragment;
 import edu.temple.pihomesecuritymobile.ui.notifications.NotificationsFragment;
 
 public class MainActivity extends AppCompatActivity implements HomeFragment.soundButtonListener, DashboardFragment.onFragListener, NotificationsFragment.onFragListener {
-
+    SharedPreferences sharePrefs;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         BottomNavigationView navView = findViewById(R.id.nav_view);
+        Bundle formBundle = getIntent().getExtras();
+        sharePrefs = getSharedPreferences("PREF_NAME",MODE_PRIVATE);
+        if(formBundle != null){
+            String form[] = formBundle.getStringArray("form");
+            sharePrefs.edit().putString("HomeID",form[0]).apply();
+        }
         // Passing each menu ID as a set of Ids because each
         // menu should be considered as top level destinations.
         AppBarConfiguration appBarConfiguration = new AppBarConfiguration.Builder(

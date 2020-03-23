@@ -184,7 +184,7 @@ public class RegisterActivity extends AppCompatActivity {
         //update home account with new number of users
         result = contentManager.updateStatement("HomeAccount", "NumOfUsers", "'" + numUsers + "'", "AccountID", accountID);
         //Log.d("result", "update: " + result);
-        String[] registerForm = {newUser, address, newPass, pin};
+        String[] registerForm = {accountID,newUser, address, newPass, pin};
         return registerForm;
     }
 

@@ -1,6 +1,7 @@
 package edu.temple.pihomesecuritymobile.ui.dashboard;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -14,6 +15,7 @@ import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import edu.temple.pihomesecuritymobile.ContentManager;
@@ -24,8 +26,8 @@ import edu.temple.pihomesecuritymobile.models.Response;
 public class DashboardFragment extends Fragment {
 
     private DashboardViewModel dashboardViewModel;
-
-
+    String errMess;
+    SharedPreferences sharePrefs;
     Response rsp;
     ContentManager mngr;
     JSONObject data;
@@ -41,16 +43,25 @@ public class DashboardFragment extends Fragment {
     public void onAttach(Context context){
         super.onAttach(context);
         this.parent = context;
+        sharePrefs = parent.getSharedPreferences("PREF_NAME",Context.MODE_PRIVATE);
         mngr = new ContentManager();
-        int incidentID = 0;
         // Place API code to get data to display
-        String result = mngr.selectIDStatement("IncidentData","DateRecorded, BadIncidentFlag, AdminComments","IncidentID","'"+incidentID+"'");
-        rsp = mngr.makeResponse(result);
+        String HomeID = sharePrefs.getString("HomeID","");
+
+        if(HomeID.equals("")){
+            errMess = "HomeID was not found";
+        } else {
+            String result = mngr.getIncidents(HomeID);
+            rsp = mngr.makeResponse(result);
+        }
+
         if(rsp.getStatusCode()==mngr.records_not_exist){
-            Log.e("DATA", "onAttach: Pulled data Failure");
+            errMess = "Records do not exist";
         } else {
             data = rsp.getBody();
+            Log.d("JSONObject", data.toString());
         }
+
         if(context instanceof onFragListener){
             mList = (onFragListener) context;
         } else {
@@ -65,6 +76,20 @@ public class DashboardFragment extends Fragment {
         View root = inflater.inflate(R.layout.fragment_dashboard, container, false);
         final TextView textView = root.findViewById(R.id.text_dashboard);
         textView.setText("Incidents");
+        TextView incID = root.findViewById(R.id.textView2);
+        TextView occDate = root.findViewById(R.id.textView3);
+        TextView adminComm = root.findViewById(R.id.textView4);
+        try{
+
+            String IDstr = "Incident ID: "+ data.getInt("incidentID");
+            incID.setText(IDstr);
+            occDate.setText("Incident occurred at: "+data.getString("dateRecorded"));
+            adminComm.setText("Admin Comments:\n"+data.getString("adminComments"));
+        } catch(JSONException e){
+            incID.setText(errMess);
+            occDate.setText("");
+            adminComm.setText("");
+        }
         return root;
     }
 
