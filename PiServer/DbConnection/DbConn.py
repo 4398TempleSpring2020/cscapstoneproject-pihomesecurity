@@ -37,7 +37,7 @@ class DbConn:
         data = cursor.fetchone()
         print("Database version : %s " % data)
 
-    def send_data(self):
+    def send_data(self, data):
         # code to send data to db
         print("writing to db")
         # prepare a cursor object using cursor() method
@@ -62,8 +62,8 @@ class DbConn:
 
 if __name__ == '__main__':
     host = "my-pi-database.cxfhfjn3ln5w.us-east-2.rds.amazonaws.com"
-    uname = "admin"
-    password = "root1234"
+    uname = "pi_user"
+    password = "totallysecurepw!"
     db_name = "mypidb"
 
     dbconn = DbConn(host, uname, password, db_name)
