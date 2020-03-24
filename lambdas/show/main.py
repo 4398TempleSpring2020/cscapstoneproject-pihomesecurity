@@ -3,12 +3,12 @@
 import pymysql
 import sys
 
-REGION = 'us-east-1'
+REGION = 'region'
 
-rds_host  = "my-pi-database.cxfhfjn3ln5w.us-east-2.rds.amazonaws.com"
-name = "read_user"
-password = "temple123"
-db_name = "mypidb"
+rds_host  = "host"
+name = "username"
+password = "password"
+db_name = "database"
 
 def lambda_handler(event, context):
     """
