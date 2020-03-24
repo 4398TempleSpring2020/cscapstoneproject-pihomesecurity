@@ -11,8 +11,6 @@ class ServerThread(threading.Thread):
     def run(self):
         print("Starting Server Thread...")
         self.server.start()
-        print("Ip Address " + self.server.local_address)
-        print("Port # " + str(self.server.port))
 
 
 class ListenerThread(threading.Thread):
@@ -53,8 +51,10 @@ class Server:
 
     def start(self):
         # get the hostname
-        ip = self.local_address
+        ip = socket.gethostbyname(self.local_address)
         port = self.port
+        print("Ip Address " + ip)
+        print("Port # " + str(port))
         tcp = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         tcp.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
         tcp.bind((ip, port))
@@ -91,6 +91,7 @@ if __name__ == '__main__':
     pi_server = Server(socket.gethostname(), 5000)
     server = ServerThread(pi_server)
     server.start()
+
 
 
 

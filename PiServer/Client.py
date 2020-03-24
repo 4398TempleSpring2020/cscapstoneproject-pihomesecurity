@@ -36,8 +36,7 @@ class Client:
         self.host = host
         self.port = port
         self.client_socket = None
-        self.listener_threads = []
-        self.sender_threads = []
+        self.listener_thread = []
 
     def connect(self):
         host = socket.gethostbyname(self.host)  # argv[1] --> up address of server. Works locally
@@ -46,7 +45,7 @@ class Client:
         self.client_socket.connect((host, port))  # connect
         new_listener_thread = ListenerThread(self.host, self.port, self.client_socket)
         new_listener_thread.start()
-        self.listener_threads.append(new_listener_thread)
+        self.listener_thread.append(new_listener_thread)
 
     def send(self, str_data):
         try:
@@ -60,5 +59,6 @@ class Client:
 if __name__ == '__main__':
     client_test = Client(str(sys.argv[1]), 5000)
     client_test.connect()
+
 
 
