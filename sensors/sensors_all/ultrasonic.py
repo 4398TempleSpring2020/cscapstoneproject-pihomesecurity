@@ -16,11 +16,7 @@ GPIO.setup(GPIO_ECHO, GPIO.IN)
 def test_other():
     GPIO.output(PIN_TRIGGER, GPIO.LOW)
 
-    print "Waiting for sensor to settle"
-
     time.sleep(2)
-
-    print "Calculating distance"
 
     GPIO.output(PIN_TRIGGER, GPIO.HIGH)
 
@@ -36,32 +32,21 @@ def test_other():
     pulse_duration = pulse_end_time - pulse_start_time
     
     distance = round(pulse_duration * 17150, 2)
-    
-    print "Distance:",distance,"cm"
-    
 
 def distance():
-    print('get distance')
     # set Trigger to HIGH
     GPIO.output(GPIO_TRIGGER, True)
 
-    print('trigger on')
- 
     # set Trigger after 0.01ms to LOW
     time.sleep(0.00001)
     GPIO.output(GPIO_TRIGGER, False)
-    print('trigger off')
 
-    
     StartTime = time.time()
     StopTime = time.time()
 
-    print('echo on')
     # save StartTime
     while GPIO.input(GPIO_ECHO) == 0:
         StartTime = time.time()
-
-    print('echo off')
 
     # save time of arrival
     while GPIO.input(GPIO_ECHO) == 1:
@@ -76,13 +61,16 @@ def distance():
     return distance
  
 if __name__ == '__main__':
+    time_overall = 60
+    print("total_time 60")
+    total_time = 0
     try:
-        while True:
+        while total_time < time_overall:
             dist = distance()
-            print ("Measured Distance = %.1f cm" % dist)
+            print(dist)
 
-            time.sleep(1)
+            time.sleep(.1)
+            total_time += .1
             # Reset by pressing CTRL + C
     except KeyboardInterrupt:
-        print("Measurement stopped by User")
         GPIO.cleanup()

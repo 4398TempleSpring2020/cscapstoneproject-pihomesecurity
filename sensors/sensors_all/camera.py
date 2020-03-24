@@ -10,15 +10,21 @@ class Camera(sensor_interface):
     isActive = None
     duration = None
     frequency = None
-
+    
     def initiate(self):
         if self.isActive:
+            self.camera.start_preview()
+            sleep(5)
+
             print('Initiating Camera')
             for i in range(self.duration):
                 cur_path = './image_' + str(i) + '.jpg'
                 print('\tCapturing [' + cur_path + ']')
+
                 self.camera.capture(cur_path)
                 sleep(1)
+
+            self.camera.stop_preview()
             return True
         else:
             print('Camera Failed')
@@ -43,3 +49,4 @@ class Camera(sensor_interface):
         self.duration = duration
         self.frequency = frequency
         self.isActive = False
+
