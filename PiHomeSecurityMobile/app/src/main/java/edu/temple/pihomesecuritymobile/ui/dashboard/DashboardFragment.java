@@ -15,6 +15,7 @@ import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -30,7 +31,8 @@ public class DashboardFragment extends Fragment {
     SharedPreferences sharePrefs;
     Response rsp;
     ContentManager mngr;
-    JSONObject data;
+    JSONObject dataObj;
+    JSONArray dataArr;
     Context parent;
     onFragListener mList;
 
@@ -58,8 +60,12 @@ public class DashboardFragment extends Fragment {
         if(rsp.getStatusCode()==mngr.records_not_exist){
             errMess = "Records do not exist";
         } else {
-            data = rsp.getBody();
-            Log.d("JSONObject", data.toString());
+            dataObj = rsp.getBody();
+            if(dataObj == null){
+                dataArr = rsp.getBodyArray();
+            }
+            Log.d("JSONObject", dataObj.toString());
+            Log.d("JSONArray", dataArr.toString());
         }
 
         if(context instanceof onFragListener){
@@ -79,12 +85,26 @@ public class DashboardFragment extends Fragment {
         TextView incID = root.findViewById(R.id.textView2);
         TextView occDate = root.findViewById(R.id.textView3);
         TextView adminComm = root.findViewById(R.id.textView4);
+        int set = -1;
+        if(dataObj == null){
+            set = 0;
+        } else if(dataArr == null){
+            set = 1;
+        }
         try{
+            if(set ==1){
+                String IDstr = "Incident ID: "+ dataObj.getInt("incidentID");
+                incID.setText(IDstr);
+                occDate.setText("Incident occurred at: "+dataObj.getString("dateRecorded"));
+                adminComm.setText("Admin Comments:\n"+dataObj.getString("adminComments"));
+            } else if(set == 0){
+                JSONObject tmp = dataArr.getJSONObject(dataArr.length()-1);
+                String IDstr = "Incident ID: "+ dataObj.getInt("incidentID");
+                incID.setText(IDstr);
+                occDate.setText("Incident occurred at: "+dataObj.getString("dateRecorded"));
+                adminComm.setText("Admin Comments:\n"+dataObj.getString("adminComments"));
+            }
 
-            String IDstr = "Incident ID: "+ data.getInt("incidentID");
-            incID.setText(IDstr);
-            occDate.setText("Incident occurred at: "+data.getString("dateRecorded"));
-            adminComm.setText("Admin Comments:\n"+data.getString("adminComments"));
         } catch(JSONException e){
             incID.setText(errMess);
             occDate.setText("");
