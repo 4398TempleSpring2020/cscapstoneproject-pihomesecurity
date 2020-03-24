@@ -98,7 +98,7 @@ public class DashboardFragment extends Fragment {
                 occDate.setText("Incident occurred at: "+dataObj.getString("dateRecorded"));
                 adminComm.setText("Admin Comments:\n"+dataObj.getString("adminComments"));
             } else if(set == 0){
-                JSONObject tmp = dataArr.getJSONObject(dataArr.length()-1);
+                JSONObject tmp = dataArr.getJSONObject(0);
                 String IDstr = "Incident ID: "+ dataObj.getInt("incidentID");
                 incID.setText(IDstr);
                 occDate.setText("Incident occurred at: "+dataObj.getString("dateRecorded"));
