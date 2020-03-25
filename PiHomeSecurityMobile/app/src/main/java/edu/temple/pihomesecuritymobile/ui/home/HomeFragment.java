@@ -64,6 +64,7 @@ public class HomeFragment extends Fragment {
                 } else {
                     alarmStr.setText("Alarm: unactive");
                 }
+                mList.setAlarm(b);
             }
         });
         soundButton.setOnClickListener(new View.OnClickListener() {
@@ -83,5 +84,6 @@ public class HomeFragment extends Fragment {
 
     public interface soundButtonListener{
         public void soundAlarm();
+        public void setAlarm(boolean setFlag);
     }
 }

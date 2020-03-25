@@ -49,6 +49,14 @@ public class MainActivity extends AppCompatActivity implements HomeFragment.soun
 
     }
 
+
+    /*
+    * Method: soundAlarm()
+    * Purpose: to make the alarm start playing a noise to scare off an intruder
+    * Parameters: None
+    * Pre-Condtions: the sound button in HomeFragment has been hit
+    * Post-Condition: A message is sent to the Pi
+    */
     @Override
     public void soundAlarm() {
         JSONObject message = new JSONObject();
@@ -62,5 +70,20 @@ public class MainActivity extends AppCompatActivity implements HomeFragment.soun
         Toast.makeText(getApplicationContext(),"Sounding Alarm", Toast.LENGTH_SHORT).show();
     }
 
-
+    /*
+     * Method: soundAlarm()
+     * Purpose: to make the alarm start playing a noise to scare off an intruder
+     * Parameters: setFlag true if alarm should be turned on or false if it should be turned off
+     * Pre-Condtions: the alarm switch has been used
+     * Post-Condition: A message is sent to the Pi based on the setFlag
+     */
+    @Override
+    public void setAlarm(boolean setFlag) {
+        JSONObject message = new JSONObject();
+        try{
+            message.put(null,0);
+        } catch (JSONException e){
+            Log.e("SENDING ARM MESSAGE", e.toString());
+        }
+    }
 }
