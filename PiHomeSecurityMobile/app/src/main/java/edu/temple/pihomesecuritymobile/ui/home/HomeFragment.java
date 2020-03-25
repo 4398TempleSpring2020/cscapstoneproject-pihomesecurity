@@ -17,6 +17,8 @@ import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 
+import org.json.JSONException;
+
 import edu.temple.pihomesecuritymobile.MainActivity;
 import edu.temple.pihomesecuritymobile.R;
 
