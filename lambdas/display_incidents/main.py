@@ -3,12 +3,12 @@
 import pymysql
 import sys
 
-REGION = 'us-east-1'
+REGION = 'region'
 
-rds_host  = "my-pi-database.cxfhfjn3ln5w.us-east-2.rds.amazonaws.com"
-name = "read_user"
-password = "temple123"
-db_name = "mypidb"
+rds_host  = "host"
+name = "username"
+password = "password"
+db_name = "database"
 
 def lambda_handler(event, context):
     """
@@ -19,8 +19,8 @@ def lambda_handler(event, context):
     with conn:
         cur = conn.cursor()
         homeID = event['homeID']
-        select_part = "SELECT inc.IncidentID, inc.DateRecorded, inc.BadIncidentFlag, inc.AdminComments, cd.CameraDataID, cd.ImagePath, cd.ImageSize, cd.ImageType, cd.FriendlyMatchFlag, sd.SensorDataID, sd.SensorFile, sd.Length "
-        table_part = "FROM IncidentData inc LEFT JOIN CameraData cd ON inc.IncidentID=cd.IncidentID LEFT JOIN SensorData sd ON inc.IncidentID=sd.IncidentID "
+        select_part = "SELECT inc.IncidentID, inc.DateRecorded, inc.BadIncidentFlag, inc.AdminComments, inc.ImagePath, inc.FriendlyMatchFlag, inc.SensorFile "
+        table_part = "FROM IncidentData inc "
         where_part = "WHERE inc.AccountID=%s ORDER BY inc.IncidentID" % (homeID)
         query = select_part + table_part + where_part
         #print(query)
