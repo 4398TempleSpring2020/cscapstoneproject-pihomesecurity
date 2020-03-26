@@ -61,7 +61,7 @@ public class MainActivity extends AppCompatActivity implements HomeFragment.soun
     public void soundAlarm() {
         JSONObject message = new JSONObject();
         try {
-            message.put("Message", "alert_message");
+            message.put("message_type", "alert_message");
             message.put("AlarmSetting",1);
             client.send(message);
         } catch (JSONException e){
@@ -71,8 +71,8 @@ public class MainActivity extends AppCompatActivity implements HomeFragment.soun
     }
 
     /*
-     * Method: soundAlarm()
-     * Purpose: to make the alarm start playing a noise to scare off an intruder
+     * Method: setAlarm()
+     * Purpose: to make the security system activate and deactivate
      * Parameters: setFlag true if alarm should be turned on or false if it should be turned off
      * Pre-Condtions: the alarm switch has been used
      * Post-Condition: A message is sent to the Pi based on the setFlag
@@ -81,7 +81,13 @@ public class MainActivity extends AppCompatActivity implements HomeFragment.soun
     public void setAlarm(boolean setFlag) {
         JSONObject message = new JSONObject();
         try{
-            message.put(null,0);
+            message.put("message_type","arm_message");
+            if(setFlag){
+                message.put("arm_data",true);
+            } else {
+                message.put("arm_data",false);
+            }
+            client.send(message);
         } catch (JSONException e){
             Log.e("SENDING ARM MESSAGE", e.toString());
         }
