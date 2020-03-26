@@ -30,7 +30,7 @@ public class MainActivity extends AppCompatActivity implements HomeFragment.soun
         setContentView(R.layout.activity_main);
         BottomNavigationView navView = findViewById(R.id.nav_view);
         Bundle formBundle = getIntent().getExtras();
-        client = new Client(null,0);
+        client = new Client("192.168.0.11",5000);
         clientThread = new ClientThread(client);
         clientThread.start();
         sharePrefs = getSharedPreferences("PREF_NAME",MODE_PRIVATE);
