@@ -62,7 +62,7 @@ public class MainActivity extends AppCompatActivity implements HomeFragment.soun
         JSONObject message = new JSONObject();
         try {
             message.put("message_type", "alert_message");
-            message.put("AlarmSetting",1);
+            message.put("alert_type","sound_alarm");
             client.send(message);
         } catch (JSONException e){
             Log.e("SENDING ALARM MESSAGE", e.toString());
