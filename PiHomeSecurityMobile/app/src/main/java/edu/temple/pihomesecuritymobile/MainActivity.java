@@ -83,9 +83,9 @@ public class MainActivity extends AppCompatActivity implements HomeFragment.soun
         try{
             message.put("message_type","arm_message");
             if(setFlag){
-                message.put("arm_data",true);
+                message.put("arm_type",1);
             } else {
-                message.put("arm_data",false);
+                message.put("arm_type",0);
             }
             client.send(message);
         } catch (JSONException e){
