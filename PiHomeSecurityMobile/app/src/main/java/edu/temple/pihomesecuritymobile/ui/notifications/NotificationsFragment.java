@@ -8,7 +8,10 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
+import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
+import android.provider.MediaStore;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -20,9 +23,15 @@ import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 import androidx.annotation.NonNull;
+import androidx.core.content.FileProvider;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
+
+import java.io.File;
+import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 import edu.temple.pihomesecuritymobile.R;
 
@@ -33,6 +42,8 @@ public class NotificationsFragment extends Fragment {
     onFragListener mList;
     final private int CAMERA_REQUEST_CODE = 22;
     final private int CAMERA_INTENT_CODE = 23;
+    final private int GALLERY_INTENT_CODE = 25;
+    String currentPhotoPath;
 
     @Override
     public void onCreate(Bundle savedInstanceState){
@@ -80,8 +91,12 @@ public class NotificationsFragment extends Fragment {
                         .setNegativeButton("Gallery", new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
-
-                            }
+                                Intent intent = new Intent();
+                                intent.setType("image/*");
+                                intent.setAction(Intent.ACTION_GET_CONTENT);
+                                if (intent.resolveActivity(parent.getPackageManager()) != null) {
+                                    startActivityForResult(Intent.createChooser(intent, "Select Picture"), GALLERY_INTENT_CODE);
+                                }                            }
                         })
                         .setPositiveButton("Camera", new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int which) {
@@ -99,19 +114,60 @@ public class NotificationsFragment extends Fragment {
         return root;
     }
 
+    /**
+     * open the camera on android
+     * copied from android developer guide
+     */
     public void openCamera() {
         Intent cameraIntent = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
-        startActivityForResult(cameraIntent, CAMERA_INTENT_CODE);
+        File photoFile = null;
+        try {
+            photoFile = createImageFile();
+        } catch (IOException ex) {
+            ex.printStackTrace();
+        }
+        // Continue only if the File was successfully created
+        if (photoFile != null) {
+            Uri photoURI = FileProvider.getUriForFile(parent,
+                    "edu.temple.pihomesecuritymobile.fileprovider",
+                    photoFile);
+            cameraIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI);
+            startActivityForResult(cameraIntent, CAMERA_INTENT_CODE);
+        }
+    }
+
+    /**
+     * Creates a temporary file to store the image taken with the camera so we can get a full sized image
+     * copied from android developer guide
+     * @return the image file
+     * @throws IOException
+     */
+    private File createImageFile() throws IOException {
+        // Create an image file name
+        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
+        String imageFileName = "JPEG_" + timeStamp + "_";
+        File storageDir = parent.getExternalFilesDir(Environment.DIRECTORY_PICTURES);
+        File image = File.createTempFile(
+                imageFileName,  /* prefix */
+                ".jpg",         /* suffix */
+                storageDir      /* directory */
+        );
+
+        // Save a file: path for use with ACTION_VIEW intents
+        currentPhotoPath = image.getAbsolutePath();
+        return image;
     }
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         if (requestCode == CAMERA_REQUEST_CODE) {
+            //user said yes to camera use
             if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 Toast.makeText(parent, "Camera permission granted", Toast.LENGTH_LONG).show();
                 openCamera();
             } else {
+                //user said no to camera use
                 Toast.makeText(parent, "Camera permission denied", Toast.LENGTH_LONG).show();
             }
         }
@@ -121,9 +177,26 @@ public class NotificationsFragment extends Fragment {
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == CAMERA_INTENT_CODE && resultCode == Activity.RESULT_OK) {
-            //this is the photo the user took with camera, send to Pi in here
-            Bitmap photo = (Bitmap) data.getExtras().get("data");
+            //Bitmap photo = (Bitmap) data.getExtras().get("data");
+            try {
+                File file = new File(currentPhotoPath);
+                Bitmap bitmap = MediaStore.Images.Media.getBitmap(parent.getContentResolver(), Uri.fromFile(file));
+                if (bitmap != null) {
+                    //do stuff to the image here
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
+        if (requestCode == GALLERY_INTENT_CODE && resultCode == Activity.RESULT_OK) {
+            try {
+                Uri fullPhotoUri = data.getData();
+                //do stuff to the image here
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+
     }
 
     @Override
