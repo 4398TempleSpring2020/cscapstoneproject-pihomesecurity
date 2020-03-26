@@ -30,7 +30,7 @@ public class MainActivity extends AppCompatActivity implements HomeFragment.soun
         setContentView(R.layout.activity_main);
         BottomNavigationView navView = findViewById(R.id.nav_view);
         Bundle formBundle = getIntent().getExtras();
-        client = new Client(null,0);
+        client = new Client("192.168.0.11",5000);
         clientThread = new ClientThread(client);
         clientThread.start();
         sharePrefs = getSharedPreferences("PREF_NAME",MODE_PRIVATE);
@@ -62,7 +62,7 @@ public class MainActivity extends AppCompatActivity implements HomeFragment.soun
         JSONObject message = new JSONObject();
         try {
             message.put("message_type", "alert_message");
-            message.put("AlarmSetting",1);
+            message.put("alert_type","sound_alarm");
             client.send(message);
         } catch (JSONException e){
             Log.e("SENDING ALARM MESSAGE", e.toString());
@@ -83,9 +83,9 @@ public class MainActivity extends AppCompatActivity implements HomeFragment.soun
         try{
             message.put("message_type","arm_message");
             if(setFlag){
-                message.put("arm_data",true);
+                message.put("arm_type",1);
             } else {
-                message.put("arm_data",false);
+                message.put("arm_type",0);
             }
             client.send(message);
         } catch (JSONException e){
