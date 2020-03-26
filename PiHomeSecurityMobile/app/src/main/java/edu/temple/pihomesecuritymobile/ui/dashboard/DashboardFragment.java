@@ -54,6 +54,7 @@ public class DashboardFragment extends Fragment {
             errMess = "HomeID was not found";
         } else {
             String result = mngr.getIncidents(HomeID);
+            Log.d("incidents result", "" + result);
             rsp = mngr.makeResponse(result);
         }
 
@@ -63,9 +64,10 @@ public class DashboardFragment extends Fragment {
             dataObj = rsp.getBody();
             if(dataObj == null){
                 dataArr = rsp.getBodyArray();
+                Log.d("JSONArray", dataArr.toString());
+            } else {
+                Log.d("JSONObject", dataObj.toString());
             }
-            Log.d("JSONObject", dataObj.toString());
-            Log.d("JSONArray", dataArr.toString());
         }
 
         if(context instanceof onFragListener){
@@ -99,10 +101,10 @@ public class DashboardFragment extends Fragment {
                 adminComm.setText("Admin Comments:\n"+dataObj.getString("adminComments"));
             } else if(set == 0){
                 JSONObject tmp = dataArr.getJSONObject(0);
-                String IDstr = "Incident ID: "+ dataObj.getInt("incidentID");
+                String IDstr = "Incident ID: "+ tmp.getInt("incidentID");
                 incID.setText(IDstr);
-                occDate.setText("Incident occurred at: "+dataObj.getString("dateRecorded"));
-                adminComm.setText("Admin Comments:\n"+dataObj.getString("adminComments"));
+                occDate.setText("Incident occurred at: "+tmp.getString("dateRecorded"));
+                adminComm.setText("Admin Comments:\n"+tmp.getString("adminComments"));
             }
 
         } catch(JSONException e){
