@@ -68,6 +68,7 @@ public class NotificationsFragment extends Fragment {
                 }
             }
         });
+        //do photo stuff here
         Button button = root.findViewById(R.id.buttonPhotos);
         button.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -84,6 +85,7 @@ public class NotificationsFragment extends Fragment {
                         })
                         .setPositiveButton("Camera", new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int which) {
+                                //check permissions first
                                 if (parent.checkSelfPermission(Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
                                     requestPermissions(new String[]{Manifest.permission.CAMERA}, CAMERA_REQUEST_CODE);
                                 } else {
@@ -91,7 +93,6 @@ public class NotificationsFragment extends Fragment {
                                 }
                             }
                         })
-
                         .show();
             }
         });
@@ -120,6 +121,7 @@ public class NotificationsFragment extends Fragment {
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == CAMERA_INTENT_CODE && resultCode == Activity.RESULT_OK) {
+            //this is the photo the user took with camera, send to Pi in here
             Bitmap photo = (Bitmap) data.getExtras().get("data");
         }
     }

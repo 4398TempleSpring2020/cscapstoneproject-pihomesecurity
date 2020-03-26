@@ -95,16 +95,16 @@ public class DashboardFragment extends Fragment {
         }
         try{
             if(set ==1){
-                String IDstr = "Incident ID: "+ dataObj.getInt("incidentID");
+                String IDstr = "Incident ID: "+ dataObj.getInt("IncidentID");
                 incID.setText(IDstr);
-                occDate.setText("Incident occurred at: "+dataObj.getString("dateRecorded"));
-                adminComm.setText("Admin Comments:\n"+dataObj.getString("adminComments"));
+                occDate.setText("Incident occurred at: "+dataObj.getString("DateRecorded"));
+                adminComm.setText("Admin Comments:\n"+dataObj.getString("AdminComments"));
             } else if(set == 0){
                 JSONObject tmp = dataArr.getJSONObject(0);
-                String IDstr = "Incident ID: "+ tmp.getInt("incidentID");
+                String IDstr = "Incident ID: "+ tmp.getInt("IncidentID");
                 incID.setText(IDstr);
-                occDate.setText("Incident occurred at: "+tmp.getString("dateRecorded"));
-                adminComm.setText("Admin Comments:\n"+tmp.getString("adminComments"));
+                occDate.setText("Incident occurred at: "+tmp.getString("DateRecorded"));
+                adminComm.setText("Admin Comments:\n"+tmp.getString("AdminComments"));
             }
 
         } catch(JSONException e){
