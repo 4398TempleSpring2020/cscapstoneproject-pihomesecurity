@@ -6,12 +6,14 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -25,21 +27,25 @@ import androidx.annotation.Nullable;
 import androidx.annotation.NonNull;
 import androidx.core.content.FileProvider;
 import androidx.fragment.app.Fragment;
-import androidx.lifecycle.Observer;
-import androidx.lifecycle.ViewModelProviders;
 
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import edu.temple.pihomesecuritymobile.R;
+import edu.temple.pihomesecuritymobile.S3Manager;
 
 public class NotificationsFragment extends Fragment {
 
     private NotificationsViewModel notificationsViewModel;
     Context parent;
     onFragListener mList;
+    SharedPreferences sharePrefs;
+    private String homeID;
     final private int CAMERA_REQUEST_CODE = 22;
     final private int CAMERA_INTENT_CODE = 23;
     final private int GALLERY_INTENT_CODE = 25;
@@ -54,6 +60,12 @@ public class NotificationsFragment extends Fragment {
     public void onAttach(Context context){
         super.onAttach(context);
         this.parent = context;
+        sharePrefs = parent.getSharedPreferences("PREF_NAME",Context.MODE_PRIVATE);
+
+        homeID = sharePrefs.getString("HomeID","");
+        if(homeID.equals("")){
+            Log.d("homeid err", "home id not found");
+        }
         if(context instanceof onFragListener){
             mList = (onFragListener) context;
         } else {
@@ -180,23 +192,48 @@ public class NotificationsFragment extends Fragment {
             //Bitmap photo = (Bitmap) data.getExtras().get("data");
             try {
                 File file = new File(currentPhotoPath);
-                Bitmap bitmap = MediaStore.Images.Media.getBitmap(parent.getContentResolver(), Uri.fromFile(file));
-                if (bitmap != null) {
-                    //do stuff to the image here
-                }
+                S3Manager s3Manager = new S3Manager(parent, homeID);
+                s3Manager.upload(file);
+                //Bitmap bitmap = MediaStore.Images.Media.getBitmap(parent.getContentResolver(), Uri.fromFile(file));
             } catch (Exception e) {
                 e.printStackTrace();
             }
         }
         if (requestCode == GALLERY_INTENT_CODE && resultCode == Activity.RESULT_OK) {
             try {
-                Uri fullPhotoUri = data.getData();
-                //do stuff to the image here
+                File file = null;
+                try {
+                    file = createImageFile();
+                } catch (IOException ex) {
+                    Log.d("error gallery", "Error occurred while creating the file");
+                }
+                InputStream inputStream = getActivity().getContentResolver().openInputStream(data.getData());
+                FileOutputStream fileOutputStream = new FileOutputStream(file);
+                // copy image to new file so we can send it to the S3
+                copyStream(inputStream, fileOutputStream);
+                fileOutputStream.close();
+                inputStream.close();
+                S3Manager s3Manager = new S3Manager(parent, homeID);
+                s3Manager.upload(file);
             } catch (Exception e) {
                 e.printStackTrace();
             }
         }
 
+    }
+
+    /**
+     * reads from one stream and writes to another stream
+     * @param input stream to read from
+     * @param output stream to write to
+     * @throws IOException
+     */
+    public static void copyStream(InputStream input, OutputStream output) throws IOException {
+        byte[] buffer = new byte[1024];
+        int bytesRead;
+        while ((bytesRead = input.read(buffer)) != -1) {
+            output.write(buffer, 0, bytesRead);
+        }
     }
 
     @Override
