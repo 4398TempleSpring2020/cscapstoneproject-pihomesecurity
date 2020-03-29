@@ -10,7 +10,7 @@ class Camera(sensor_interface):
     isActive = None
     duration = None
     frequency = None
-    
+
     def initiate(self):
         if self.isActive:
             self.camera.start_preview()
