@@ -18,6 +18,20 @@ if __name__ == '__main__':
     sm.connect_all()
     sm.initiate_all()
 
-
     # (ultra_bucket_filename[], mic_bucket_filename[], cam_bucket_filename[],
-    # trigger_sensor_type, face_match_flag, incident_id)
+    # trigger_sensor_type, face_match_flag, incident_id, wasAlert
+
+
+    '''
+    # executed on a thread
+    while isArmed:
+        # block 10 seconds
+        data = run_lukes_sensor_script()
+        
+        if(wasAlert):
+            sound_alarm
+
+        if(incoming_user_message > 0):
+            for message in user_messages:
+                handle(message)
+    '''
