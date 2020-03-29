@@ -25,13 +25,18 @@ if __name__ == '__main__':
     '''
     # executed on a thread
     while isArmed:
+        acquire soundlock
         # block 10 seconds
         data = run_lukes_sensor_script()
         
         if(wasAlert):
-            sound_alarm
+            sound_alarm() -> while true: acuire SL 
+                                                   if ShouldContinue: soundAlarm
+                                                   else: quit
+                                         release SL
 
         if(incoming_user_message > 0):
             for message in user_messages:
-                handle(message)
+                handle(message) -> one of these should modify shouldContinue
+        release soundLock
     '''
