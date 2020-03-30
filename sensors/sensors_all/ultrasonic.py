@@ -63,6 +63,7 @@ class Ultrasonic(sensor_interface):
                 output += str(dist) + "\n"
                 time.sleep(self.frequency)
                 total_time += self.frequency
+
             with open(outfiles[0], 'w') as outfile:
                 outfile.write(output)
                 

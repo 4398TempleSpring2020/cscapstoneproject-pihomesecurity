@@ -35,12 +35,11 @@ class MicProc():
         plt.savefig('./individual_ultra_signals.png')
         plt.show()
 
-    def get_files(self, dname):
+    def get_files(self, files):
         fcontents = []
         fnames = []
-        files = os.listdir(dname)
         for fname in files:
-            curfile = dname + fname
+            curfile = fname
             fcontents.append(scipy.io.wavfile.read(curfile, mmap=False))
             fnames.append(fname)
         return(fcontents, fnames)
