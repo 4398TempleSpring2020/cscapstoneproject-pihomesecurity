@@ -13,7 +13,12 @@ class Microphone(sensor_interface):
     frequency = None
     num_channels = 1
     
-    def initiate(self):
+    def initiate(self, response_list, outPath):
+        list_lock = response_list[0]
+
+        outfiles = []
+        outfiles.append(outPath + 'audio.wav')
+        
         self.isActive = True
         print('Recording Audio...')
         try:
@@ -21,13 +26,16 @@ class Microphone(sensor_interface):
             sd.wait()
             print("Recording Complete")
 
-            sf.write('./audio.wav', myrecording, self.frequency)
+            sf.write(outfiles[0], myrecording, self.frequency)
         except:
             print('Recording Failed')
             raise
         finally:
             self.isActive = False
-    
+
+        with list_lock:
+            response_list.append((outfiles, "microphone"))
+            
     def connect(self):
         print('Connecting to Microphone')
         pass

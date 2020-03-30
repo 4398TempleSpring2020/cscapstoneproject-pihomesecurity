@@ -11,14 +11,19 @@ class Camera(sensor_interface):
     duration = None
     frequency = None
 
-    def initiate(self):
+    def initiate(self, thread_list, outPath):
+        list_lock = response_list[0]
+        
+        outfiles = []
         if self.isActive:
             self.camera.start_preview()
             sleep(5)
 
             print('Initiating Camera')
             for i in range(self.duration):
-                cur_path = './image_' + str(i) + '.jpg'
+                cur_path = outPath + 'image_' + str(i) + '.jpg'
+                outfiles.append(cur_path)
+                
                 print('\tCapturing [' + cur_path + ']')
 
                 self.camera.capture(cur_path)
@@ -29,7 +34,10 @@ class Camera(sensor_interface):
         else:
             print('Camera Failed')
             return False
-    
+
+        with list_lock:
+            response_list.append((outfiles, "camera"))
+            
     def connect(self):
         print('Camera Connecting')
         try:
