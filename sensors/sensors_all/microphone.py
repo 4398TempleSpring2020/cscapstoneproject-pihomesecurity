@@ -4,6 +4,7 @@ from sensor_interface import sensor_interface
 import sounddevice as sd
 import os
 import soundfile as sf
+import time
 
 class Microphone(sensor_interface):
     frequency = None
@@ -14,6 +15,7 @@ class Microphone(sensor_interface):
     num_channels = 1
     
     def initiate(self, response_list, outPath):
+        start = time.time()
         print(response_list)
         list_lock = response_list[0]
 
@@ -36,6 +38,10 @@ class Microphone(sensor_interface):
 
         with list_lock:
             response_list.append((outfiles, "microphone"))
+
+        end = time.time()
+        print("Total mic time to execute : [" + str(end - start) + "]")
+
             
     def connect(self):
         print('Connecting to Microphone')

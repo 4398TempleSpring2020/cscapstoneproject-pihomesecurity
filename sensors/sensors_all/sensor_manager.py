@@ -15,8 +15,6 @@ class Sensor_Manager():
             sensor.connect()
 
     def initiate_all(self):
-        start = time.time()
-
         # store thread output files
         ret_list = []
         list_lock = threading.Lock()
@@ -35,11 +33,8 @@ class Sensor_Manager():
         for thread_a in thread_list:
             thread_a.join()
         
-        end = time.time()
-        print("Total time to execute : [" + str(end - start) + "]")
-
         return ret_list[1:]
-        
+    
     def run_sensor(self, sensor, ret_list):
         sensor.initiate(ret_list, os.getcwd() + "/")
 

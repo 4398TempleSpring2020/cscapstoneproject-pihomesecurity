@@ -22,7 +22,7 @@ class Ultrasonic(sensor_interface):
         GPIO.output(self.GPIO_TRIGGER, True)
         
         # set Trigger after 0.01ms to LOW
-        time.sleep(self.frequency)
+        time.sleep(.00001)
         GPIO.output(self.GPIO_TRIGGER, False)
 
         StartTime = time.time()
@@ -45,6 +45,7 @@ class Ultrasonic(sensor_interface):
         return distance
     
     def initiate(self, response_list, outPath):
+        start = time.time()
         print(response_list)
         list_lock = response_list[0]
 
@@ -54,24 +55,33 @@ class Ultrasonic(sensor_interface):
         self.isActive = True
         print('Recording Distance...')
 
+        output = ""
         total_time = 0
         try:
+            while total_time < self.duration:
+                dist = self.distance()
+                output += str(dist) + "\n"
+                time.sleep(self.frequency)
+                total_time += self.frequency
             with open(outfiles[0], 'w') as outfile:
-                while total_time < self.duration:
-                    dist = self.distance()
-                    outfile.write(str(dist) + "\n")
-                    
-                    time.sleep(self.frequency)
-                    total_time += self.frequency
+                outfile.write(output)
+                
         except:
             print('Recording Failed')
             raise
         finally:
+            print('cleaning gpio')
             GPIO.cleanup()
             self.isActive = False
 
+        print('acquiring lock')
+
         with list_lock:
-            response_list.append((outfiles, "microphone"))
+            response_list.append((outfiles, "ultrasonic"))
+
+        end = time.time()
+        print("Total ultra time to execute : [" + str(end - start) + "]")
+
             
     def connect(self):
         print('Connecting to Ultra')

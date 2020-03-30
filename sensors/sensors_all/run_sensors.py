@@ -7,7 +7,7 @@ from ultrasonic import Ultrasonic
 def run_sensors(duration):
     sm = Sensor_Manager() # takes in acc iD
     sm.add_sensor(Microphone(duration=duration, frequency=44100))
-    sm.add_sensor(Camera(duration=duration, frequency=1))
+    sm.add_sensor(Camera(duration=duration, frequency=.5))
     sm.add_sensor(Ultrasonic(duration=duration, frequency=.1))
     sm.connect_all()
     ret_list = sm.initiate_all()
