@@ -1,5 +1,6 @@
 package edu.temple.pihomesecuritymobile;
 
+import android.util.JsonWriter;
 import android.util.Log;
 
 import java.io.*;
@@ -67,6 +68,23 @@ public class Client {
     public Client(String host, int port) {
         this.host = host;
         this.port = port;
+        writer = new Writer() {
+            @Override
+            public void write(char[] chars, int i, int i1) throws IOException {
+
+            }
+
+            @Override
+            public void flush() throws IOException {
+
+            }
+
+            @Override
+            public void close() throws IOException {
+
+            }
+        };
+        buffer = new BufferedWriter(writer);
     }
 
 
