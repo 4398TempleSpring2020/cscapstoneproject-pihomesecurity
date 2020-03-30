@@ -1,25 +1,64 @@
+import socket
+import sys
+import threading
 
-import socket, sys
 
-def client_program():
-    host = socket.gethostbyname(str(sys.argv[1]))  # argv[1] --> up address of server. Works locally
-    port = 5000  # port #
+class ListenerThread(threading.Thread):
+    local_address = None
+    port = None
+    socket = None
 
-    client_socket = socket.socket() 
-    client_socket.connect((host, port))  # connect
+    def __init__(self, local_address, port, client_socket):
+        threading.Thread.__init__(self)
+        self.local_address = local_address
+        self.port = port
+        self.client_socket = client_socket
 
-    message = input(" -> ") 
+    def run(self):
+        print("Thread " + str(threading.get_ident()) + " handling listener side connection from : "
+              + self.local_address + ":" + str(self.port))
 
-    while message.lower().strip() != 'bye':
-        client_socket.send(message.encode())  # send to server
-        data = client_socket.recv(2048).decode()  # receive data. 2048 byte max
+        while True:
+            # receive data. 2048 byte max
+            try:
+                data = self.client_socket.recv(2048).decode()
+                if not data:
+                    break
+                print("received data: " + str(data))
+            except:
+                print("connection error. closing connection")
+                break
 
-        print('Received from server: ' + data)
 
-        message = input(" -> ") 
+class Client:
 
-    client_socket.close()  # close connection
+    def __init__(self, host, port):
+        self.host = host
+        self.port = port
+        self.client_socket = None
+        self.listener_thread = []
+
+    def connect(self):
+        host = socket.gethostbyname(self.host)  # argv[1] --> up address of server. Works locally
+        port = self.port  # port #
+        self.client_socket = socket.socket()
+        self.client_socket.connect((host, port))  # connect
+        new_listener_thread = ListenerThread(self.host, self.port, self.client_socket)
+        new_listener_thread.start()
+        self.listener_thread.append(new_listener_thread)
+
+    def send(self, str_data):
+        try:
+            self.client_socket.send(str_data.encode())  # send to server
+            return True
+        except:
+            print("Error sending data")
+            return False
 
 
 if __name__ == '__main__':
-    client_program()
+    client_test = Client(str(sys.argv[1]), 5000)
+    client_test.connect()
+
+
+
