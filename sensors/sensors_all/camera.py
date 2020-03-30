@@ -11,7 +11,8 @@ class Camera(sensor_interface):
     duration = None
     frequency = None
 
-    def initiate(self, thread_list, outPath):
+    def initiate(self, response_list, outPath):
+        print(response_list)
         list_lock = response_list[0]
         
         outfiles = []

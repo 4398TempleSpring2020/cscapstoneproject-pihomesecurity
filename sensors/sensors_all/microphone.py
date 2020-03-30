@@ -14,6 +14,7 @@ class Microphone(sensor_interface):
     num_channels = 1
     
     def initiate(self, response_list, outPath):
+        print(response_list)
         list_lock = response_list[0]
 
         outfiles = []

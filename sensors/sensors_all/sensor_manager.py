@@ -2,6 +2,7 @@ from camera import Camera
 from microphone import Microphone
 import threading
 import time
+import os
 
 class Sensor_Manager():
     sensors = []
@@ -14,7 +15,7 @@ class Sensor_Manager():
             sensor.connect()
 
     def initiate_all(self):
-        start = time.Time()
+        start = time.time()
 
         # store thread output files
         ret_list = []
@@ -26,7 +27,7 @@ class Sensor_Manager():
 
         # for each sensor, create a thread
         for sensor in self.sensors:
-            t = threading.Thread(target=run_sensor, args=(sensor, ret_list))
+            t = threading.Thread(target=self.run_sensor, args=(sensor, ret_list))
             thread_list.append(t)
             t.start()
 
@@ -34,13 +35,13 @@ class Sensor_Manager():
         for thread_a in thread_list:
             thread_a.join()
         
-        end = time.Time()
+        end = time.time()
         print("Total time to execute : [" + str(end - start) + "]")
 
         return ret_list[1:]
         
     def run_sensor(self, sensor, ret_list):
-        sensor.initiate(ret_list)
+        sensor.initiate(ret_list, os.getcwd() + "/")
 
     def test_all(self):
         for sensor in self.sensors:
