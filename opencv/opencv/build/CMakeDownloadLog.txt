@@ -1,2 +1,0 @@
-#use_cache "/home/pi/cscapstoneproject-pihomesecurity/opencv/opencv/.cache"
-#match_hash_in_cmake_cache "OCV_DOWNLOAD_ADE_HASH_3rdparty_ade_v0_1_1d_zip"
