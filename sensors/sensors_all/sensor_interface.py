@@ -19,7 +19,7 @@ class sensor_interface(metaclass=ABCMeta):
                or NotImplemented)
     
     @abstractmethod
-    def initiate(self):
+    def initiate(self, thread_list):
         raise NotImplementedError
 
     @abstractmethod
