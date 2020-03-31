@@ -1,0 +1,59 @@
+﻿
+@{
+    ViewData["Title"] = "Employee Table";
+    ViewData["linkVis"] = "color: white; " +
+                "visibility: visible; " +
+                "font-size: small";
+    ViewData["link1"] = "Info";
+    ViewData["link2"] = "Logoff";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<!-- HTML Code: Place this code in the document's body (between the 'body' tags) where the table should appear -->
+<h2>Employee Panel</h2>
+<h3 id="address"></h3>
+<label for="cars">Choose an Account Id:</label>
+<select id="accountIdDropDown">
+    <option disabled selected> -- Select an Account Id -- </option>
+</select>
+
+<div id="tableHere">
+</div>
+<div id="errorHere"></div>
+
+<script src="~/js/TableBuilder.js"></script>
+<script src="~/js/DropDownBuilder.js"></script>
+<script src="~/js/ajax.js"></script>
+<script src="~/js/test.js"></script>
+<script type="text/javascript">
+    var homeAccount;
+    document.addEventListener('DOMContentLoaded', (event) => {
+        ajax({
+            url: '/api/homeaccounts',
+            successFn: buildDropDown,
+            errorId: errorHere
+        });
+    })
+   
+
+    function buildDropDown(data) {
+        console.log("Here is the data from buildDropDown: " + Object.values(data[0]));
+        DropDownBuilder(data);
+    }
+
+    function buildTableById(data) {
+        var dropdown = document.getElementById("accountIdDropDown");
+        var addressDiv = document.getElementById("address");
+        addressDiv.innerHTML = data[dropdown.selectedIndex - 1].homeAccountAddress;
+        ajax({
+            url: '/api/incidentdatas',
+            successFn: buildEmployeeTable,
+            errorId: errorHere
+        });
+
+    }
+
+    function buildEmployeeTable(data) {
+        TableBuilder.user(data, document.getElementById("accountIdDropDown").value);
+    }
+</script>
+<!-- Generated at CSSPortal.com -->

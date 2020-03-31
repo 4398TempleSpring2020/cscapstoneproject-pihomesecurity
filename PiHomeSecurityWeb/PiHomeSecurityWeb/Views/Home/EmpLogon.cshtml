@@ -1,0 +1,20 @@
+﻿@model Employee
+@{
+    ViewData["Title"] = "EmpLogon";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+
+<form class="form form--login framed" method="post">
+    <div class="inputWrap">
+        <img class="logo" src="~/pics/logo.png">
+        <input asp-for="EmployeeId" type="text" placeholder="Employee Id" class="input input--top" />
+        <input asp-for="EmployeeUsername" type="text" placeholder="Username" class="input input" />
+        <input asp-for="EmployeePassword" type="password" placeholder="Password" class="input" />
+        <input type="submit" value="Sign in" class="input input--submit" />
+
+        <div class="logonErrorMsg">@ViewBag.Message</div>
+        <label class="text text--small text--centered">Not an Employee? <a asp-area="" asp-controller="Home" asp-action="Index">Sign in</a></label>
+    </div>
+</form>
+

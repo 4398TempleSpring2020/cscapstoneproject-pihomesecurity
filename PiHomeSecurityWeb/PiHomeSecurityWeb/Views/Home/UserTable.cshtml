@@ -1,0 +1,32 @@
+﻿
+@{
+    ViewData["Title"] = "Your Table";
+    ViewData["linkVis"] = "color: white; " +
+                "visibility: visible;";
+    ViewData["link1"] = "Info";
+    ViewData["link2"] = "Logoff";
+}
+<!-- HTML Code: Place this code in the document's body (between the 'body' tags) where the table should appear -->
+<h2>User Table</h2>
+<h3>Welcome @ViewBag.Username</h3>
+<div id="tableHere"></div>
+<div id="errorHere"></div>
+
+<script src="~/js/TableBuilder.js"></script>
+<script src="~/js/ajax.js"></script>
+<script src="~/js/test.js"></script>
+<script type="text/javascript">
+    document.addEventListener('DOMContentLoaded', (event) => {
+        ajax({
+            url: '/api/incidentdatas',
+            successFn: buildDropDown,
+            errorId: errorHere
+        });
+    })
+
+    function buildDropDown(data) {
+        console.log(data);
+        TableBuilder.user(data, @ViewBag.Id);
+    }
+</script>
+<!-- Generated at CSSPortal.com -->

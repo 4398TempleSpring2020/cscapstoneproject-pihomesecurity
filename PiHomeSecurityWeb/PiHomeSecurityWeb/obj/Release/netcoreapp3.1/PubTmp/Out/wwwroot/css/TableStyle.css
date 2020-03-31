@@ -1,0 +1,24 @@
+﻿<!--
+table {
+    width: 100%;
+    background-color: #FFFFFF;
+    border-collapse: collapse;
+    border-width: 2px;
+    border-color: #569AC4;
+    border-style: outset;
+    color: #000000;
+    overflow: scroll;
+}
+
+table td, table th {
+        border-width: 2px;
+        border-color: black;
+        border-style: inset;
+        padding: 5px;
+    }
+
+table thead {
+        background-color: #569AC4;
+}
+
+
