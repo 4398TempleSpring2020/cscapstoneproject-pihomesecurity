@@ -13,7 +13,7 @@ class S3Conn:
 
     def connect(self):
         #read akey and skey
-        conn = boto3.connect_s3('<AKIAJPS6AE2SDVHWCTUA>', '</xqBOSjc7mRYdVpmWKfbnyyei5jHjh3T7umxtwbz>')
+        conn = boto3.connect_s3('')
         return conn
 
 
