@@ -5,6 +5,7 @@ from PiServer.DbConnection.IncidentData import IncidentData
 from PiServer.Constant import Constant
 
 
+
 class ServerThread(threading.Thread):
 
     def __init__(self, s):
@@ -96,8 +97,23 @@ if __name__ == '__main__':
     pi_server = Server(socket.gethostname(), Constant.port)
     server = ServerThread(pi_server)
     server.start()
-    path = "https://media.alienwarearena.com/media/tux-t.jpg"
-    temp = IncidentData(Constant.ACCOUNT_ID, path, "some data")
+    ret_dict = ast.literal_eval(
+        "{'microphone': ['123/1585615830.5592604/microphone/audio.wav'], "
+        "'camera': ['123/1585615830.5592604/camera/image_0.jpg', '123/1585615830.5592604/camera/image_1.jpg',"
+        " '123/1585615830.5592604/camera/image_2.jpg', '123/1585615830.5592604/camera/image_3.jpg', "
+        "'123/1585615830.5592604/camera/image_4.jpg', '123/1585615830.5592604/camera/image_5.jpg', "
+        "'123/1585615830.5592604/camera/image_6.jpg', '123/1585615830.5592604/camera/image_7.jpg', "
+        "'123/1585615830.5592604/camera/image_8.jpg', '123/1585615830.5592604/camera/image_9.jpg'],"
+        " 'ultrasonic': ['123/1585615830.5592604/ultrasonic/ultra.txt'],"
+        " 'bucket': 'whateverworks', "
+        "'instance_id': '1585615830.5592604',"
+        " 'face_match_flag': False, "
+        "'wasAlert': True, "
+        "'trigger_sensor_type': ['camera']}")
+
+    image_path = ret_dict.camera[0]
+    mic_path = ret_dict
+    temp = IncidentData(Constant.ACCOUNT_ID, image_path, "some data")
     print(db_connection.insert_incident_data(temp))
 
 
