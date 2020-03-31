@@ -85,7 +85,8 @@ def run_everything(acc_id):
     print('------------ Upload Complete -----------------')
 
     print(ret_dict)
-    
+
+    return(ret_dict)
     # (ultra_bucket_filename[], mic_bucket_filename[], cam_bucket_filename[],
     # trigger_sensor_type, face_match_flag, incident_id, wasAlert
 
