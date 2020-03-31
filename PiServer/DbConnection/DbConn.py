@@ -5,8 +5,8 @@ import pymysql
 
 class DbConn:
     host = None  # "my-pi-database.cxfhfjn3ln5w.us-east-2.rds.amazonaws.com"
-    uname = None  # "admin"
-    password = None  # "root1234"
+    uname = None  # "pi_user"
+    password = None  # "totallysecurepw!"
     db_name = None  # "mypidb"
     connection = None
 
@@ -19,6 +19,7 @@ class DbConn:
 
     def connect(self):
         # Open database connection
+        connect_timeout = 5
         db = pymysql.connect(self.host, self.uname, self.password, self.db_name)
         return db
 
@@ -37,36 +38,42 @@ class DbConn:
         data = cursor.fetchone()
         print("Database version : %s " % data)
 
-    def send_data(self, data):
-        # code to send data to db
-        print("writing to db")
-        # prepare a cursor object using cursor() method
-        cursor = self.connection.cursor()
+    def insert_incident_data(self, incident_data):
+        """
+        This function fetches content from mysql RDS instance
+        """
+        result = []
+        self.connection.autocommit(True)
+        with self.connection.cursor() as cur:
 
-        # Prepare SQL query to INSERT a record into the database.
-        sql = "INSERT INTO EmployeeHomeRelationship(EmployeeId, \
-               AccountId, AccessDate) \
-               VALUES ('%s, %s, '%s')"  # % \
-        # (data.EmployeeId, data.AccountId, data.AccessDate, 'M', 2000)
-        # https://stackoverflow.com/questions/1136437/inserting-a-python-datetime-datetime-object-into-mysql
+            insert_statement = 'INSERT INTO IncidentData (AccountID, SensorFile, ImagePath) VALUES (%s, %s, %s)'
+            insert_data = (int(incident_data.account_id), incident_data.sensor_path, incident_data.image_path,)
+            try:
+                cur.execute(insert_statement, insert_data)
+            except Exception as e:
+                cur.close()
+                return {
+                    "statusCode": 412,
+                    "error": str(e)
+                }
+            cur.close()
+            self.disconnect()
+            return {
+                'statusCode': 200,
+                'message': "Inserted records successfully",
+                'body': ""
+            }
 
-        try:
-            # Execute the SQL command
-            cursor.execute(sql)
-            # Commit your changes in the database
-            self.connection.commit()
-        except:
-            # Rollback in case there is any error
-            self.connection.rollback()
 
 
-if __name__ == '__main__':
-    host = "my-pi-database.cxfhfjn3ln5w.us-east-2.rds.amazonaws.com"
-    uname = "pi_user"
-    password = "totallysecurepw!"
-    db_name = "mypidb"
-
-    dbconn = DbConn(host, uname, password, db_name)
-    dbconn.connection = dbconn.connect()
-    dbconn.test()
-    dbconn.disconnect()
+# if __name__ == '__main__':
+#     host = "my-pi-database.cxfhfjn3ln5w.us-east-2.rds.amazonaws.com"
+#     uname = "pi_user"
+#     password = "totallysecurepw!"
+#     db_name = "mypidb"
+#     print("hello")
+#     dbconn = DbConn(host, uname, password, db_name)
+#     dbconn.connection = dbconn.connect()
+#     dbconn.test()
+#     print(dbconn.insert_incident(1,1))
+#     dbconn.disconnect()

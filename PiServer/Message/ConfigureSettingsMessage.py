@@ -1,13 +1,18 @@
-from Message.Constant import Constant
-from Message.Imesssage import Imessage
+from PiServer.Constant import Constant
+from PiServer.Message.Imesssage import Imessage
 
 
 class ConfigureSettingsMessage(Imessage):
     message_type = None
+
     bool_contact_police_on_threat_escalated_protocol = None
+
     bool_contact_police_on_no_reply_protocol = None
+
     bool_receive_face_recognized_alert_message_protocol = None
+
     bool_notify_all_when_threat_escalated_protocol = None
+
     bool_only_archive_face_not_recognized_data_protocol = None
 
     def __init__(self, bool_contact_police_on_threat_escalated_protocol, bool_contact_police_on_no_reply_protocol,

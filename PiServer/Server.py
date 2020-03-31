@@ -1,5 +1,8 @@
 import socket
 import threading
+from PiServer.DbConnection.DbConn import DbConn
+from PiServer.DbConnection.IncidentData import IncidentData
+from PiServer.Constant import Constant
 
 
 class ServerThread(threading.Thread):
@@ -46,7 +49,6 @@ class Server:
         self.local_address = local_address
         self.port = port
         self.listener_threads = []
-        self.sender_threads = []
         self.socket_array = []
 
     def start(self):
@@ -88,9 +90,16 @@ class Server:
 
 
 if __name__ == '__main__':
-    pi_server = Server(socket.gethostname(), 5000)
+
+    db_connection = DbConn(Constant.host, Constant.uname, Constant.password, Constant.db_name)
+    db_connection.connection = db_connection.connect()
+    pi_server = Server(socket.gethostname(), Constant.port)
     server = ServerThread(pi_server)
     server.start()
+    path = "https://media.alienwarearena.com/media/tux-t.jpg"
+    temp = IncidentData(Constant.ACCOUNT_ID, path, "some data")
+    print(db_connection.insert_incident_data(temp))
+
 
 
 

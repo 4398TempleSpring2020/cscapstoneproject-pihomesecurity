@@ -1,5 +1,5 @@
-from Message.Constant import Constant
-from Message.Imesssage import Imessage
+from PiServer.Constant import Constant
+from PiServer.Message.Imesssage import Imessage
 
 
 class ResponseMessage(Imessage):

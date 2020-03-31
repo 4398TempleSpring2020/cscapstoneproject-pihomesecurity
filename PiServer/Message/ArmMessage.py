@@ -1,10 +1,12 @@
-from Message.Constant import Constant
-from Message.Imesssage import Imessage
+from PiServer.Constant import Constant
+from PiServer.Message.Imesssage import Imessage
 
 
 class ArmMessage(Imessage):
     message_type = None
     arm_type = None
+# 1 arm
+# 0 disarm
 
     def __init__(self, arm_type, message_type):
         self.arm_type = arm_type
@@ -27,3 +29,10 @@ class ArmMessage(Imessage):
             self.message_type = message_type
         else:
             self.message_type = None
+
+    def get_arm_status(self):
+        return self.arm_type
+
+    def set_arm_status(self, status):
+        self.arm_type = status
+

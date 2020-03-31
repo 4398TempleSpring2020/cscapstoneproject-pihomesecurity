@@ -1,11 +1,10 @@
-from Message.Constant import Constant
-from Message.Imesssage import Imessage
+from PiServer.Constant import Constant
+from PiServer.Message.Imesssage import Imessage
 
 
 class ProfileUpdateMessage(Imessage):
     message_type = None
     update_type = None
-
     phone_number = None
     image_name = None
     image_array = None
@@ -22,8 +21,13 @@ class ProfileUpdateMessage(Imessage):
     def get_data(self):
         return self
 
-    def set_data(self):
-        pass
+    def set_data(self, profile_update_data):
+        self.update_type = profile_update_data.update_type
+        self.phone_number = profile_update_data.phone_number
+        self.image_name = profile_update_data.image_name
+        self.image_array = profile_update_data.image_array
+        self.image_array_size = profile_update_data.image_array_size
+        self.message_type = profile_update_data.message_type
 
     def get_message_type(self):
         return self.message_type
