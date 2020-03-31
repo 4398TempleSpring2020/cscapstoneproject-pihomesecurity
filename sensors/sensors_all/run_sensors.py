@@ -20,7 +20,7 @@ def run_sensors(duration):
     return ret_list
     
     
-if __name__ == '__main__':
+def run_everything(acc_id):
     '''
     Handles upload of detection files to S3
     Preprocesses sensor data
@@ -70,7 +70,7 @@ if __name__ == '__main__':
         obj_list = []
         for file_a in files:
             object_name = file_a.split('/')[-1]
-            object_name = instance_id + '/' + src + '/' + object_name
+            object_name = str(acc_id) + "/" + instance_id + '/' + src + '/' + object_name
             obj_list.append(object_name)
             client.upload_file(file_a, bucket_name, object_name)
         print(src)
