@@ -1,14 +1,14 @@
 ﻿
 @{
-    ViewData["Title"] = "Your Incidents";
+    ViewData["Title"] = "Your Accounts";
     ViewData["linkVis"] = "color: white; " +
                 "visibility: visible;";
     ViewData["link1"] = "Info";
-    ViewData["link2"] = "Accounts";
+    ViewData["link2"] = "Incidents";
     ViewData["link3"] = "Logoff";
 
     ViewData["link1Action"] = "Info";
-    ViewData["link2Action"] = "Accounts";
+    ViewData["link2Action"] = "UserTable";
     ViewData["link3Action"] = "logoff";
 }
 <!-- HTML Code: Place this code in the document's body (between the 'body' tags) where the table should appear -->
@@ -23,7 +23,7 @@
 <script type="text/javascript">
     document.addEventListener('DOMContentLoaded', (event) => {
         ajax({
-            url: '/api/incidentdatas',
+            url: '/api/useraccounts',
             successFn: buildDropDown,
             errorId: errorHere
         });
@@ -31,7 +31,7 @@
 
     function buildDropDown(data) {
         console.log(data);
-        TableBuilder.incidents(data, @ViewBag.Id);
+        TableBuilder.useraccounts(data, @ViewBag.Id);
     }
 </script>
 <!-- Generated at CSSPortal.com -->

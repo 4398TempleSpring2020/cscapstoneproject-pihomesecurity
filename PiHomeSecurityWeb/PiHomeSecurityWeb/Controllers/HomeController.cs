@@ -98,6 +98,7 @@ namespace PiHomeSecurityWeb.Controllers
         [HttpGet]
         public IActionResult Logoff()
         {
+
             return View();
         }
 
@@ -107,15 +108,14 @@ namespace PiHomeSecurityWeb.Controllers
             try
             {
                 HttpContext.Session.Clear();
-                ViewBag.Message = "Successfully logged off";
+                return RedirectToAction("Index");
 
             }
             catch
             {
-                ViewBag.Message = "Error logging off";
+                return View();
 
             }
-            return View();
         }
 
         [HttpGet]
@@ -140,6 +140,12 @@ namespace PiHomeSecurityWeb.Controllers
             {
                 ViewBag.message = "Unable to register user, please try again.";
             }
+            return View();
+        }
+
+        public IActionResult Accounts()
+        {
+            ViewBag.Id = HttpContext.Session.GetInt32("Id");
             return View();
         }
 

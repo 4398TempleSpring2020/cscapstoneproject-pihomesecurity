@@ -11,5 +11,6 @@
     <WebStackScaffolding_ControllerDialogWidth>600</WebStackScaffolding_ControllerDialogWidth>
     <WebStackScaffolding_DbContextTypeFullName>PiHomeSecurityWeb.Models.mypidbContext</WebStackScaffolding_DbContextTypeFullName>
     <WebStackScaffolding_IsAsyncSelected>False</WebStackScaffolding_IsAsyncSelected>
+    <NameOfLastUsedPublishProfile>PiHomeSecurityTest - Web Deploy</NameOfLastUsedPublishProfile>
   </PropertyGroup>
 </Project>

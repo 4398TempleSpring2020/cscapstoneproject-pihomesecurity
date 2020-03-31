@@ -23,7 +23,7 @@ a.navbar-brand {
 }
 
 #headerWrap {
-    background-color: #222123;
+    background-color: #222224;
 }
 
 /* Provide sufficient contrast against white background */
@@ -70,6 +70,11 @@ button.accept-policy {
   line-height: inherit;
 }
 
+.nav-link {
+    color: white;
+    font-size: small;
+}
+
 /* Sticky footer styles
 -------------------------------------------------- */
 html {
@@ -88,5 +93,5 @@ body {
     width: 100%;
     white-space: nowrap;
     line-height: 60px; /* Vertically center the text there */
-    background-color: #222123;
+    background-color: #222224;
 }

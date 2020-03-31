@@ -17,11 +17,11 @@
 
 .framed {
     position: absolute;
-    top: 30%;
-    left: 50%;
-    width: 15rem;
+    width: 30%;
+    left: 40%;
     margin-left: -7.5rem;
-    background-color: #222123;
+    background-color: #222224;
+    top: 20%;
 }
 
 .framed2 {
@@ -30,7 +30,7 @@
     left: 50%;
     width: 15rem;
     margin-left: -7.5rem;
-    background-color: #222123;
+    background-color: #222224;
 }
 
 .logo {
@@ -53,6 +53,11 @@
     text-align: center;
 }
 
+.logonErrorMsg{
+    color: red;
+    margin-bottom: 10px;
+    font-size: smaller;
+}
 
 .input {
     -moz-box-sizing: border-box;
@@ -67,6 +72,7 @@
     border-top: 1px solid rgba(255,255,255,0.7);
     padding: 0 1rem;
     font-family: 'Open Sans', sans-serif;
+    text-align: center;
 }
 
     .input:focus {
@@ -79,7 +85,7 @@
 }
 
 .input--submit {
-    background-color: rgba(92,168,214,0.9);
+    background-color: #55608F;
     color: #fff;
     font-weight: bold;
     cursor: pointer;

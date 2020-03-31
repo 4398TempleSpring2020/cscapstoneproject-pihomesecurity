@@ -27,10 +27,13 @@
                     <div class="navbar-collapse collapse d-sm-inline-flex flex-sm-row-reverse">
                         <ul class="navbar-nav flex-grow-1">
                             <li class="nav-item">
-                                <a class="nav-link" asp-area="" asp-controller="Home" asp-action=@ViewData["link1"] style=@ViewData["linkVis"]>@ViewData["link1"]</a>
+                                <a class="nav-link" asp-area="" asp-controller="Home" asp-action=@ViewData["link1Action"] style=@ViewData["linkVis"]>@ViewData["link1"]</a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link" asp-area="" asp-controller="Home" asp-action=@ViewData["link2"] style=@ViewData["linkVis"]>@ViewData["link2"]</a>
+                                <a class="nav-link" asp-area="" asp-controller="Home" asp-action=@ViewData["link2Action"] style=@ViewData["linkVis"]>@ViewData["link2"]</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" asp-area="" asp-controller="Home" asp-action=@ViewData["link3Action"] style=@ViewData["linkVis"]>@ViewData["link3"]</a>
                             </li>
                         </ul>
                     </div>
