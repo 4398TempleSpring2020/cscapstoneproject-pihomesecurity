@@ -12,7 +12,7 @@ class s3_client():
     def __init__(self):
         self.session = boto3.Session(
             aws_access_key_id=#'ACCESS'
-            aws_secret_access_key=#'secret'
+            aws_secret_access_key=#'Secret'
         )
 
         self.s3 = self.session.resource("s3")

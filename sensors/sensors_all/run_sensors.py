@@ -80,7 +80,8 @@ def run_everything(acc_id):
     ret_dict['instance_id'] = instance_id
     ret_dict['face_match_flag'] = False
     ret_dict['wasAlert'] = False
-
+    ret_dict['trigger_sensor_type'] = []
+    
     print('------------ Upload Complete -----------------')
 
     print(ret_dict)
