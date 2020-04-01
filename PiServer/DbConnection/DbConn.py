@@ -57,8 +57,25 @@ class DbConn:
         with self.connection.cursor() as cur:
 
             insert_statement = "INSERT INTO IncidentData (AccountID, IncidentID, FriendlyMatchFlag, ImagePaths, MicrophonePath, UltrasonicPath) "
-            insert_data = "('" + incident_data.account_id + "', '" + incident_data.incident_id + "', '" + incident_data.match_flag + "', '" + incident_data.image_path + "', '" + incident_data.mic_path + "', '" + incident_data.sonic_path) + "')"
-            insert_statement2 = insert_statement + " VALUES " + insert_data 
+
+            image_path_whole = ''
+            for i, name in enumerate(incident_data.image_path,1):
+                if(i == len(incident_data.image_path)):
+                    image_path_whole += name
+                else:
+                    image_path_whole += name + ","
+                    
+
+            insert_data = "('" + str(incident_data.account_id) + "', '" + str(incident_data.incident_id) + "', '" + str(incident_data.match_flag) + "', '" + image_path_whole + "', '" + str(incident_data.mic_path) + "', '" + str(incident_data.sonic_path) + "')"
+            insert_statement2 = insert_statement + " VALUES " + insert_data
+
+            print('--------------------------------------------------------')
+            print(image_path_whole)
+
+            print('--------------------------------------------------------')
+            print(insert_statement2)
+            print('--------------------------------------------------------')
+
             try:
                 cur.execute(insert_statement2)
             except Exception as e:
