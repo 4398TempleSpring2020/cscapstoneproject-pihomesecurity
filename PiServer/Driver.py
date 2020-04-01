@@ -37,14 +37,15 @@ class Driver:
             "'wasAlert': True, "
             "'trigger_sensor_type': ['camera']}")
         '''
+
         ret_dict = run_everything(4)
-        incident_id = ret_dict["instance_id"]
-        face_match_flag = ret_dict["face_match_flag"]
-        image_path = str(ret_dict["camera"])
+        incident_id = str(ret_dict["instance_id"])
+        face_match_flag = str(ret_dict["face_match_flag"])
+        image_path = ret_dict["camera"]
         mic_path = ret_dict["microphone"][0]
         ultrasonic_path = ret_dict["ultrasonic"][0]
-
-        temp = IncidentData(Constant.ACCOUNT_ID, incident_id, 1, image_path, mic_path, ultrasonic_path)
+        
+        temp = IncidentData(4, incident_id, 1, image_path, mic_path, ultrasonic_path)
         print(db_connection.insert_incident_data(temp))
         #ret_dict = run_everything(123)
 

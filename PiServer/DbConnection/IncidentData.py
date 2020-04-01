@@ -4,7 +4,7 @@ class IncidentData:
         self.account_id = account_id
         self.incident_id = incident_id
         self.match_flag = match_flag
-        self.image_path = image_path
+        self.image_path = image_path # list of images
         self.mic_path = mic_path
         self.sonic_path = sonic_path
 
