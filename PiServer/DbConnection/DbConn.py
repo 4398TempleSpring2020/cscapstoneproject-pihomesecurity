@@ -56,7 +56,7 @@ class DbConn:
         self.connection.autocommit(True)
         with self.connection.cursor() as cur:
 
-            insert_statement = 'INSERT INTO IncidentData (AccountID, SensorFile, ImagePath) VALUES (%s, %s, %s)'
+            insert_statement = 'INSERT INTO IncidentData (AccountID, IncidentID, FriendlyMatchFlag, ImagePaths, MicrophonePath, UltrasonicPath) VALUES (%s, %s, %s, %s)'
             insert_data = (int(incident_data.account_id), incident_data.sensor_path, incident_data.image_path,)
             try:
                 cur.execute(insert_statement, insert_data)
@@ -77,7 +77,7 @@ class DbConn:
     def test_integration(self):
         # time.sleep(2)
 
-        '''
+
         ret_dict = ast.literal_eval(
             "{'microphone': ['123/1585615830.5592604/microphone/audio.wav'], "
             "'camera': ['123/1585615830.5592604/camera/image_0.jpg', '123/1585615830.5592604/camera/image_1.jpg',"
@@ -91,13 +91,13 @@ class DbConn:
             " 'face_match_flag': False, "
             "'wasAlert': True, "
             "'trigger_sensor_type': ['camera']}")
-        '''
-        ret_dict = run_everything(123)
 
-        
+        #ret_dict = run_everything(123)
+        incident_id = ret_dict["instance_id"]
+        face_match_flag = ret_dict["face_match_flag"][0]
         image_path = str(ret_dict["camera"])
         mic_path = ret_dict["microphone"][0]
         ultrasonic_path = ret_dict["ultrasonic"][0]
 
-        temp = IncidentData(Constant.ACCOUNT_ID, image_path, mic_path)
+        temp = IncidentData(Constant.ACCOUNT_ID, incident_id, 1, image_path, mic_path,ultrasonic_path)
         print(self.connection.insert_incident_data(temp))
