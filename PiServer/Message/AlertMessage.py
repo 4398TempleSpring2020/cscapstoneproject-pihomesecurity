@@ -1,5 +1,4 @@
 from PiServer.Message.Imesssage import Imessage
-from PiServer.Constant import Constant
 
 
 class AlertMessage(Imessage):

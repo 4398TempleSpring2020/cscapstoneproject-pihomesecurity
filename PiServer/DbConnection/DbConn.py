@@ -1,14 +1,18 @@
 #!/usr/bin/python
+import ast
 
 import pymysql
 
+from PiServer.Constants.Constant import Constant
+from PiServer.DbConnection.IncidentData import IncidentData
+
 
 class DbConn:
-    host = None  # "my-pi-database.cxfhfjn3ln5w.us-east-2.rds.amazonaws.com"
-    uname = None  # "pi_user"
-    password = None  # "totallysecurepw!"
-    db_name = None  # "mypidb"
-    connection = None
+    # host = None  # "my-pi-database.cxfhfjn3ln5w.us-east-2.rds.amazonaws.com"
+    # uname = None  # "pi_user"
+    # password = None  # "totallysecurepw!"
+    # db_name = None  # "mypidb"
+    # connection = None
 
     def __init__(self, host, uname, password, db_name):
         pymysql.install_as_MySQLdb()
@@ -16,6 +20,7 @@ class DbConn:
         self.uname = uname
         self.password = password
         self.db_name = db_name
+        self.connection = self.connect()
 
     def connect(self):
         # Open database connection
@@ -64,16 +69,25 @@ class DbConn:
                 'body': ""
             }
 
+    def test_integration(self):
+        # time.sleep(2)
+        ret_dict = ast.literal_eval(
+            "{'microphone': ['123/1585615830.5592604/microphone/audio.wav'], "
+            "'camera': ['123/1585615830.5592604/camera/image_0.jpg', '123/1585615830.5592604/camera/image_1.jpg',"
+            "'123/1585615830.5592604/camera/image_2.jpg', '123/1585615830.5592604/camera/image_3.jpg', "
+            "'123/1585615830.5592604/camera/image_4.jpg', '123/1585615830.5592604/camera/image_5.jpg', "
+            "'123/1585615830.5592604/camera/image_6.jpg', '123/1585615830.5592604/camera/image_7.jpg', "
+            "'123/1585615830.5592604/camera/image_8.jpg', '123/1585615830.5592604/camera/image_9.jpg'],"
+            "'ultrasonic': ['123/1585615830.5592604/ultrasonic/ultra.txt'],"
+            " 'bucket': 'whateverworks', "
+            "'instance_id': '1585615830.5592604',"
+            " 'face_match_flag': False, "
+            "'wasAlert': True, "
+            "'trigger_sensor_type': ['camera']}")
 
+        image_path = str(ret_dict["camera"])
+        mic_path = ret_dict["microphone"][0]
+        ultrasonic_path = ret_dict["ultrasonic"][0]
 
-# if __name__ == '__main__':
-#     host = "my-pi-database.cxfhfjn3ln5w.us-east-2.rds.amazonaws.com"
-#     uname = "pi_user"
-#     password = "totallysecurepw!"
-#     db_name = "mypidb"
-#     print("hello")
-#     dbconn = DbConn(host, uname, password, db_name)
-#     dbconn.connection = dbconn.connect()
-#     dbconn.test()
-#     print(dbconn.insert_incident(1,1))
-#     dbconn.disconnect()
+        temp = IncidentData(Constant.ACCOUNT_ID, image_path, mic_path)
+        print(self.connection.insert_incident_data(temp))
