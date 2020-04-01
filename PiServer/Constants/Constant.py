@@ -15,3 +15,13 @@ class Constant:
     PROFILE_ADD_MEMBER_FACE = "add_member_face"
     PROFILE_ADD_MY_FACE = "add_my_face"
     PROFILE_REMOVE_MEMBER = "remove_member"
+
+    # Database connection
+    host = "my-pi-database.cxfhfjn3ln5w.us-east-2.rds.amazonaws.com"
+    uname = "pi_user"
+    password = "totallysecurepw!"
+    db_name = "mypidb"
+
+    # Pi server
+    ACCOUNT_ID = 5
+    port = 5000

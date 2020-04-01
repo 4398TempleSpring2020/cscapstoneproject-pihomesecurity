@@ -1,7 +1,7 @@
-import boto
+import boto3
 
 
-# http://boto.cloudhackers.com/en/latest/s3_tut.html
+# boto/s3 tutorial http://boto.cloudhackers.com/en/latest/s3_tut.html
 
 
 class S3Conn:
@@ -12,11 +12,9 @@ class S3Conn:
         self.bucket = None
 
     def connect(self):
-        conn = boto.connect_s3('<AKIAIDZRKUSDQLB2QRZA>', '<Cz0DRacat119j1NsPEgnTVXawElfwVzBSWMMcemv>')
+        #read akey and skey
+        conn = boto3.connect_s3('')
         return conn
 
 
-if __name__ == '__main__':
-    db = S3Conn()
-    S3Conn.connection = S3Conn.connect(db)
-    print(S3Conn.connection)
+

@@ -1,3 +1,4 @@
+#!/usr/bin/python
 import socket
 import threading
 
@@ -46,7 +47,6 @@ class Server:
         self.local_address = local_address
         self.port = port
         self.listener_threads = []
-        self.sender_threads = []
         self.socket_array = []
 
     def start(self):
@@ -85,13 +85,3 @@ class Server:
         except:
             print("Error sending data")
             return False
-
-
-if __name__ == '__main__':
-    pi_server = Server(socket.gethostname(), 5000)
-    server = ServerThread(pi_server)
-    server.start()
-
-
-
-
