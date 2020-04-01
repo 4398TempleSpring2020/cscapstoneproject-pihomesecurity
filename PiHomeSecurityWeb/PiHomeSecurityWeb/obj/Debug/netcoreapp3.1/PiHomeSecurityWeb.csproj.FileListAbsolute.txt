@@ -171,3 +171,4 @@ C:\Users\mulla\source\repos\PiHomeSecurity1\PiHomeSecurityWeb\PiHomeSecurityWeb\
 C:\Users\mulla\source\repos\PiHomeSecurity1\PiHomeSecurityWeb\PiHomeSecurityWeb\obj\Debug\netcoreapp3.1\Razor\Views\Home\Logoff.cshtml.g.cs
 C:\Users\mulla\source\repos\PiHomeSecurity1\PiHomeSecurityWeb\PiHomeSecurityWeb\obj\Debug\netcoreapp3.1\Razor\Views\AccountsTable.cshtml.g.cs
 C:\Users\mulla\source\repos\PiHomeSecurity1\PiHomeSecurityWeb\PiHomeSecurityWeb\obj\Debug\netcoreapp3.1\Razor\Views\Home\Accounts.cshtml.g.cs
+C:\Users\mulla\source\repos\PiHomeSecurity1\PiHomeSecurityWeb\PiHomeSecurityWeb\obj\Debug\netcoreapp3.1\Razor\Views\Home\UserAccountsTable.cshtml.g.cs

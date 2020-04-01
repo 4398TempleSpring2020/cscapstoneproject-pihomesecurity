@@ -5,7 +5,7 @@ namespace PiHomeSecurityWeb.Models
 {
     public partial class IncidentData
     {
-        public int IncidentId { get; set; }
+        public string IncidentId { get; set; }
         public int AccountId { get; set; }
         public DateTime DateRecorded { get; set; }
         public sbyte? BadIncidentFlag { get; set; }
@@ -14,9 +14,10 @@ namespace PiHomeSecurityWeb.Models
         public string AdminComments { get; set; }
         public sbyte DeletionBlockFlag { get; set; }
         public sbyte EmergencyContactedFlag { get; set; }
-        public string SensorFile { get; set; }
-        public string ImagePath { get; set; }
+        public string MicrophonePath { get; set; }
+        public string ImagePaths { get; set; }
         public sbyte FriendlyMatchFlag { get; set; }
+        public string UltrasonicPath { get; set; }
 
         public virtual HomeAccount Account { get; set; }
     }

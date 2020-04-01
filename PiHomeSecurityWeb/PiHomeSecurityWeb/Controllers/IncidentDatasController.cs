@@ -45,7 +45,7 @@ namespace PiHomeSecurityWeb.Controllers
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for
         // more details see https://aka.ms/RazorPagesCRUD.
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutIncidentData(int id, IncidentData incidentData)
+        public async Task<IActionResult> PutIncidentData(string id, IncidentData incidentData)
         {
             if (id != incidentData.IncidentId)
             {
@@ -101,7 +101,7 @@ namespace PiHomeSecurityWeb.Controllers
             return incidentData;
         }
 
-        private bool IncidentDataExists(int id)
+        private bool IncidentDataExists(string id)
         {
             return _context.IncidentData.Any(e => e.IncidentId == id);
         }

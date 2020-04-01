@@ -71,7 +71,7 @@ namespace PiHomeSecurityWeb.Models
 
             modelBuilder.Entity<EmployeeHomeRelationship>(entity =>
             {
-                entity.HasKey(e => new { e.AccountId, e.EmployeeId });
+                entity.HasNoKey();
 
                 entity.HasIndex(e => e.AccountId)
                     .HasName("AccountID_idx");
@@ -113,6 +113,10 @@ namespace PiHomeSecurityWeb.Models
 
                 entity.HasIndex(e => e.AccountUsername)
                     .HasName("AccountUsername_UNIQUE")
+                    .IsUnique();
+
+                entity.HasIndex(e => e.HomeAccountAddress)
+                    .HasName("HomeAccountAddress_UNIQUE")
                     .IsUnique();
 
                 entity.Property(e => e.AccountId)
@@ -186,7 +190,9 @@ namespace PiHomeSecurityWeb.Models
 
                 entity.Property(e => e.IncidentId)
                     .HasColumnName("IncidentID")
-                    .HasColumnType("int(11)");
+                    .HasColumnType("varchar(32)")
+                    .HasCharSet("utf8")
+                    .HasCollation("utf8_general_ci");
 
                 entity.Property(e => e.AccountId)
                     .HasColumnName("AccountID")
@@ -213,9 +219,9 @@ namespace PiHomeSecurityWeb.Models
 
                 entity.Property(e => e.FriendlyMatchFlag).HasColumnType("tinyint(4)");
 
-                entity.Property(e => e.ImagePath)
+                entity.Property(e => e.ImagePaths)
                     .IsRequired()
-                    .HasColumnType("varchar(255)")
+                    .HasColumnType("varchar(1054)")
                     .HasCharSet("utf8")
                     .HasCollation("utf8_general_ci");
 
@@ -223,7 +229,13 @@ namespace PiHomeSecurityWeb.Models
                     .HasColumnType("datetime")
                     .HasDefaultValueSql("CURRENT_TIMESTAMP");
 
-                entity.Property(e => e.SensorFile)
+                entity.Property(e => e.MicrophonePath)
+                    .IsRequired()
+                    .HasColumnType("varchar(255)")
+                    .HasCharSet("utf8")
+                    .HasCollation("utf8_general_ci");
+
+                entity.Property(e => e.UltrasonicPath)
                     .IsRequired()
                     .HasColumnType("varchar(255)")
                     .HasCharSet("utf8")
