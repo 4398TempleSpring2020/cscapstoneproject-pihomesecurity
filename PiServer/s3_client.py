@@ -10,9 +10,18 @@ class S3_Client():
     s3 = None
     
     def __init__(self):
+        keys = []
+        with open('/home/pi/Desktop/secrets.txt', 'r') as secFile:
+            sec_file = secFile.readlines()
+            for line in sec_file:
+                keys.append((line.split(',')[-1]).strip())
+
+        print("|" + keys[0] + '|')
+        print("|" + keys[1] + "|")
+
         self.session = boto3.Session(
-            aws_access_key_id=
-            aws_secret_access_key=
+            aws_access_key_id=keys[0],
+            aws_secret_access_key=keys[1]
         )
 
         self.s3 = self.session.resource("s3")
