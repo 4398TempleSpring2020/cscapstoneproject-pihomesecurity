@@ -57,7 +57,7 @@ class DbConn:
         with self.connection.cursor() as cur:
 
             insert_statement = 'INSERT INTO IncidentData (AccountID, IncidentID, FriendlyMatchFlag, ImagePaths, MicrophonePath, UltrasonicPath) VALUES (%s, %s, %s, %s)'
-            insert_data = (int(incident_data.account_id), incident_data.sensor_path, incident_data.image_path,)
+            insert_data = (int(incident_data.account_id), incident_data.incident_id, incident_data.match_flag,incident_data.image_path, incident_data.mic_path, incident_data.sonic_path)
             try:
                 cur.execute(insert_statement, insert_data)
             except Exception as e:
@@ -93,9 +93,9 @@ class DbConn:
             "'trigger_sensor_type': ['camera']}")
 
         #ret_dict = run_everything(123)
-        incident_id = ret_dict["instance_id"]
-        face_match_flag = ret_dict["face_match_flag"][0]
-        image_path = str(ret_dict["camera"])
+        incident_id = str(ret_dict["instance_id"])
+        face_match_flag = str(ret_dict["face_match_flag"])
+        image_path = ret_dict["camera"]
         mic_path = ret_dict["microphone"][0]
         ultrasonic_path = ret_dict["ultrasonic"][0]
 
