@@ -1,9 +1,12 @@
 class IncidentData:
-
-    def __init__(self, account_id, image_path, sensor_path):
-        self.image_path = image_path
-        self.sensor_path = sensor_path
+#AccountID, IncidentID, FriendlyMatchFlag , ImagePaths, MicrophonePath, UltrasonicPath
+    def __init__(self, account_id, incident_id, match_flag, image_path, mic_path, sonic_path):
         self.account_id = account_id
+        self.incident_id = incident_id
+        self.match_flag = match_flag
+        self.image_path = image_path
+        self.mic_path = mic_path
+        self.sonic_path = sonic_path
 
     def get_image_path(self):
         return self.image_path
