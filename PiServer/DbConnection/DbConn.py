@@ -51,7 +51,8 @@ class DbConn:
     def insert_incident_data(self, incident_data):
         """
         This function fetches content from mysql RDS instance
-        """        result = []
+        """        
+        result = []
         self.connection.autocommit(True)
         with self.connection.cursor() as cur:
 
