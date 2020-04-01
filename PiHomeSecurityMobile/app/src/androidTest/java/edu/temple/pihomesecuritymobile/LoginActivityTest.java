@@ -36,7 +36,7 @@ public class LoginActivityTest {
         emptyString = "";
         spaceString = " ";
         validPassword = "1234";
-        validUsername = "danielle";
+        validUsername = "dani";
         validWords = "Temple";
         emptyError = "Field is empty";
         userError = "Incorrect password or username";
