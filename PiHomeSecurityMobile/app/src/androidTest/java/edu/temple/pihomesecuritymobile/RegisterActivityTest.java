@@ -60,7 +60,7 @@ public class RegisterActivityTest {
         homeAddrError = "Home address not found";
         pinError = "Pin does not match";
         duplicateError = "Username exists";
-        duplicateUsername = "danielle";
+        duplicateUsername = "dani";
         address_error = "Home address length is too short";
     }
 
