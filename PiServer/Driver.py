@@ -37,7 +37,7 @@ class Driver:
             "'wasAlert': True, "
             "'trigger_sensor_type': ['camera']}")
         '''
-        ret_dict = run_everything(123)
+        ret_dict = run_everything(4)
         incident_id = ret_dict["instance_id"]
         face_match_flag = ret_dict["face_match_flag"]
         image_path = str(ret_dict["camera"])

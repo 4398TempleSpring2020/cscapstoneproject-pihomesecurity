@@ -51,15 +51,15 @@ class DbConn:
     def insert_incident_data(self, incident_data):
         """
         This function fetches content from mysql RDS instance
-        """
-        result = []
+        """        result = []
         self.connection.autocommit(True)
         with self.connection.cursor() as cur:
 
-            insert_statement = 'INSERT INTO IncidentData (AccountID, IncidentID, FriendlyMatchFlag, ImagePaths, MicrophonePath, UltrasonicPath) VALUES (%s, %s, %s, %s)'
-            insert_data = (int(incident_data.account_id), incident_data.incident_id, incident_data.match_flag,incident_data.image_path, incident_data.mic_path, incident_data.sonic_path)
+            insert_statement = "INSERT INTO IncidentData (AccountID, IncidentID, FriendlyMatchFlag, ImagePaths, MicrophonePath, UltrasonicPath) "
+            insert_data = "('" + incident_data.account_id + "', '" + incident_data.incident_id + "', '" + incident_data.match_flag + "', '" + incident_data.image_path + "', '" + incident_data.mic_path + "', '" + incident_data.sonic_path) + "')"
+            insert_statement2 = insert_statement + " VALUES " + insert_data 
             try:
-                cur.execute(insert_statement, insert_data)
+                cur.execute(insert_statement2)
             except Exception as e:
                 cur.close()
                 return {
