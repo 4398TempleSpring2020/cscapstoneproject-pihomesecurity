@@ -47,9 +47,7 @@ public class IncidentImageAdapter extends BaseAdapter {
             imageView.setLayoutParams(new GridView.LayoutParams(200, 120));
             imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
             imageView.setPadding(2, 2, 2, 2);
-        }
-        else
-        {
+        } else {
             imageView = (ImageView) convertView;
         }
         String url = url_prefix + images[position];
