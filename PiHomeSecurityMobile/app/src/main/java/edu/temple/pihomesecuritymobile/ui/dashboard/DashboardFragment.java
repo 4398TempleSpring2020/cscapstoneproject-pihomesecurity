@@ -38,6 +38,7 @@ public class DashboardFragment extends Fragment {
     JSONArray dataArr;
     Context parent;
     onFragListener mList;
+    String home_ID;
 
     @Override
     public void onCreate(Bundle savedInstanceState){
@@ -52,11 +53,12 @@ public class DashboardFragment extends Fragment {
         mngr = new ContentManager();
         // Place API code to get data to display
         String HomeID = sharePrefs.getString("HomeID","");
-
         if(HomeID.equals("")){
             errMess = "HomeID was not found";
         } else {
             String result = mngr.getIncidents(HomeID);
+            Log.d("homeID", "" + HomeID);
+            home_ID=HomeID;
             Log.d("incidents result", "" + result);
             rsp = mngr.makeResponse(result);
         }
@@ -116,6 +118,7 @@ public class DashboardFragment extends Fragment {
                         // Pass image index
                         i.putExtra("image_id", position);
                         i.putExtra("images", imagePaths);
+                        i.putExtra("home_id", home_ID);
                         startActivity(i);
                     }
                 });
@@ -138,6 +141,7 @@ public class DashboardFragment extends Fragment {
                         // Pass image index
                         i.putExtra("image_id", position);
                         i.putExtra("images", imagePaths);
+                        i.putExtra("home_id", home_ID);
                         startActivity(i);
                     }
                 });
