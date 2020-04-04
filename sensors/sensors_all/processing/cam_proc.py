@@ -61,10 +61,43 @@ class CamProc():
         cv2.imshow('otsu', otsu)
         cv2.waitKey(0)
         cv2.destroyAllWindows()
+    
+    def color_filtering():
+        cap = cv2.VideoCapture(0)
+        while True:
+            _, frame = cap.read()
+            hsv = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)
+            lower_pink = np.array([100,100,50])
+            upper_pink = np.array([255,255,255])
 
+            mask = cv2.inRange(hsv, lower_pink, upper_pink)
+            res = cv2.bitwise_and(frame, frame, mask=mask)
+            
+            frame = cv2.rotate(frame, cv2.ROTATE_180)
+            mask = cv2.rotate(mask, cv2.ROTATE_180)
+            res = cv2.rotate(res, cv2.ROTATE_180)
+            
+            kernel = np.ones((15,15), np.float32)/225
+            #smoothed = cv2.filter2D(res, -1, kernel)
+            blur = cv2.GaussianBlur(res, (15,15), 0)
+            median = cv2.medianBlur(res, 15)
+
+            cv2.imshow('frame', frame)
+            #cv2.imshow('mask', mask)
+            cv2.imshow('res', res)
+            #cv2.imshow('smoothed', smoothed)
+            #cv2.imshow('blur', blur)
+            cv2.imshow('median', median)
+
+            k = cv2.waitKey(5) & 0xFF
+            if k == 27:
+                break;
+        cv2.destroyAllWindows()
+        cap.release()
 
 # CamProc.get_image('../data/cam/charles/charles_5.jpg', 400, 900, 550, 950)
 # CamProc.test_draw_on_image('../data/cam/charles/charles_5.jpg')
 # CamProc.test_matlab_plot('../data/cam/charles/charles_5.jpg')
 # CamProc.test_video()
-CamProc.test_threshold('../data/cam/charles/charles_5.jpg')
+# CamProc.test_threshold('../data/cam/charles/charles_5.jpg')
+CamProc.color_filtering()
