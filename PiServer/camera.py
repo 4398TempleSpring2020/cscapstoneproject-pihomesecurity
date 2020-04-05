@@ -5,6 +5,8 @@ from picamera import PiCamera
 from time import sleep
 import os
 import time
+from cam_proc import CamProc
+
 
 class Camera(sensor_interface):
     camera = None
@@ -15,7 +17,8 @@ class Camera(sensor_interface):
     def initiate(self, response_list, outPath):
         start = time.time()
         print(response_list)
-        list_lock = response_list[0]
+        list_lock, barrier, anomaly_dict, instance_id, acc_id, bucket_name = response_list[0]
+
         
         outfiles = []
         try:
@@ -36,17 +39,41 @@ class Camera(sensor_interface):
             print('Camera Failed')
         finally:
             self.isActive = False
+        
+        # check if anomaly in cam data
+        print('camera anomaly detection')
+        camProc = CamProc()
+        isAnomaly = camProc.isAnomaly(files)
+        anomaly_dict['cam'] = isAnomaly
+        
+        # wait until every thread has processed their files
+        barrier.wait()
+        print('cam passed barrier')
 
-        print('Camera locking')
+        # check if any anomalies detected
+        wasAnom = False
+        for anomaly in anomaly_dict.values():
+            if(anomaly):
+                wasAnom = True
+                break
+
+        # list of objects
+        obj_list = []
+        if(wasAnom):
+            client = S3_Client()
+            # upload to s3
+            for file_a in files:
+                object_name = file_a.split('/')[-1]
+                object_name = str(acc_id) + "/" + instance_id + '/' + 'camera' + '/' + object_name
+                obj_list.append(object_name)
+                client.upload_file(file_a, bucket_name, object_name)
+
+        print('acquiring lock')
         with list_lock:
-            print('Camera locked')
-
-            response_list.append((outfiles, "camera"))
-            print('Camera added to list')
-            
+            response_list.append((obj_list, "camera"))
+        
         end = time.time()
-        print("Total camera time to execute : [" + str(end - start) + "]")
-
+        print("Total ultra time to execute : [" + str(end - start) + "]")          
             
     def connect(self):
         print('Camera Connecting')

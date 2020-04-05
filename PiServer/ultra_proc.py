@@ -46,11 +46,6 @@ class UltraProc():
                 fcontents.append(np.asarray(curf))
                 fnames.append(fname)        
         return(fcontents, fnames)
-'''    
-if __name__ == "__main__":
-    ultra_dir = "../data/ultra/"
-    ultra_signals, ultra_names = get_files(ultra_dir)
 
-    plot_signals(ultra_signals, ultra_names, "Ultrasonic Sensor Signals")
-    plot_each_signals(ultra_signals, ultra_names, "Individual Ultrasonic Sensor Signals")
-'''
+    def isAnomaly(self, files):
+        return False

@@ -5,6 +5,7 @@ import sounddevice as sd
 import os
 import soundfile as sf
 import time
+from mic_proc import MicProc
 
 class Microphone(sensor_interface):
     frequency = None
@@ -17,7 +18,7 @@ class Microphone(sensor_interface):
     def initiate(self, response_list, outPath):
         start = time.time()
         print(response_list)
-        list_lock = response_list[0]
+        list_lock, barrier, anomaly_dict, instance_id, acc_id, bucket_name = response_list[0]
 
         outfiles = []
         outfiles.append(outPath + 'audio.wav')
@@ -36,12 +37,40 @@ class Microphone(sensor_interface):
         finally:
             self.isActive = False
 
-        with list_lock:
-            response_list.append((outfiles, "microphone"))
+        # check if anomaly in ultra data
+        print('microphone anomaly detection')
+        micProc = MicProc()
+        isAnomaly = micProc.isAnomaly(files)
+        anomaly_dict['mic'] = isAnomaly
+        
+        # wait until every thread has processed their files
+        barrier.wait()
+        print('mic passed barrier')
 
+        # check if any anomalies detected
+        wasAnom = False
+        for anomaly in anomaly_dict.values():
+            if(anomaly):
+                wasAnom = True
+                break
+
+        # list of objects
+        obj_list = []
+        if(wasAnom):
+            client = S3_Client()
+            # upload to s3
+            for file_a in files:
+                object_name = file_a.split('/')[-1]
+                object_name = str(acc_id) + "/" + instance_id + '/' + 'microphone' + '/' + object_name
+                obj_list.append(object_name)
+                client.upload_file(file_a, bucket_name, object_name)
+
+        print('acquiring lock')
+        with list_lock:
+            response_list.append((obj_list, "mic"))
+        
         end = time.time()
         print("Total mic time to execute : [" + str(end - start) + "]")
-
             
     def connect(self):
         print('Connecting to Microphone')

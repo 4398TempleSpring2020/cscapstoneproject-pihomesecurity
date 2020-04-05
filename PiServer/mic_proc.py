@@ -44,11 +44,5 @@ class MicProc():
             fnames.append(fname)
         return(fcontents, fnames)
 
-'''
-if __name__ == "__main__":
-    mic_dir = "../data/mic/"
-    mic_signals, mic_names = get_files(mic_dir)
-
-    plot_signals(mic_signals, mic_names, "Microphone Signals")
-    plot_each_signals(mic_signals, mic_names, "Individual Microphone Signals")
-'''
+    def isAnomaly(self, files):
+        return True
