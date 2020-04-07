@@ -20,7 +20,6 @@ import java.io.File;
 public class S3Manager {
     private Context context;
     final private String bucket = "mypishield";
-    private String path;
     private String homeID;
     private CognitoCachingCredentialsProvider credentialsProvider;
 

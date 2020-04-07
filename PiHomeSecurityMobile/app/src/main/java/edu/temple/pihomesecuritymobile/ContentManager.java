@@ -1,7 +1,6 @@
 package edu.temple.pihomesecuritymobile;
 
 
-import android.content.Context;
 import android.os.AsyncTask;
 
 import org.json.JSONException;
@@ -29,7 +28,6 @@ public class ContentManager {
 
     //the base url
     final private String base_url = "https://jlt49k4n90.execute-api.us-east-2.amazonaws.com/beta";
-    private static AsyncListener activity;
 
     //resource paths
     final private String show_record_resource="/show";
@@ -37,6 +35,8 @@ public class ContentManager {
     final private String update_resource="/update";
     final private String delete_resource="/delete";
     final private String incident_resource="/incidents";
+    final private String response_resource="/alert-response";
+
 
     //resource required keys in JSONObject
     final private String[] show_all_keys = new String[] {"table", "columns"};
@@ -47,9 +47,6 @@ public class ContentManager {
 
     public ContentManager() { }
 
-    public ContentManager(Context context) {
-        this.activity = (AsyncListener)context;
-    }
     /**
      * This method is the one that gets called from the Activity that needs to make a POST/GET request
      * @param method: "GET" or "POST"
@@ -147,10 +144,6 @@ public class ContentManager {
         @Override
         protected void onPostExecute(String result) {
             super.onPostExecute(result);
-            //convert the string to a JSONObject
-            if (activity != null) {
-                activity.doAfterAsync(makeResponse(result));
-            }
         }
     }
 
@@ -175,12 +168,6 @@ public class ContentManager {
         return rsp;
     }
 
-    /**
-     * Interface required to get the data returned
-     */
-    public interface AsyncListener{
-        void doAfterAsync(Response nresponse);
-    }
 
     /**
      * Example of GET request
@@ -320,6 +307,23 @@ public class ContentManager {
             e.printStackTrace();
         }
         return requestData("POST", incident_resource, params);
+    }
+
+    /**
+     * sends a notification to all users when a mobile user responds to an alert
+     * @param homeID the home account id
+     * @param responseChosen yes if authorities are to be contacted and no if authorities not to be contacted
+     * @return
+     */
+    public String alertResponse(String homeID, String responseChosen) {
+        JSONObject params = new JSONObject();
+        try {
+            params.put("homeID", homeID);
+            params.put("resp", responseChosen);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return requestData("POST", response_resource, params);
     }
 }
 
