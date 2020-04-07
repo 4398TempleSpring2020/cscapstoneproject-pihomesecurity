@@ -22,9 +22,7 @@ import edu.temple.pihomesecuritymobile.models.Response;
 public class ContentManager {
     final public int records_not_exist = 411;
     final public int insertError = 412;
-    final public int deleteError = 414;
     final public int updateError = 415;
-    final public int selectError = 413;
 
     //the base url
     final private String base_url = "https://jlt49k4n90.execute-api.us-east-2.amazonaws.com/beta";
@@ -33,17 +31,14 @@ public class ContentManager {
     final private String show_record_resource="/show";
     final private String insert_resource="/insert";
     final private String update_resource="/update";
-    final private String delete_resource="/delete";
     final private String incident_resource="/incidents";
     final private String response_resource="/alert-response";
 
 
     //resource required keys in JSONObject
-    final private String[] show_all_keys = new String[] {"table", "columns"};
     final private String[] show_record_keys = new String[] {"table", "columns", "columnMatch", "valueMatch"};
     final private String[] insert_keys = new String[] {"table", "columns", "values"};
     final private String[] update_keys = new String[] {"table", "column", "newColVal", "row", "rowVal"};
-    final private String[] delete_keys = new String[] {"table", "column", "value"};
 
     public ContentManager() { }
 
@@ -168,33 +163,6 @@ public class ContentManager {
         return rsp;
     }
 
-
-    /**
-     * Example of GET request
-     * Returns a list of tables in the database, isn't really meant for us
-     * SQL used in lambda: SHOW TABLES;
-     */
-    String showTables() {
-        return requestData("GET", "", new JSONObject());
-    }
-
-    /**
-     * Example of POST request to return all records in a table with the specified columns
-     * SQL used in lambda: SELECT columns FROM table;
-     * @param table: table to get records from
-     * @param columns: columns to show
-     */
-    String selectStatement(String table, String columns) {
-        JSONObject params = new JSONObject();
-        try {
-            params.put(show_all_keys[0], table);
-            params.put(show_all_keys[1], columns);
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-        return requestData("POST", "", params);
-    }
-
     /**
      * Example of a POST statement that returns a record matching a specified value
      * SQL used in lambda: SELECT columns FROM table WHERE columnMatch = valueMatch
@@ -233,25 +201,6 @@ public class ContentManager {
             e.printStackTrace();
         }
         return requestData("POST", insert_resource, params);
-    }
-
-    /**
-     * Example of a POST statement that deletes a record matching a specified value
-     * SQL used in lambda: DELETE FROM table WHERE column = value;
-     * @param table: table to delete record from
-     * @param columnMatch: column to match value with
-     * @param valueMatch: value to match
-     */
-    protected String deleteStatement(String table, String columnMatch, String valueMatch) {
-        JSONObject params = new JSONObject();
-        try {
-            params.put(delete_keys[0], table);
-            params.put(delete_keys[1], columnMatch);
-            params.put(delete_keys[2], valueMatch);
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-        return requestData("POST", delete_resource, params);
     }
 
     /**
@@ -312,7 +261,7 @@ public class ContentManager {
     /**
      * sends a notification to all users when a mobile user responds to an alert
      * @param homeID the home account id
-     * @param responseChosen yes if authorities are to be contacted and no if authorities not to be contacted
+     * @param responseChosen "yes" if authorities are to be contacted and "no" if authorities not to be contacted
      * @return
      */
     public String alertResponse(String homeID, String responseChosen) {

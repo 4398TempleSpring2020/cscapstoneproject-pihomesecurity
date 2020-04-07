@@ -28,7 +28,7 @@ public class ImageViewerTest {
     private String backBut;
 
     @Before
-    public void setUp() throws Exception {
+    public void setUp() {
         title="Confirm Action";
         confirm ="Upload to Pi";
         cancel = "Cancel";
