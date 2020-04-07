@@ -52,7 +52,7 @@ public class ImageViewer extends AppCompatActivity {
         //Selected image position
         int position = i.getExtras().getInt("image_id");
         homeID = i.getExtras().getString("home_id");
-        Log.d("homeID", homeID);
+        Log.d("homeID","" + homeID);
         String[] images = i.getExtras().getStringArray("images");
         ImageView imageView = findViewById(R.id.ImageViewFull);
         final String url = url_prefix + images[position];
