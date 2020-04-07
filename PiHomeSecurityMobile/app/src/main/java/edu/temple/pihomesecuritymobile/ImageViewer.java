@@ -5,7 +5,9 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
 import android.Manifest;
+import android.app.AlertDialog;
 import android.app.ProgressDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
@@ -71,7 +73,17 @@ public class ImageViewer extends AppCompatActivity {
         uploadButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                new UploadImage().execute(url);
+                new AlertDialog.Builder(ImageViewer.this)
+                        .setTitle("Confirm Action")
+                        .setMessage("You are about to upload this image to the Raspberry Pi and mark it as safe. Are you sure you want to continue?")
+                        .setNeutralButton("Upload to Pi", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                new UploadImage().execute(url);
+                            }
+                        })
+                        .setPositiveButton("Cancel", null)
+                        .show();
             }
         });
 

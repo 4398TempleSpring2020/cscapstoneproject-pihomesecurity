@@ -94,13 +94,18 @@ public class DashboardFragment extends Fragment {
         //TextView adminComm = root.findViewById(R.id.textView4);
         GridView gridView = root.findViewById(R.id.gridViewInc);
         int set = -1;
-        if(dataObj == null){
+        if (dataObj==null && dataArr==null) { //no incidents exist yet
+            set = -1;
+        } else if(dataObj == null){ //only one incident exists
             set = 0;
-        } else if(dataArr == null){
+        } else if(dataArr == null){ //multiple incidents exist
             set = 1;
         }
         try{
-            if(set ==1){
+            if (set == -1) {
+                incID.setText("No Incident data available.");
+                occDate.setText("");
+            } else if(set ==1){
                 String IDstr = "Incident ID: "+ dataObj.getInt("IncidentID");
                 incID.setText(IDstr);
                 occDate.setText("Incident occurred at: "+dataObj.getString("DateRecorded"));
