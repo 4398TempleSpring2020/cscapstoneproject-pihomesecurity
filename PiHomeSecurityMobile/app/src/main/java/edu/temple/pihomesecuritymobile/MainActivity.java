@@ -92,4 +92,10 @@ public class MainActivity extends AppCompatActivity implements HomeFragment.soun
             Log.e("SENDING ARM MESSAGE", e.toString());
         }
     }
+
+
+    @Override
+    public void escalateRsp() {
+
+    }
 }

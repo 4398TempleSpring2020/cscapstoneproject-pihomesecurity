@@ -9,6 +9,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.Button;
 import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -94,6 +95,13 @@ public class DashboardFragment extends Fragment {
         //TextView adminComm = root.findViewById(R.id.textView4);
         GridView gridView = root.findViewById(R.id.gridViewInc);
         int set = -1;
+        Button button = root.findViewById(R.id.escalate);
+        button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+            }
+        });
         if (dataObj==null && dataArr==null) { //no incidents exist yet
             set = -1;
         } else if(dataObj == null){ //only one incident exists
@@ -168,6 +176,6 @@ public class DashboardFragment extends Fragment {
     }
 
     public interface onFragListener{
-
+        public void escalateRsp();
     }
 }
