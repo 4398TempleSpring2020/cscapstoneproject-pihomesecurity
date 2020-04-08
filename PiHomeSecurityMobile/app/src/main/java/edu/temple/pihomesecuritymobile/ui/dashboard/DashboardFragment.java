@@ -95,13 +95,15 @@ public class DashboardFragment extends Fragment {
         //TextView adminComm = root.findViewById(R.id.textView4);
         GridView gridView = root.findViewById(R.id.gridViewInc);
         int set = -1;
+
         Button button = root.findViewById(R.id.escalate);
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
+                mList.escalateRsp();
             }
         });
+
         if (dataObj==null && dataArr==null) { //no incidents exist yet
             set = -1;
         } else if(dataObj == null){ //only one incident exists
