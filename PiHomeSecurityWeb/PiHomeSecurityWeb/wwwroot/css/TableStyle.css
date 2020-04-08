@@ -35,6 +35,53 @@ td {
     color: black;
 }
 
+.adminCommentText {
+    position: relative;
+    display: inline-block;
+    color: black;
+
+}
+
+.adminCommentText:hover {
+    position: relative;
+    display: inline-block;
+    color: gray;
+    text-decoration: none;
+}
+
+.adminCommentText .adminCommentTip::after {
+    content: " ";
+    position: absolute;
+    top: 100%; /* At the bottom of the tooltip */
+    left: 50%;
+    margin-left: -5px;
+    border-width: 5px;
+    border-style: solid;
+    border-color: black transparent transparent transparent;
+}
+
+.adminCommentText .adminCommentTip {
+    visibility: hidden;
+    width: 120px;
+    background-color: black;
+    color: #fff;
+    text-align: center;
+    padding: 5px 0;
+    border-radius: 6px;
+    /* Position the tooltip text - see examples below! */
+    position: absolute;
+    z-index: 1;
+        
+    width: 120px;
+    bottom: 100%;
+    left: 50%;
+    margin-left: -60px; /* Use half of the width (120/2 = 60), to center the tooltip */
+}
+
+.adminCommentText:hover .adminCommentTip {
+    visibility: visible;
+}
+
 td:hover:before {
     content: "";
     position: absolute;
