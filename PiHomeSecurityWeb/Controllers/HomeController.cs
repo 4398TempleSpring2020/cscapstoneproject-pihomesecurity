@@ -1,4 +1,4 @@
-﻿                          using System;
+﻿using System;
 using System.Diagnostics;
 using System.Linq;
 using Microsoft.AspNetCore.Http;
@@ -147,6 +147,31 @@ namespace PiHomeSecurityWeb.Controllers
         {
             ViewBag.Id = HttpContext.Session.GetInt32("Id");
             return View();
+        }
+
+        [HttpGet]
+        public IActionResult EditComment(string id)
+        {
+            ViewBag.IncidentId = id;
+            return View();
+        }
+
+        [HttpPost]
+        public IActionResult EditComment(string id, IncidentData updatedIncident)
+        {
+            using (mypidbContext db = new mypidbContext())
+            {
+
+
+                IncidentData incident = db.IncidentData.Where(x => x.IncidentId == id).FirstOrDefault();
+
+                if(incident != null)
+                {
+                    incident.AdminComments = updatedIncident.AdminComments;
+                    db.SaveChanges();
+                }
+            }
+            return RedirectToAction("EmpTable");
         }
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]

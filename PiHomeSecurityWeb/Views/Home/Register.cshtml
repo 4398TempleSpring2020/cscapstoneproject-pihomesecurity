@@ -17,7 +17,7 @@
         <input asp-for="AccountPin" type="text" placeholder="Enter a PIN you will remember" class="input" id="lNameRegBox" />
         <input asp-for="PhoneNumber" type="text" placeholder="Phone Number" class="input" id="phoneRegBox" />
         <input type="submit" value="Register" class="input input--submit" />
-        <div class="logonErrorMsg">@ViewBag.Message</div>
+        <div class="logonErrorMsg" style="color:white">@ViewBag.Message</div>
 
         <label class="text text--small text--centered">Already have an account? <a asp-area="" asp-controller="Home" asp-action="Index">Sign in</a></label>
     </div>

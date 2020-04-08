@@ -43,6 +43,14 @@ a {
   border-color: #1861ac;
 }
 
+.commentEditBox {
+    overflow: auto;
+    resize: both;
+}
+.commentConfirmButton {
+    display: flex;
+}
+
 /* Sticky footer styles
 -------------------------------------------------- */
 html {

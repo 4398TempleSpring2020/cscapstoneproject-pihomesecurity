@@ -35,20 +35,42 @@ TableBuilder.incidents = function (data, id) {
         if (id == data[i].accountId) {
             var tableRow = document.createElement("tr");
             tableBody.appendChild(tableRow);
+
             for (var j = 0; j < Object.values(data[i]).length; j++) {
                 if (keysToShow.includes(Object.keys(data[i])[j])) {
                     console.log("Adding data to table:");
                     console.log("Row " + i + ", Key: " + Object.keys(data[i])[j] + ": " + Object.values(data[i])[j]);
                     var tableData = document.createElement("td");
+
                     if (Object.keys(data[i])[j] == "imagePaths") {
                         var tableLink = document.createElement("img");
-                        tableLink.src = TableBuilder.createImgLink(Object.values(data[i])[j]);
+                        var imgArray = TableBuilder.createImgArray(Object.values(data[i])[j]);
+                        tableLink.src = TableBuilder.createImgLink(imgArray[0]);
                         tableLink.style.width = "100px";
                         tableData.appendChild(tableLink);
+                    }
+                    else if (Object.keys(data[i])[j] == "incidentId") {
+                        tableData.innerHTML = Object.values(data[i])[j];
+                        var incidentId = Object.values(data[i])[j];
+                    }
+                    else if(Object.keys(data[i])[j] == "microphonePath"){
+                        var tableLink = document.createElement("a");
+                        tableLink.href = TableBuilder.createImgLink(Object.values(data[i])[j]);
+                        tableLink.innerHTML = "Click Here";
+                        tableData.appendChild(tableLink);
+                    }
+                    else if (Object.keys(data[i])[j] == "adminComments") {
+                        var text = document.createElement("a");
+                        text.className = "adminCommentText";
+                        text.innerHTML = Object.values(data[i])[j] + '<span class="adminCommentTip">Click to edit</span>';
+                        text.href = "EditComment?id="+ incidentId;
+                        tableData.appendChild(text);
+
                     }
                     else {
                         tableData.innerHTML = Object.values(data[i])[j];
                     }
+
                     tableRow.appendChild(tableData);
                 }
             }
@@ -117,6 +139,19 @@ TableBuilder.useraccounts = function (data, id) {
 }
 
 TableBuilder.createImgLink = function(urlTail){
-    var urlHead = "https://whateverworks.s3.us-east-2.amazonaws.com/";
+    var urlHead = "https://d1uydrbc3kb9ug.cloudfront.net/";
     return (urlHead + urlTail);
+}
+
+TableBuilder.createImgArray = function (imgString) {
+    console.log("FROM IMAGE ARRAY: " + imgString.split(",")[0]);
+    return imgString.split(","); 
+}
+
+TableBuilder.goToComment = function (id) {
+    console.log("in");
+    $.ajax({
+        url: '/Home/EditCommentAsync',
+        incidentId: id
+    });
 }

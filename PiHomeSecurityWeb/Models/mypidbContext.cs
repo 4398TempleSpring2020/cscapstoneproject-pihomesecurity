@@ -115,6 +115,10 @@ namespace PiHomeSecurityWeb.Models
                     .HasName("AccountUsername_UNIQUE")
                     .IsUnique();
 
+                entity.HasIndex(e => e.HomeAccountAddress)
+                    .HasName("HomeAccountAddress_UNIQUE")
+                    .IsUnique();
+
                 entity.Property(e => e.AccountId)
                     .HasColumnName("AccountID")
                     .HasColumnType("int(11)");
@@ -186,7 +190,9 @@ namespace PiHomeSecurityWeb.Models
 
                 entity.Property(e => e.IncidentId)
                     .HasColumnName("IncidentID")
-                    .HasColumnType("int(11)");
+                    .HasColumnType("varchar(32)")
+                    .HasCharSet("utf8")
+                    .HasCollation("utf8_general_ci");
 
                 entity.Property(e => e.AccountId)
                     .HasColumnName("AccountID")

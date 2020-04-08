@@ -1,12 +1,12 @@
 ﻿var TableBuilder = {};
 
-var keysToShow = ["incidentId", "dateRecorded", "badIncidentFlag", "lastAccessed", "adminComments",
-    "deletionBlockFlag", "imagePath", "friendlyMatchFlag"];
+TableBuilder.incidents = function (data, id) {
+    var keysToShow = ["incidentId", "dateRecorded", "badIncidentFlag", "lastAccessed", "adminComments",
+        "deletionBlockFlag", "microphonePath", "imagePaths", "friendlyMatchFlag", "ultrasonicPath"];
 
-var keysToDisplay = ["Incident Id", "Date Recorded", "Bad Incident Flag", "Last Accessed", "Admin Comments",
-    "Deletion Block Flag", "Image Path", "Friendly Match Flag"];
+    var keysToDisplay = ["Incident Id", "Date Recorded", "Bad Incident Flag", "Last Accessed", "Admin Comments",
+        "Deletion Block Flag", "Microphone Path", "Image Path", "Friendly Match Flag", "Ultrasonic Path"];
 
-TableBuilder.user = function(data, id) {
     console.log("Keys: " + Object.keys(data[0]));
     console.log("Values: " + Object.values(data[0]));
 
@@ -40,10 +40,22 @@ TableBuilder.user = function(data, id) {
                     console.log("Adding data to table:");
                     console.log("Row " + i + ", Key: " + Object.keys(data[i])[j] + ": " + Object.values(data[i])[j]);
                     var tableData = document.createElement("td");
-                    if (Object.keys(data[i])[j] == "imagePath") {
+                    if (Object.keys(data[i])[j] == "imagePaths") {
                         var tableLink = document.createElement("img");
-                        tableLink.src = Object.values(data[i])[j];
+                        var imgArray = TableBuilder.createImgArray(Object.values(data[i])[j]);
+                        tableLink.src = TableBuilder.createImgLink(imgArray[0]);
+                        tableLink.style.width = "100px";
                         tableData.appendChild(tableLink);
+                    }
+                    else if(Object.keys(data[i])[j] == "microphonePath"){
+                        var tableLink = document.createElement("a");
+                        tableLink.href = TableBuilder.createImgLink(Object.values(data[i])[j]);
+                        tableLink.innerHTML = "Click Here";
+                        tableData.appendChild(tableLink);
+                    }
+                    else if (Object.keys(data[i])[j] == "adminComments") {
+                        tableData.id = "editable";
+                        tableData.innerHTML = '<a asp-area="" asp-controller="Home" asp-action="EmpLogon">' + Object.values(data[i])[j] + '</a>';
                     }
                     else {
                         tableData.innerHTML = Object.values(data[i])[j];
@@ -55,14 +67,22 @@ TableBuilder.user = function(data, id) {
     }
 }
 
-TableBuilder.employee = function (data) {
-    var id = document.getElementById("accountIdDropDown").value;
-    console.log(data);
+TableBuilder.useraccounts = function (data, id) {
+    var keysToShow = ["userId", "username", "masterUserFlag", "dateCreated", "lastLogin"];
+
+    var keysToDisplay = ["User Id", "Username", "Master User?", "Date Created", "Last Login"];
+
+    console.log("Keys: " + Object.keys(data[0]));
+    console.log("Values: " + Object.values(data[0]));
+
+    console.log("1");
 
     var putTableHere = document.getElementById("tableHere");
     putTableHere.innerHTML = "";
     var tableEle = document.createElement("table");
     putTableHere.appendChild(tableEle);
+
+    console.log("2");
 
 
     var tableHead = document.createElement("thead");
@@ -71,36 +91,48 @@ TableBuilder.employee = function (data) {
     var headerRow = document.createElement("tr");
     tableHead.appendChild(headerRow);
 
+    console.log("3");
+
     for (var i = 0; i < keysToShow.length; i++) {
         var headerItem = document.createElement("th");
         headerItem.innerHTML = keysToDisplay[i];
         headerRow.appendChild(headerItem);
     }
 
+    console.log("4");
+
     var tableBody = document.createElement("tbody");
     tableEle.appendChild(tableBody);
 
+    console.log("5");
+
     for (var i = 0; i < data.length; i++) {
+        console.log("6 outter");
+        console.log("data[i].accountId: " + data[i].accountId);
+        console.log("id: " + id);
         if (id == data[i].accountId) {
             var tableRow = document.createElement("tr");
             tableBody.appendChild(tableRow);
             for (var j = 0; j < Object.values(data[i]).length; j++) {
+                console.log("6 inner");
                 if (keysToShow.includes(Object.keys(data[i])[j])) {
                     console.log("Adding data to table:");
                     console.log("Row " + i + ", Key: " + Object.keys(data[i])[j] + ": " + Object.values(data[i])[j]);
                     var tableData = document.createElement("td");
-                    if (Object.keys(data[i])[j] == "imagePath") {
-                        var tableLink = document.createElement("a");
-                        tableLink.innerHTML = Object.values(data[i])[j];
-                        tableLink.href = Object.values(data[i])[j];
-                        tableData.appendChild(tableLink);
-                    }
-                    else {
-                        tableData.innerHTML = Object.values(data[i])[j];
-                    }
+                    tableData.innerHTML = Object.values(data[i])[j];
                     tableRow.appendChild(tableData);
                 }
             }
         }
     }
+}
+
+TableBuilder.createImgLink = function(urlTail){
+    var urlHead = "https://d1uydrbc3kb9ug.cloudfront.net/";
+    return (urlHead + urlTail);
+}
+
+TableBuilder.createImgArray = function (imgString) {
+    console.log("FROM IMAGE ARRAY: " + imgString.split(",")[0]);
+    return imgString.split(","); 
 }

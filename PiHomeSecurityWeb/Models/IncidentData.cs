@@ -5,7 +5,7 @@ namespace PiHomeSecurityWeb.Models
 {
     public partial class IncidentData
     {
-        public int IncidentId { get; set; }
+        public string IncidentId { get; set; }
         public int AccountId { get; set; }
         public DateTime DateRecorded { get; set; }
         public sbyte? BadIncidentFlag { get; set; }
