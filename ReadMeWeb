@@ -1,0 +1,17 @@
+Install Microsoft Visual Studio Community
+https://visualstudio.microsoft.com/downloads/
+
+Install .NET 3.1
+https://dotnet.microsoft.com/download
+
+Install MySql for Visual Studio
+https://dev.mysql.com/downloads/windows/visualstudio/
+
+Files that you need from PiHomeSecurityWeb folder:
+-.vs
+-PiHomeSecurityWeb
+-PiHomeSecurityWeb.sln
+(Try creating a fresh project to see what I mean)
+
+Short Tutorial:
+https://docs.microsoft.com/en-us/visualstudio/get-started/csharp/tutorial-aspnet-core-ef-step-02?view=vs-2019
