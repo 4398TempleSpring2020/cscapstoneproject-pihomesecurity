@@ -74,6 +74,7 @@ namespace PiHomeSecurityWeb.Controllers
                     //Save user info to session
                     HttpContext.Session.SetInt32("Id", loggedInEmployee.EmployeeId);
                     HttpContext.Session.SetString("Username", loggedInEmployee.EmployeeUsername);
+                    ViewBag.Employee = "1";
 
                     return RedirectToAction("EmpTable");
                 }
@@ -172,6 +173,18 @@ namespace PiHomeSecurityWeb.Controllers
                 }
             }
             return RedirectToAction("EmpTable");
+        }
+
+        public IActionResult DeleteIncident(string id)
+        {
+            using (mypidbContext db = new mypidbContext())
+            {
+                IncidentData deleteMe = db.IncidentData.Where(x => x.IncidentId == id).FirstOrDefault();
+                db.IncidentData.Remove(deleteMe);
+                db.SaveChanges();
+                return RedirectToAction("EmpTable");
+            }
+
         }
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]

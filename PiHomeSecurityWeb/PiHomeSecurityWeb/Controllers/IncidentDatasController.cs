@@ -29,7 +29,7 @@ namespace PiHomeSecurityWeb.Controllers
 
         // GET: api/IncidentDatas/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<IncidentData>> GetIncidentData(int id)
+        public async Task<ActionResult<IncidentData>> GetIncidentData(string id)
         {
             var incidentData = await _context.IncidentData.FindAsync(id);
 
@@ -87,7 +87,7 @@ namespace PiHomeSecurityWeb.Controllers
 
         // DELETE: api/IncidentDatas/5
         [HttpDelete("{id}")]
-        public async Task<ActionResult<IncidentData>> DeleteIncidentData(int id)
+        public async Task<ActionResult<IncidentData>> DeleteIncidentData(string id)
         {
             var incidentData = await _context.IncidentData.FindAsync(id);
             if (incidentData == null)
