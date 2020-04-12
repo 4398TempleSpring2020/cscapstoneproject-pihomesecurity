@@ -95,7 +95,12 @@ public class MainActivity extends AppCompatActivity implements HomeFragment.soun
 
 
     @Override
-    public void escalateRsp() {
+    public void escalateRsp(JSONObject msg) {
+        client.send(msg);
+    }
 
+    @Override
+    public void resolveRsp(JSONObject msg) {
+        client.send(msg);
     }
 }

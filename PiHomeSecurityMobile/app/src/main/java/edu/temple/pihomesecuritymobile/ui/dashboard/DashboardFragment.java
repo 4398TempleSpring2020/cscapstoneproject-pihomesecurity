@@ -100,7 +100,29 @@ public class DashboardFragment extends Fragment {
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                mList.escalateRsp();
+                JSONObject msg = new JSONObject();;
+                try{
+                    msg.put("message_type","escalate");
+                    msg.put("rsp_type",1);
+                } catch (Exception e){
+                    Log.e("ESC_FAIL",e.toString());
+                }
+                mList.escalateRsp(msg);
+            }
+        });
+
+        Button button2 = root.findViewById(R.id.resolve);
+        button2.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                JSONObject msg = new JSONObject();;
+                try{
+                    msg.put("message_type","escalate");
+                    msg.put("rsp_type",0);
+                } catch (Exception e){
+                    Log.e("ESC_FAIL",e.toString());
+                }
+                mList.resolveRsp(msg);
             }
         });
 
@@ -178,6 +200,7 @@ public class DashboardFragment extends Fragment {
     }
 
     public interface onFragListener{
-        public void escalateRsp();
+        public void escalateRsp(JSONObject msg);
+        public void resolveRsp(JSONObject msg);
     }
 }
