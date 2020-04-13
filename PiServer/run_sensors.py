@@ -27,6 +27,7 @@ def run_everything(acc_id):
     '''
     bucket_name = "mypishield"
 
+    print('-------------- RUNNING SENSORS ---------------------')
     ret_list, anomaly_dict, instance_id, acc_id = run_sensors(10, acc_id, bucket_name)
 
     print('------------ Sensors Complete -----------------')
@@ -39,14 +40,15 @@ def run_everything(acc_id):
     
     print('------------ Data Acquired -----------------')
 
-    print('------------ Uploading to S3 -----------------')
+    print('------------ CONSTRUCTING RESPONSE -----------------')
 
     wasAlert = False
     trig_type = []
-    for key, val in anomaly_dict:
-        if val == True:
+    for sensor_type in anomaly_dict:
+        was_triggered = anomaly_dict[sensor_type]
+        if was_triggered:
             wasAlert = True
-            trig_type.append(key)
+            trig_type.append(sensor_type)
             
     ret_dict = {}
     for files, src in ret_list:
@@ -58,11 +60,10 @@ def run_everything(acc_id):
     ret_dict['wasAlert'] = wasAlert
     ret_dict['trigger_sensor_type'] = trig_type
     
-    print('------------ Upload Complete -----------------')
+    print('------------ RESPONSE CONSTRUCTED -----------------')
 
     print(ret_dict)
 
-    exit()
     return(ret_dict)
     # (ultra_bucket_filename[], mic_bucket_filename[], cam_bucket_filename[],
     # trigger_sensor_type, face_match_flag, incident_id, wasAlert

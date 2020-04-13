@@ -5,6 +5,7 @@ import os
 import RPi.GPIO as GPIO
 import time
 from ultra_proc import UltraProc
+from s3_client import S3_Client
 
 class Ultrasonic(sensor_interface):
     frequency = None
@@ -79,7 +80,7 @@ class Ultrasonic(sensor_interface):
         # check if anomaly in ultra data
         print('Ultrasonic anomaly detection')
         ultraProc = UltraProc()
-        isAnomaly = ultraProc.isAnomaly(files)
+        isAnomaly = ultraProc.isAnomaly(outfiles)
         anomaly_dict['ultra'] = isAnomaly
         
         # wait until every thread has processed their files
@@ -98,9 +99,9 @@ class Ultrasonic(sensor_interface):
         if(wasAnom):
             client = S3_Client()
             # upload to s3
-            for file_a in files:
+            for file_a in outfiles:
                 object_name = file_a.split('/')[-1]
-                object_name = str(acc_id) + "/" + instance_id + '/' + 'ultrasonic' + '/' + object_name
+                object_name = str(acc_id) + "/" + str(instance_id) + '/' + 'ultrasonic' + '/' + object_name
                 obj_list.append(object_name)
                 client.upload_file(file_a, bucket_name, object_name)
 

@@ -38,11 +38,16 @@ class Driver:
             "'trigger_sensor_type': ['camera']}")
         '''
 
+
+        print("------------- START SENSORS ---------------")
         ret_dict = run_everything(11)
+        print("------------- DONE SENSORS ---------------")
+
+        
         incident_id = str(ret_dict["instance_id"])
         face_match_flag = str(ret_dict["face_match_flag"])
         image_path = ret_dict["camera"]
-        mic_path = ret_dict["microphone"][0]
+        mic_path = ret_dict["mic"][0]
         ultrasonic_path = ret_dict["ultrasonic"][0]
         
         temp = IncidentData(11, incident_id, 1, image_path, mic_path, ultrasonic_path)

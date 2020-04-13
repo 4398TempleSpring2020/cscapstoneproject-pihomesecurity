@@ -45,7 +45,7 @@ class Sensor_Manager():
         return(ret_list[1:], anomaly_dict, instance_id, acc_id)
     
     def run_sensor(self, sensor, ret_list):
-        sensor.initiate(ret_list, os.getcwd() + "/")
+        sensor.initiate(ret_list, "./")
 
     def test_all(self):
         for sensor in self.sensors:

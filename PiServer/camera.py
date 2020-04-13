@@ -6,7 +6,7 @@ from time import sleep
 import os
 import time
 from cam_proc import CamProc
-
+from s3_client import S3_Client
 
 class Camera(sensor_interface):
     camera = None
@@ -43,7 +43,7 @@ class Camera(sensor_interface):
         # check if anomaly in cam data
         print('camera anomaly detection')
         camProc = CamProc()
-        isAnomaly = camProc.isAnomaly(files)
+        isAnomaly = camProc.isAnomaly(outfiles)
         anomaly_dict['cam'] = isAnomaly
         
         # wait until every thread has processed their files
@@ -62,9 +62,9 @@ class Camera(sensor_interface):
         if(wasAnom):
             client = S3_Client()
             # upload to s3
-            for file_a in files:
+            for file_a in outfiles:
                 object_name = file_a.split('/')[-1]
-                object_name = str(acc_id) + "/" + instance_id + '/' + 'camera' + '/' + object_name
+                object_name = str(acc_id) + "/" + str(instance_id) + '/' + 'camera' + '/' + object_name
                 obj_list.append(object_name)
                 client.upload_file(file_a, bucket_name, object_name)
 
@@ -94,4 +94,3 @@ class Camera(sensor_interface):
         self.duration = duration
         self.frequency = frequency
         self.isActive = False
-

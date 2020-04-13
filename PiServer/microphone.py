@@ -6,6 +6,7 @@ import os
 import soundfile as sf
 import time
 from mic_proc import MicProc
+from s3_client import S3_Client
 
 class Microphone(sensor_interface):
     frequency = None
@@ -40,7 +41,7 @@ class Microphone(sensor_interface):
         # check if anomaly in ultra data
         print('microphone anomaly detection')
         micProc = MicProc()
-        isAnomaly = micProc.isAnomaly(files)
+        isAnomaly = micProc.isAnomaly(outfiles)
         anomaly_dict['mic'] = isAnomaly
         
         # wait until every thread has processed their files
@@ -59,9 +60,9 @@ class Microphone(sensor_interface):
         if(wasAnom):
             client = S3_Client()
             # upload to s3
-            for file_a in files:
+            for file_a in outfiles:
                 object_name = file_a.split('/')[-1]
-                object_name = str(acc_id) + "/" + instance_id + '/' + 'microphone' + '/' + object_name
+                object_name = str(acc_id) + "/" + str(instance_id) + '/' + 'microphone' + '/' + object_name
                 obj_list.append(object_name)
                 client.upload_file(file_a, bucket_name, object_name)
 
