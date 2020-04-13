@@ -26,15 +26,16 @@
 <script src="~/js/TableBuilder.js"></script>
 <script src="~/js/DropDownBuilder.js"></script>
 <script src="~/js/SlideshowBuilder.js"></script>
+<script src="https://ajax.aspnetcdn.com/ajax/jQuery/jquery-3.4.1.min.js"></script>
 <script src="~/js/ajax.js"></script>
 <script src="~/js/test.js"></script>
 <script type="text/javascript">
     var homeAccount;
     document.addEventListener('DOMContentLoaded', (event) => {
-        ajax({
+        $.ajax({
             url: '/api/homeaccounts',
-            successFn: buildDropDown,
-            errorId: errorHere
+        }).done(function (data) {
+            DropDownBuilder(data); 
         });
     })
    
@@ -48,16 +49,13 @@
         var dropdown = document.getElementById("accountIdDropDown");
         var addressDiv = document.getElementById("address");
         addressDiv.innerHTML = data[dropdown.selectedIndex - 1].homeAccountAddress;
-        ajax({
+
+        $.ajax({
             url: '/api/incidentdatas',
-            successFn: buildEmployeeTable,
-            errorId: errorHere
+        }).done(function (data) {
+            TableBuilder.incidents(data, document.getElementById("accountIdDropDown").value);
         });
 
-    }
-
-    function buildEmployeeTable(data) {
-        TableBuilder.incidents(data, document.getElementById("accountIdDropDown").value);
     }
 </script>
 <!-- Generated at CSSPortal.com -->

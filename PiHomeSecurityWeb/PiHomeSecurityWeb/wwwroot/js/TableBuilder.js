@@ -66,11 +66,21 @@ TableBuilder.incidents = function (data, id) {
                             break;
 
                         case "imagePaths":
-                            var tableLink = document.createElement("img");
-                            var imgArray = TableBuilder.createImgArray(Object.values(data[i])[j]);
-                            tableLink.src = TableBuilder.createLink(imgArray[0]);
-                            tableLink.style.width = "100px";
-                            tableData.appendChild(tableLink);
+                            var imgArray = this.createImgArray(Object.values(data[i])[j]);
+                            tableData.innerHTML = `
+                                <a href=`+ imgArray[0] + ` data-lightbox="mygallery` + i.toString() + `"><img src=` + imgArray[0] + ` style="width:100px;"></a>
+                                <div style="display:none;">
+                                    <a href=`+ imgArray[1] + ` data-lightbox="mygallery` + i.toString() + `"><img src=` + imgArray[1] + ` style="width:100px;"></a>
+                                    <a href=`+ imgArray[2] + ` data-lightbox="mygallery` + i.toString() + `"><img src=` + imgArray[2] + ` style="width:100px;"></a>
+                                    <a href=`+ imgArray[3] + ` data-lightbox="mygallery` + i.toString() + `"><img src=` + imgArray[3] + ` style="width:100px;"></a>
+                                    <a href=`+ imgArray[4] + ` data-lightbox="mygallery` + i.toString() + `"><img src=` + imgArray[4] + ` style="width:100px;"></a>
+                                    <a href=`+ imgArray[5] + ` data-lightbox="mygallery` + i.toString() + `"><img src=` + imgArray[5] + ` style="width:100px;"></a>
+                                    <a href=`+ imgArray[6] + ` data-lightbox="mygallery` + i.toString() + `"><img src=` + imgArray[6] + ` style="width:100px;"></a>
+                                    <a href=`+ imgArray[7] + ` data-lightbox="mygallery` + i.toString() + `"><img src=` + imgArray[7] + ` style="width:100px;"></a>
+                                    <a href=`+ imgArray[8] + ` data-lightbox="mygallery` + i.toString() + `"><img src=` + imgArray[8] + ` style="width:100px;"></a>
+                                    <a href=`+ imgArray[9] + ` data-lightbox="mygallery` + i.toString() + `"><img src=` + imgArray[9] + ` style="width:100px;"></a>
+                                </div>
+                            `;
                             break;
 
                         case "ultrasonicPath":
@@ -89,10 +99,22 @@ TableBuilder.incidents = function (data, id) {
             }
 
             var deleteTableData = document.createElement("td");
-            var deleteLink = document.createElement("a");
-            deleteLink.innerHTML = "Delete";
-            deleteLink.href = 'DeleteIncident?id=' + incidentId; 
-            deleteTableData.appendChild(deleteLink);
+            var deleteButton = document.createElement("button");
+            deleteButton.innerHTML = "Delete";
+            deleteButton.onclick = function () {
+                var row = this.parentNode.parentNode;
+                var id = row.cells[0].innerHTML;
+                if (confirm("Would you like to delete incident: " + id)) {
+                    console.log("Running delete api");
+                    $.ajax({
+                        url: '/api/incidentdatas/' + id,
+                        method: 'DELETE'
+                    }).done(function () {
+                        row.parentNode.removeChild(row);
+                    });
+                }
+            }
+            deleteTableData.appendChild(deleteButton);
 
             tableRow.appendChild(deleteTableData);
 
@@ -166,6 +188,10 @@ TableBuilder.createLink = function(urlTail){
 }
 
 TableBuilder.createImgArray = function (imgString) {
-    console.log("FROM IMAGE ARRAY: " + imgString.split(",")[0]);
-    return imgString.split(","); 
+    var returnArray = [];
+    var splitString = imgString.split(",");
+    for (i = 0; i < splitString.length; i++) {
+        returnArray[i] = this.createLink(splitString[i]);
+    }
+    return returnArray;
 }

@@ -18,14 +18,14 @@
 <div id="errorHere"></div>
 
 <script src="~/js/TableBuilder.js"></script>
+<script src="~/js/SlideshowBuilder.js"></script>
 <script src="~/js/ajax.js"></script>
 <script src="~/js/test.js"></script>
 <script type="text/javascript">
     document.addEventListener('DOMContentLoaded', (event) => {
         ajax({
             url: '/api/incidentdatas',
-            successFn: buildDropDown,
-            errorId: "errorHere"
+            successFn: buildDropDown
         });
     })
 
