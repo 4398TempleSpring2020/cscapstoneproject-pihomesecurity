@@ -23,7 +23,11 @@ def lambda_handler(event, context):
         newColVal = event['newColVal']
         row = event['row']
         rowVal = event['rowVal']
-        #fix the rowVal to have apostrophes if it does not or SQL statement may fail
+        #fix the newColVal to have apostrophes if it does not or SQL statement may fail
+        if newColVal[0]!="'" and "current_timestamp" not in newColVal and "CURRENT_TIMESTAMP" not in newColVal:
+            tempValue = "'" + newColVal + "'"
+            newColVal = tempValue
+        #fix the valueMatch to have apostrophes if it does not or SQL statement may fail
         if rowVal[0]!="'":
             tempValue = "'" + rowVal + "'"
             rowVal = tempValue
