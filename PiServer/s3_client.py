@@ -16,9 +16,6 @@ class S3_Client():
             for line in sec_file:
                 keys.append((line.split(',')[-1]).strip())
 
-        print("|" + keys[0] + '|')
-        print("|" + keys[1] + "|")
-
         self.session = boto3.Session(
             aws_access_key_id=keys[0],
             aws_secret_access_key=keys[1]
@@ -59,6 +56,7 @@ class S3_Client():
 
         # Upload the file
         try:
+            print("Uploading [" + object_name + "]")
             response = self.s3_client.upload_file(file_name, bucket, object_name)
         except ClientError as e:
             logging.error(e)
