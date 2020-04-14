@@ -45,4 +45,5 @@ class MicProc():
         return(fcontents, fnames)
 
     def isAnomaly(self, files):
+        
         return True

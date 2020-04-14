@@ -129,4 +129,3 @@ class Ultrasonic(sensor_interface):
     def __init__(self, duration, frequency):
         self.duration = duration
         self.frequency = frequency
-

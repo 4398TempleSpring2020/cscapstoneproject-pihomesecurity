@@ -1,6 +1,8 @@
 import numpy as np
 import os
 import matplotlib.pyplot as plt
+from scipy import stats
+import statistics
 
 class UltraProc():
     def plot_signals(self, x, x_lab, fig_title):
@@ -48,4 +50,17 @@ class UltraProc():
         return(fcontents, fnames)
 
     def isAnomaly(self, files):
-        return False
+        data = []
+        with open(files[0], "r") as sfile:
+            lines = sfile.readlines()
+            for(line in lines):
+               data.append(int(line.strip())) 
+        
+        isAnom = False
+        std = statistics.stdev(data)
+        mean = statistics.mean(data)
+
+        z = np.abs(stats.zscore(data))
+        z_new = (z < 3).all(axis=0)
+        
+        return isAnom
