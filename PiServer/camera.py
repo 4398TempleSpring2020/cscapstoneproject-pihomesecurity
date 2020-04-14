@@ -74,7 +74,7 @@ class Camera(sensor_interface):
         
         end = time.time()
         print("Total ultra time to execute : [" + str(end - start) + "]")          
-            
+
     def connect(self):
         print('Camera Connecting')
         try:
