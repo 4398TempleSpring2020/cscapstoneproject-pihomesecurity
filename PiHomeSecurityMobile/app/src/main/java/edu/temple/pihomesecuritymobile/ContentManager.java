@@ -229,25 +229,8 @@ public class ContentManager {
     }
 
     /**
-     * Example of POST request to return all incident records in a table with the specified columns
-     * Sometimes this will return a result that contains a JSONArray
-     * so when you turn the string into a Response object, make sure to check if getBody() and getBodyArray()
-     * are null when you call them before you use the returned objects
-     *         String result = contentManager.getIncidents("4");
-     *         Log.d("test", "" + result);
-     *         Response response = contentManager.makeResponse(result);
-     *         Log.d("test", "" + response.getBodyString());
-     *         try {
-     *              if (response.getBody() != null) {
-     *                  Log.d("test", "" + response.getBody().getString("IncidentID"));
-     *              } else {
-     *                  for (int i=0; i<response.getBodyArray().length(); i++) {
-     *                      Log.d("test", "" + response.getBodyArray().getJSONObject(i).getString("IncidentID"));
-     *                  }
-     *              }
-     *         } catch (Exception e) {
-     *
-     *         }
+     * Example of POST request to return all incident records in a table with the specified columns;
+     * returns most recent incident row in database for the associated AccountID
      * @param homeID: HomeAccountID to get incident data for
      */
     public String getIncidents(String homeID) {

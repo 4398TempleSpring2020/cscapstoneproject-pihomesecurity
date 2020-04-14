@@ -169,8 +169,7 @@ public class Response {
                 e.printStackTrace();
             }
 
-
-            Log.d("date: ", "" + newDateTime);
+            //Log.d("date: ", "" + newDateTime);
             tokens[i] = "";
             tokens[i] = newDateTime + tokens_temp[1];
             //Log.d("date added back: ", "" + tokens[i]);
