@@ -1,6 +1,8 @@
 package edu.temple.pihomesecuritymobile.ui.dashboard;
 
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -13,6 +15,7 @@ import android.widget.Button;
 import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
@@ -96,8 +99,8 @@ public class DashboardFragment extends Fragment {
         GridView gridView = root.findViewById(R.id.gridViewInc);
         int set = -1;
 
-        Button button = root.findViewById(R.id.escalate);
-        button.setOnClickListener(new View.OnClickListener() {
+        Button escalateButton = root.findViewById(R.id.escalate);
+        escalateButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 JSONObject msg = new JSONObject();;
@@ -107,12 +110,24 @@ public class DashboardFragment extends Fragment {
                 } catch (Exception e){
                     Log.e("ESC_FAIL",e.toString());
                 }
-                mList.escalateRsp(msg);
+                new AlertDialog.Builder(parent)
+                        .setTitle("Confirm Action")
+                        .setMessage("You are about to escalate this incident which will contact the authorities. Are you sure you want to continue?")
+                        .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                mList.escalateRsp(msg);
+                                mngr.alertResponse(home_ID, "yes");
+                                Toast.makeText(parent.getApplicationContext(), "Sending escalation response.", Toast.LENGTH_SHORT).show();
+                            }
+                        })
+                        .setNegativeButton("Cancel", null)
+                        .show();
             }
         });
 
-        Button button2 = root.findViewById(R.id.resolve);
-        button2.setOnClickListener(new View.OnClickListener() {
+        Button resolveButton = root.findViewById(R.id.resolve);
+        resolveButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 JSONObject msg = new JSONObject();;
@@ -122,7 +137,19 @@ public class DashboardFragment extends Fragment {
                 } catch (Exception e){
                     Log.e("ESC_FAIL",e.toString());
                 }
-                mList.resolveRsp(msg);
+                new AlertDialog.Builder(parent)
+                        .setTitle("Confirm Action")
+                        .setMessage("You are about to mark this incident as resolved. Are you sure you want to continue?")
+                        .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                mList.resolveRsp(msg);
+                                mngr.alertResponse(home_ID, "no");
+                                Toast.makeText(parent.getApplicationContext(), "Sending de-escalation response.", Toast.LENGTH_SHORT).show();
+                            }
+                        })
+                        .setNegativeButton("Cancel", null)
+                        .show();
             }
         });
 
@@ -138,10 +165,10 @@ public class DashboardFragment extends Fragment {
                 incID.setText("No Incident data available.");
                 occDate.setText("");
             } else if(set ==1){
-                String IDstr = "Incident ID: "+ dataObj.getInt("IncidentID");
+                String IDstr = "Incident ID: "+ dataObj.getString("IncidentID");
                 incID.setText(IDstr);
+                Log.d("incidentID", "" + IDstr);
                 occDate.setText("Incident occurred at: "+dataObj.getString("DateRecorded"));
-                //adminComm.setText("Admin Comments:\n"+dataObj.getString("AdminComments"));
                 String paths = dataObj.getString("ImagePaths");
                 Log.d("paths", "" + paths);
                 final String[] imagePaths = paths.split(",");
@@ -160,9 +187,10 @@ public class DashboardFragment extends Fragment {
                     }
                 });
             } else if(set == 0){
-                JSONObject tmp = dataArr.getJSONObject(dataArr.length()-1);
-                String IDstr = "Incident ID: "+ tmp.getInt("IncidentID");
+                JSONObject tmp = dataArr.getJSONObject(0);
+                String IDstr = "Incident ID: "+ tmp.getString("IncidentID");
                 incID.setText(IDstr);
+                Log.d("incidentID", "" + IDstr);
                 occDate.setText("Incident occurred at: "+tmp.getString("DateRecorded"));
                 //adminComm.setText("Admin Comments:\n"+tmp.getString("AdminComments"));
                 String paths = tmp.getString("ImagePaths");

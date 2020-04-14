@@ -2,6 +2,7 @@ package edu.temple.pihomesecuritymobile;
 
 
 import android.os.AsyncTask;
+import android.util.Log;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -249,6 +250,10 @@ public class ContentManager {
      * @param homeID: HomeAccountID to get incident data for
      */
     public String getIncidents(String homeID) {
+        if (homeID == null) {
+            Log.e("error", "alert message could not be sent to users because homeID is null");
+            return null;
+        }
         JSONObject params = new JSONObject();
         try {
             params.put("homeID", homeID);
@@ -265,6 +270,10 @@ public class ContentManager {
      * @return
      */
     public String alertResponse(String homeID, String responseChosen) {
+        if (homeID == null) {
+            Log.e("error", "alert message could not be sent to users because homeID is null");
+            return null;
+        }
         JSONObject params = new JSONObject();
         try {
             params.put("homeID", homeID);
