@@ -50,7 +50,7 @@ public class IncidentImageAdapter extends BaseAdapter {
             imageView = (ImageView) convertView;
         }
         String url = url_prefix + images[position];
-        Log.d("image url", "" + url);
+        //Log.d("image url", "" + url);
 
         Picasso.get().load(url).into(imageView);
         return imageView;

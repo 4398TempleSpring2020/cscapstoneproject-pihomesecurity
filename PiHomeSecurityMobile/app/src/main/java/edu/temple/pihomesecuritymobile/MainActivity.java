@@ -37,6 +37,13 @@ public class MainActivity extends AppCompatActivity implements HomeFragment.soun
         if(formBundle != null){
             String form[] = formBundle.getStringArray("form");
             sharePrefs.edit().putString("HomeID",form[0]).apply();
+            sharePrefs.edit().putString("UserName",form[1]).apply();
+        }
+        String username = sharePrefs.getString("UserName", "");
+        if (username!=null) {
+            Log.d("username", "" + username);
+            ContentManager contentManager = new ContentManager();
+            contentManager.updateStatement("UserAccounts", "LastLogin", "current_timestamp()", "Username", username);
         }
         // Passing each menu ID as a set of Ids because each
         // menu should be considered as top level destinations.
@@ -50,7 +57,7 @@ public class MainActivity extends AppCompatActivity implements HomeFragment.soun
     }
 
 
-    /*
+    /**
     * Method: soundAlarm()
     * Purpose: to make the alarm start playing a noise to scare off an intruder
     * Parameters: None
@@ -70,7 +77,7 @@ public class MainActivity extends AppCompatActivity implements HomeFragment.soun
         Toast.makeText(getApplicationContext(),"Sounding Alarm", Toast.LENGTH_SHORT).show();
     }
 
-    /*
+    /**
      * Method: setAlarm()
      * Purpose: to make the security system activate and deactivate
      * Parameters: setFlag true if alarm should be turned on or false if it should be turned off

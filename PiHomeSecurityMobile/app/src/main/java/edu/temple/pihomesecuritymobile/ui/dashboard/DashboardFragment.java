@@ -43,6 +43,7 @@ public class DashboardFragment extends Fragment {
     Context parent;
     onFragListener mList;
     String home_ID;
+    String current_username;
 
     @Override
     public void onCreate(Bundle savedInstanceState){
@@ -57,6 +58,8 @@ public class DashboardFragment extends Fragment {
         mngr = new ContentManager();
         // Place API code to get data to display
         String HomeID = sharePrefs.getString("HomeID","");
+        current_username = sharePrefs.getString("UserName", "");
+        Log.d("username", "" + current_username);
         if(HomeID.equals("")){
             errMess = "HomeID was not found";
         } else {
@@ -116,7 +119,7 @@ public class DashboardFragment extends Fragment {
                         .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
-                                mList.escalateRsp(msg);
+                                //mList.escalateRsp(msg);
                                 mngr.alertResponse(home_ID, "yes");
                                 Toast.makeText(parent.getApplicationContext(), "Sending escalation response.", Toast.LENGTH_SHORT).show();
                             }
@@ -143,7 +146,7 @@ public class DashboardFragment extends Fragment {
                         .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
-                                mList.resolveRsp(msg);
+                                //mList.resolveRsp(msg);
                                 mngr.alertResponse(home_ID, "no");
                                 Toast.makeText(parent.getApplicationContext(), "Sending de-escalation response.", Toast.LENGTH_SHORT).show();
                             }
@@ -165,10 +168,16 @@ public class DashboardFragment extends Fragment {
                 incID.setText("No Incident data available.");
                 occDate.setText("");
             } else if(set ==1){
-                String IDstr = "Incident ID: "+ dataObj.getString("IncidentID");
-                incID.setText(IDstr);
+                String IDstr = dataObj.getString("IncidentID");
+                incID.setText( "Incident ID: " + IDstr);
                 Log.d("incidentID", "" + IDstr);
-                occDate.setText("Incident occurred at: "+dataObj.getString("DateRecorded"));
+                String incDate = dataObj.getString("DateRecorded");
+                occDate.setText("Incident occurred at: " + incDate);
+                mngr.updateStatement("IncidentData", "LastAccessed", "current_timestamp()", "IncidentID", IDstr);
+
+                if (current_username!=null) {
+                    mngr.updateStatement("IncidentData", "UserAccessed", current_username, "IncidentID", IDstr);
+                }
                 String paths = dataObj.getString("ImagePaths");
                 Log.d("paths", "" + paths);
                 final String[] imagePaths = paths.split(",");
@@ -188,11 +197,16 @@ public class DashboardFragment extends Fragment {
                 });
             } else if(set == 0){
                 JSONObject tmp = dataArr.getJSONObject(0);
-                String IDstr = "Incident ID: "+ tmp.getString("IncidentID");
-                incID.setText(IDstr);
+                String IDstr = tmp.getString("IncidentID");
+                incID.setText( "Incident ID: " + IDstr);
                 Log.d("incidentID", "" + IDstr);
-                occDate.setText("Incident occurred at: "+tmp.getString("DateRecorded"));
-                //adminComm.setText("Admin Comments:\n"+tmp.getString("AdminComments"));
+                String incDate = tmp.getString("DateRecorded");
+                occDate.setText("Incident occurred at: " + incDate);
+                mngr.updateStatement("IncidentData", "LastAccessed", "current_timestamp()", "IncidentID", IDstr);
+
+                if (current_username!=null) {
+                    mngr.updateStatement("IncidentData", "UserAccessed", current_username, "IncidentID", IDstr);
+                }
                 String paths = tmp.getString("ImagePaths");
                 Log.d("paths", "" + paths);
                 final String[] imagePaths = paths.split(",");
@@ -215,7 +229,6 @@ public class DashboardFragment extends Fragment {
         } catch(JSONException e){
             incID.setText(errMess);
             occDate.setText("");
-            //adminComm.setText("");
         }
 
         return root;
@@ -228,7 +241,7 @@ public class DashboardFragment extends Fragment {
     }
 
     public interface onFragListener{
-        public void escalateRsp(JSONObject msg);
-        public void resolveRsp(JSONObject msg);
+        void escalateRsp(JSONObject msg);
+        void resolveRsp(JSONObject msg);
     }
 }

@@ -213,7 +213,7 @@ public class ContentManager {
      * @param columnMatch: column to match value with
      * @param valueMatch: value to match
      */
-    protected String updateStatement(String table, String newColumn, String newValue, String columnMatch, String valueMatch) {
+    public String updateStatement(String table, String newColumn, String newValue, String columnMatch, String valueMatch) {
         JSONObject params = new JSONObject();
         try {
             params.put(update_keys[0], table);
@@ -221,6 +221,7 @@ public class ContentManager {
             params.put(update_keys[2], newValue);
             params.put(update_keys[3], columnMatch);
             params.put(update_keys[4], valueMatch);
+            //Log.d("update json", "" + params.toString());
         } catch (JSONException e) {
             e.printStackTrace();
         }
