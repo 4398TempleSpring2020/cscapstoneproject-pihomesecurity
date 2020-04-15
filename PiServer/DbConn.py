@@ -63,9 +63,7 @@ class DbConn:
                 else:
                     image_path_whole += name + ","
 
-            insert_data = "('" + str(incident_data.account_id) + "', '" + str(incident_data.incident_id) + "', '" + str(
-                incident_data.match_flag) + "', '" + image_path_whole + "', '" + str(
-                incident_data.mic_path) + "', '" + str(incident_data.sonic_path) + "')"
+            insert_data = "('" + str(incident_data.account_id) + "', '" + str(incident_data.incident_id) + "', '" + str(incident_data.match_flag) + "', '" + image_path_whole + "', '" + str(incident_data.mic_path) + "', '" + str(incident_data.sonic_path) + "')"
             insert_statement2 = insert_statement + " VALUES " + insert_data
 
             print('--------------------------------------------------------')
@@ -93,7 +91,7 @@ class DbConn:
 
     def test_integration(self):
         # time.sleep(2)
-
+        
         ret_dict = ast.literal_eval(
             "{'microphone': ['123/1585615830.5592604/microphone/audio.wav'], "
             "'camera': ['123/1585615830.5592604/camera/image_0.jpg', '123/1585615830.5592604/camera/image_1.jpg',"
