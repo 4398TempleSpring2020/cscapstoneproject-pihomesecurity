@@ -33,6 +33,13 @@ public class MainActivity extends AppCompatActivity implements HomeFragment.soun
         client = new Client("3.16.163.252",5001);
         clientThread = new ClientThread(client);
         clientThread.start();
+        JSONObject json = new JSONObject();
+        try{
+            json.put("pi_mobile","pi_mobile");
+            client.send("pi_mobile");
+        } catch (Exception e){
+
+        }
         sharePrefs = getSharedPreferences("PREF_NAME",MODE_PRIVATE);
         if(formBundle != null){
             String form[] = formBundle.getStringArray("form");
@@ -70,7 +77,7 @@ public class MainActivity extends AppCompatActivity implements HomeFragment.soun
         try {
             message.put("message_type", "alert_message");
             message.put("alert_type","sound_alarm");
-            client.send(message);
+            //client.send(message);
         } catch (JSONException e){
             Log.e("SENDING ALARM MESSAGE", e.toString());
         }
@@ -94,7 +101,7 @@ public class MainActivity extends AppCompatActivity implements HomeFragment.soun
             } else {
                 message.put("arm_type",0);
             }
-            client.send(message);
+            client.send("ARM");
         } catch (JSONException e){
             Log.e("SENDING ARM MESSAGE", e.toString());
         }
@@ -103,11 +110,11 @@ public class MainActivity extends AppCompatActivity implements HomeFragment.soun
 
     @Override
     public void escalateRsp(JSONObject msg) {
-        client.send(msg);
+        //client.send(msg);
     }
 
     @Override
     public void resolveRsp(JSONObject msg) {
-        client.send(msg);
+        //client.send(msg);
     }
 }
