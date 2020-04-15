@@ -42,4 +42,6 @@ class LogicHandlerThread(threading.Thread):
                                     ultrasonic_path)  # create incident data
                 self.shared_resources.db_conn.connection = self.shared_resources.db_conn.connect()  # connect
                 print(self.shared_resources.db_conn.insert_incident_data(temp))  # send to db and print
+                self.shared_resources.is_ongoing_threat = True
+                self.shared_resources.record_incident = False
 
