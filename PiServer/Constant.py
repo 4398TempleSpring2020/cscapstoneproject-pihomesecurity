@@ -18,10 +18,11 @@ class Constant:
 
     # Database connection
     host = "my-pi-database.cxfhfjn3ln5w.us-east-2.rds.amazonaws.com"
+    host_ip = "3.16.163.252"
     uname = "pi_user"
     password = "totallysecurepw!"
     db_name = "mypidb"
 
     # Pi server
-    ACCOUNT_ID = 5
-    port = 5000
+    ACCOUNT_ID = 4
+    port = 5001
