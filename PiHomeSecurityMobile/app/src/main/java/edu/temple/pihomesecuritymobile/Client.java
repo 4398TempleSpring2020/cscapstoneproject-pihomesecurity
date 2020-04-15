@@ -89,9 +89,9 @@ public class Client {
 
 
 
-    public boolean send(JSONObject json){
+    public boolean send(String stuff){
         try {
-            this.buffer.write(json.toString());
+            this.buffer.write(stuff);
             this.buffer.flush();
             return true;
         }

@@ -13,9 +13,9 @@ class LogicHandlerThread(threading.Thread):
         
     def run(self):
         while True:
-            record_incident = False
+            #record_incident = False
             self.shared_resources.q_lock.acquire()  # get lock for shared resource is_armed
-            if self.shared_resources.is_armed is True:
+            if self.shared_resources.is_armed is True and self.shared_resources.is_ongoing_threat is False:
                 ret_dict = run_everything(11)
 
                 # create pipe
@@ -29,11 +29,10 @@ class LogicHandlerThread(threading.Thread):
                 # parent can now continue on as normal
                 
                 if ret_dict["wasAlert"] is True:  # reduce time holding lock
-                    record_incident = True
-                    self.shared_resources.is_ongoing_threat = True
+                    self.shared_resources.record_incident = True
                     self.shared_resources.was_alert = True
             self.shared_resources.q_lock.release()  # release lock
-            if record_incident is True:
+            if self.shared_resources.record_incident is True and self.shared_resources.is_ongoing_threat is False:
                 incident_id = str(ret_dict["instance_id"])
                 face_match_flag = str(ret_dict["face_match_flag"])
                 image_path = ret_dict["camera"]
@@ -43,5 +42,4 @@ class LogicHandlerThread(threading.Thread):
                                     ultrasonic_path)  # create incident data
                 self.shared_resources.db_conn.connection = self.shared_resources.db_conn.connect()  # connect
                 print(self.shared_resources.db_conn.insert_incident_data(temp))  # send to db and print
-                # log to text file
-                #self.shared_resources.db_conn.disconnect()  # disconnect
+

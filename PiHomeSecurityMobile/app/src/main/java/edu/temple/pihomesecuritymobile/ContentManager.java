@@ -1,8 +1,8 @@
 package edu.temple.pihomesecuritymobile;
 
 
-import android.content.Context;
 import android.os.AsyncTask;
+import android.util.Log;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -23,33 +23,26 @@ import edu.temple.pihomesecuritymobile.models.Response;
 public class ContentManager {
     final public int records_not_exist = 411;
     final public int insertError = 412;
-    final public int deleteError = 414;
     final public int updateError = 415;
-    final public int selectError = 413;
 
     //the base url
     final private String base_url = "https://jlt49k4n90.execute-api.us-east-2.amazonaws.com/beta";
-    private static AsyncListener activity;
 
     //resource paths
     final private String show_record_resource="/show";
     final private String insert_resource="/insert";
     final private String update_resource="/update";
-    final private String delete_resource="/delete";
     final private String incident_resource="/incidents";
+    final private String response_resource="/alert-response";
+
 
     //resource required keys in JSONObject
-    final private String[] show_all_keys = new String[] {"table", "columns"};
     final private String[] show_record_keys = new String[] {"table", "columns", "columnMatch", "valueMatch"};
     final private String[] insert_keys = new String[] {"table", "columns", "values"};
     final private String[] update_keys = new String[] {"table", "column", "newColVal", "row", "rowVal"};
-    final private String[] delete_keys = new String[] {"table", "column", "value"};
 
     public ContentManager() { }
 
-    public ContentManager(Context context) {
-        this.activity = (AsyncListener)context;
-    }
     /**
      * This method is the one that gets called from the Activity that needs to make a POST/GET request
      * @param method: "GET" or "POST"
@@ -147,10 +140,6 @@ public class ContentManager {
         @Override
         protected void onPostExecute(String result) {
             super.onPostExecute(result);
-            //convert the string to a JSONObject
-            if (activity != null) {
-                activity.doAfterAsync(makeResponse(result));
-            }
         }
     }
 
@@ -173,39 +162,6 @@ public class ContentManager {
             e.printStackTrace();
         }
         return rsp;
-    }
-
-    /**
-     * Interface required to get the data returned
-     */
-    public interface AsyncListener{
-        void doAfterAsync(Response nresponse);
-    }
-
-    /**
-     * Example of GET request
-     * Returns a list of tables in the database, isn't really meant for us
-     * SQL used in lambda: SHOW TABLES;
-     */
-    String showTables() {
-        return requestData("GET", "", new JSONObject());
-    }
-
-    /**
-     * Example of POST request to return all records in a table with the specified columns
-     * SQL used in lambda: SELECT columns FROM table;
-     * @param table: table to get records from
-     * @param columns: columns to show
-     */
-    String selectStatement(String table, String columns) {
-        JSONObject params = new JSONObject();
-        try {
-            params.put(show_all_keys[0], table);
-            params.put(show_all_keys[1], columns);
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-        return requestData("POST", "", params);
     }
 
     /**
@@ -249,25 +205,6 @@ public class ContentManager {
     }
 
     /**
-     * Example of a POST statement that deletes a record matching a specified value
-     * SQL used in lambda: DELETE FROM table WHERE column = value;
-     * @param table: table to delete record from
-     * @param columnMatch: column to match value with
-     * @param valueMatch: value to match
-     */
-    protected String deleteStatement(String table, String columnMatch, String valueMatch) {
-        JSONObject params = new JSONObject();
-        try {
-            params.put(delete_keys[0], table);
-            params.put(delete_keys[1], columnMatch);
-            params.put(delete_keys[2], valueMatch);
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-        return requestData("POST", delete_resource, params);
-    }
-
-    /**
      * Example of a POST statement that updates a record matching a specified value
      * SQL used in lambda: UPDATE table SET column = newColValue WHERE row = rowVal;
      * @param table: table to update
@@ -276,7 +213,7 @@ public class ContentManager {
      * @param columnMatch: column to match value with
      * @param valueMatch: value to match
      */
-    protected String updateStatement(String table, String newColumn, String newValue, String columnMatch, String valueMatch) {
+    public String updateStatement(String table, String newColumn, String newValue, String columnMatch, String valueMatch) {
         JSONObject params = new JSONObject();
         try {
             params.put(update_keys[0], table);
@@ -284,6 +221,7 @@ public class ContentManager {
             params.put(update_keys[2], newValue);
             params.put(update_keys[3], columnMatch);
             params.put(update_keys[4], valueMatch);
+            //Log.d("update json", "" + params.toString());
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -291,28 +229,15 @@ public class ContentManager {
     }
 
     /**
-     * Example of POST request to return all incident records in a table with the specified columns
-     * Sometimes this will return a result that contains a JSONArray
-     * so when you turn the string into a Response object, make sure to check if getBody() and getBodyArray()
-     * are null when you call them before you use the returned objects
-     *         String result = contentManager.getIncidents("4");
-     *         Log.d("test", "" + result);
-     *         Response response = contentManager.makeResponse(result);
-     *         Log.d("test", "" + response.getBodyString());
-     *         try {
-     *              if (response.getBody() != null) {
-     *                  Log.d("test", "" + response.getBody().getString("IncidentID"));
-     *              } else {
-     *                  for (int i=0; i<response.getBodyArray().length(); i++) {
-     *                      Log.d("test", "" + response.getBodyArray().getJSONObject(i).getString("IncidentID"));
-     *                  }
-     *              }
-     *         } catch (Exception e) {
-     *
-     *         }
+     * Example of POST request to return all incident records in a table with the specified columns;
+     * returns most recent incident row in database for the associated AccountID
      * @param homeID: HomeAccountID to get incident data for
      */
     public String getIncidents(String homeID) {
+        if (homeID == null) {
+            Log.e("error", "alert message could not be sent to users because homeID is null");
+            return null;
+        }
         JSONObject params = new JSONObject();
         try {
             params.put("homeID", homeID);
@@ -320,6 +245,27 @@ public class ContentManager {
             e.printStackTrace();
         }
         return requestData("POST", incident_resource, params);
+    }
+
+    /**
+     * sends a notification to all users when a mobile user responds to an alert
+     * @param homeID the home account id
+     * @param responseChosen "yes" if authorities are to be contacted and "no" if authorities not to be contacted
+     * @return
+     */
+    public String alertResponse(String homeID, String responseChosen) {
+        if (homeID == null) {
+            Log.e("error", "alert message could not be sent to users because homeID is null");
+            return null;
+        }
+        JSONObject params = new JSONObject();
+        try {
+            params.put("homeID", homeID);
+            params.put("resp", responseChosen);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return requestData("POST", response_resource, params);
     }
 }
 

@@ -3,7 +3,6 @@ package edu.temple.pihomesecuritymobile;
 import android.content.Context;
 import android.util.Log;
 
-import com.amazonaws.auth.AWSCredentialsProvider;
 import com.amazonaws.auth.CognitoCachingCredentialsProvider;
 import com.amazonaws.mobile.config.AWSConfiguration;
 import com.amazonaws.mobileconnectors.s3.transferutility.TransferListener;
@@ -13,14 +12,12 @@ import com.amazonaws.mobileconnectors.s3.transferutility.TransferUtility;
 import com.amazonaws.regions.Regions;
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.AmazonS3Client;
-import com.amazonaws.services.s3.model.CannedAccessControlList;
 
 import java.io.File;
 
 public class S3Manager {
     private Context context;
     final private String bucket = "mypishield";
-    private String path;
     private String homeID;
     private CognitoCachingCredentialsProvider credentialsProvider;
 
@@ -80,4 +77,5 @@ public class S3Manager {
             });
         }
     }
+
 }
