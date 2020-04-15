@@ -4,7 +4,7 @@ import socket
 from Server import Server
 from Server import ServerThread
 from Constant import Constant
-# from PiServer.run_sensors import run_everything
+# from PiSystem.run_sensors import run_everything
 
 '''
 Public DNS (IPv4): ec2-3-16-163-252.us-east-2.compute.amazonaws.com

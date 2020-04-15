@@ -1,4 +1,4 @@
-from PiServer.Message.Imesssage import Imessage
+from PiSystem.Message.Imesssage import Imessage
 
 
 class AlertMessage(Imessage):
