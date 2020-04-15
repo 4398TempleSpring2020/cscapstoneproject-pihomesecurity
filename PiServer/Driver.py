@@ -10,12 +10,10 @@ from Constant import Constant
 from Client import Client
 from Client import ClientThread
 from MessageHandlerThread import MessageHandlerThread
-#from LogicHandlerThread import LogicHandlerThread
-
-
+from LogicHandlerThread import LogicHandlerThread
 
 class Driver:
-
+    
     def __init__(self, q, db):          # add variables to enable sharing with entire program
         self.message_q = q              # queue for holding response from mobile
         self.q_lock = threading.Lock()  # lock for q sync
@@ -24,9 +22,7 @@ class Driver:
         self.was_alert = False          # comes lukes code on run everything return
         self.is_ongoing_threat = False  # is there a ongoing threat?
         self.record_incident = False    # should i record incident?
-
-
-
+   
 
 if __name__ == '__main__':
     # global shared resources
@@ -39,5 +35,6 @@ if __name__ == '__main__':
     pi_system_thread.start()
     message_handler_thread = MessageHandlerThread(shared_resources)
     message_handler_thread.start()
-    #logic_handler_thread = LogicHandlerThread(shared_resources)    # comment out if you do not have sensors
-    #logic_handler_thread.start()                                   # comment out if you do not have sensors
+
+    logic_handler_thread = LogicHandlerThread(shared_resources)    # comment out if you do not have sensors
+    logic_handler_thread.start()                                   # comment out if you do not have sensors
