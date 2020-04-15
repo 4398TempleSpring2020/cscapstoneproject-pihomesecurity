@@ -105,7 +105,7 @@ public class Client {
             InetAddress ip = InetAddress.getByName("localhost");
             System.out.println(ip);
             // establish the connection with server port 5056
-            this.client_socket = new Socket("192.168.0.11", 5000);
+            this.client_socket = new Socket(host, port);
             Log.d("client_test","connected to server");
             this.output = this.client_socket.getOutputStream();
             this.writer = new OutputStreamWriter(this.output);
