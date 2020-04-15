@@ -2,15 +2,13 @@
 import os
 import sys
 
+from Constant import Constant
+from IncidentData import IncidentData
+
 sys.path.append('..')
-
 import ast
-
 import pymysql
 
-from Constants.Constant import Constant
-from DbConnection.IncidentData import IncidentData
-from run_sensors import run_everything
 
 class DbConn:
     # host = None  # "my-pi-database.cxfhfjn3ln5w.us-east-2.rds.amazonaws.com"
@@ -25,7 +23,7 @@ class DbConn:
         self.uname = uname
         self.password = password
         self.db_name = db_name
-        self.connection = self.connect()
+        self.connection = None
 
     def connect(self):
         # Open database connection
@@ -51,7 +49,7 @@ class DbConn:
     def insert_incident_data(self, incident_data):
         """
         This function fetches content from mysql RDS instance
-        """        
+        """
         result = []
         self.connection.autocommit(True)
         with self.connection.cursor() as cur:
@@ -59,12 +57,11 @@ class DbConn:
             insert_statement = "INSERT INTO IncidentData (AccountID, IncidentID, FriendlyMatchFlag, ImagePaths, MicrophonePath, UltrasonicPath) "
 
             image_path_whole = ''
-            for i, name in enumerate(incident_data.image_path,1):
-                if(i == len(incident_data.image_path)):
+            for i, name in enumerate(incident_data.image_path, 1):
+                if (i == len(incident_data.image_path)):
                     image_path_whole += name
                 else:
                     image_path_whole += name + ","
-                    
 
             insert_data = "('" + str(incident_data.account_id) + "', '" + str(incident_data.incident_id) + "', '" + str(incident_data.match_flag) + "', '" + image_path_whole + "', '" + str(incident_data.mic_path) + "', '" + str(incident_data.sonic_path) + "')"
             insert_statement2 = insert_statement + " VALUES " + insert_data
@@ -94,8 +91,7 @@ class DbConn:
 
     def test_integration(self):
         # time.sleep(2)
-
-
+        
         ret_dict = ast.literal_eval(
             "{'microphone': ['123/1585615830.5592604/microphone/audio.wav'], "
             "'camera': ['123/1585615830.5592604/camera/image_0.jpg', '123/1585615830.5592604/camera/image_1.jpg',"
@@ -110,12 +106,12 @@ class DbConn:
             "'wasAlert': True, "
             "'trigger_sensor_type': ['camera']}")
 
-        #ret_dict = run_everything(123)
+        # ret_dict = run_everything(123)
         incident_id = str(ret_dict["instance_id"])
         face_match_flag = str(ret_dict["face_match_flag"])
         image_path = ret_dict["camera"]
         mic_path = ret_dict["microphone"][0]
         ultrasonic_path = ret_dict["ultrasonic"][0]
 
-        temp = IncidentData(Constant.ACCOUNT_ID, incident_id, 1, image_path, mic_path,ultrasonic_path)
+        temp = IncidentData(Constant.ACCOUNT_ID, incident_id, 1, image_path, mic_path, ultrasonic_path)
         print(self.connection.insert_incident_data(temp))

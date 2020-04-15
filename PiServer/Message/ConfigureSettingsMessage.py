@@ -1,4 +1,4 @@
-from PiServer.Constants.Constant import Constant
+from PiServer.Constant import Constant
 from PiServer.Message.Imesssage import Imessage
 
 

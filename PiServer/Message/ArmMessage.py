@@ -1,4 +1,4 @@
-from PiServer.Constants.Constant import Constant
+from PiServer.Constant import Constant
 from PiServer.Message.Imesssage import Imessage
 
 
@@ -16,8 +16,7 @@ class ArmMessage(Imessage):
         return self
 
     def set_data(self, arm_data):
-        if arm_data.alert_type == Constant.FACE_RECOGNIZED_ALERT or \
-                arm_data.alert_type == Constant.FACE_NOT_RECOGNIZED_ALERT or arm_data.alert_type is None:
+        if arm_data.alert_type == Constant.FACE_RECOGNIZED_ALERT or arm_data.alert_type == Constant.FACE_NOT_RECOGNIZED_ALERT or arm_data.alert_type is None:
             self.arm_type = arm_data.arm_type
 
     def get_message_type(self):
