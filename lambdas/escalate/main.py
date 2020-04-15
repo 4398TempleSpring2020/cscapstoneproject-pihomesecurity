@@ -94,7 +94,7 @@ def lambda_handler(event, context):
     appNotMessage = "The incident has been auto-escalated and authorities will be contacted immediately."
     body = incAlertMessage + "\n" + appNotMessage
     for number in phonenums:
-        from_number = "+14784019052"
+        from_number = os.environ.get("FROM_NUMBER")
         populated_url = TWILIO_SMS_URL.format(TWILIO_ACCOUNT_SID)
         post_params = {"To": number, "From": from_number, "Body": body}
     
