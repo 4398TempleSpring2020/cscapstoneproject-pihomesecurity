@@ -14,7 +14,7 @@ class LogicHandlerThread(threading.Thread):
     def run(self):
         while True:
             record_incident = False
-            ret_dict = run_everything(4)
+            ret_dict = run_everything(11)
             self.shared_resources.q_lock.acquire()  # get lock for shared resource is_armed
             if ret_dict["wasAlert"] is True and self.shared_resources.is_armed is True:  # reduce time holding lock
                 record_incident = True
