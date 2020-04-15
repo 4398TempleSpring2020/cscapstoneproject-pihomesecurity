@@ -9,16 +9,13 @@ from cam_proc import CamProc
 from s3_client import S3_Client
 import time
 
-def run_sensors(duration):
+def run_sensors(duration, acc_id, bucket_name):
     sm = Sensor_Manager() # takes in acc iD
     sm.add_sensor(Microphone(duration=duration, frequency=44100))
     sm.add_sensor(Camera(duration=duration, frequency=.5))
     sm.add_sensor(Ultrasonic(duration=duration, frequency=.1))
     sm.connect_all()
-    ret_list = sm.initiate_all()
-
-    return ret_list
-    
+    return(sm.initiate_all(acc_id, bucket_name))
     
 def run_everything(acc_id):
     '''
@@ -28,86 +25,45 @@ def run_everything(acc_id):
     continuously records mic and ultra in background
     lock itself on data trigger return, waits for signal from server to start again
     '''
-    ret_list = run_sensors(10)
+    bucket_name = "mypishield"
+
+    print('-------------- RUNNING SENSORS ---------------------')
+    ret_list, anomaly_dict, instance_id, acc_id = run_sensors(10, acc_id, bucket_name)
 
     print('------------ Sensors Complete -----------------')
     for item in ret_list:
         print(item)
+
+    print (anomaly_dict)
+    print(instance_id)
+    print(acc_id)
+    
     print('------------ Data Acquired -----------------')
-    print('------------ Processing Data -----------------')
 
-    micProc = MicProc()
-    ultraProc = UltraProc()
-    camProc = CamProc()
-    
-    for files, src in ret_list:
-        if(src == 'camera'):
-            print('Camera Data')
-            camProc.test_cv()
-        elif(src == 'microphone'):
-            print('Microphone Data')
-            mic_signals, mic_names = micProc.get_files(files)
-            #micProc.plot_signals(mic_signals, mic_names, "Microphone Signals")
-            #micProc.plot_each_signals(mic_signals, mic_names, "Individual Microphone Signals")
-        elif(src == 'ultrasonic'):
-            print('Ultrasonic Data')
-            ultra_signals, ultra_names = ultraProc.get_files(files)
-            #ultraProc.plot_signals(ultra_signals, ultra_names, "Ultrasonic Sensor Signals")
-            #ultraProc.plot_each_signals(ultra_signals, ultra_names,
-            #                            "Individual Ultrasonic Sensor Signals")
-        else:
-            print('Error: Invalid label : [' + str(src) + ']')
+    print('------------ CONSTRUCTING RESPONSE -----------------')
+
+    wasAlert = False
+    trig_type = []
+    for sensor_type in anomaly_dict:
+        was_triggered = anomaly_dict[sensor_type]
+        if was_triggered:
+            wasAlert = True
+            trig_type.append(sensor_type)
             
-    print('------------ Data Processed -----------------')
-    
-    print('------------ Uploading to S3 -----------------')
-
     ret_dict = {}
-    client = S3_Client()
-    bucket_name = 'mypishield'
-    instance_id = str(time.time())
     for files, src in ret_list:
-        obj_list = []
-        for file_a in files:
-            object_name = file_a.split('/')[-1]
-            object_name = str(acc_id) + "/" + instance_id + '/' + src + '/' + object_name
-            obj_list.append(object_name)
-            if(src == "camera"):
-                client.upload_image_file(file_a, bucket_name, object_name)
-            else:
-                client.upload_file(file_a, bucket_name, object_name)
-        print(src)
-        print(obj_list)
-        ret_dict[src] = obj_list
+        ret_dict[src] = files
+
     ret_dict['bucket'] = bucket_name
     ret_dict['instance_id'] = instance_id
     ret_dict['face_match_flag'] = False
-    ret_dict['wasAlert'] = True
-    ret_dict['trigger_sensor_type'] = ['ultrasonic']
+    ret_dict['wasAlert'] = wasAlert
+    ret_dict['trigger_sensor_type'] = trig_type
     
-    print('------------ Upload Complete -----------------')
+    print('------------ RESPONSE CONSTRUCTED -----------------')
 
     print(ret_dict)
 
     return(ret_dict)
     # (ultra_bucket_filename[], mic_bucket_filename[], cam_bucket_filename[],
     # trigger_sensor_type, face_match_flag, incident_id, wasAlert
-
-    '''
-    # executed on a thread
-    while isArmed:
-        acquire soundlock
-        # block 10 seconds
-        data = run_lukes_sensor_script()
-        
-        if(wasAlert):
-            sound_alarm() -> while true: acuire SL 
-                                                   if ShouldContinue: soundAlarm
-                                                   else: quit
-                                         release SL
-
-        if(incoming_user_message > 0):
-            for message in user_messages:
-                handle(message) -> one of these should modify shouldContinue
-        release soundLock
-    '''
