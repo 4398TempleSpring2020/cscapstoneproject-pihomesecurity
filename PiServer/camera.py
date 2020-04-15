@@ -19,7 +19,6 @@ class Camera(sensor_interface):
         print(response_list)
         list_lock, barrier, anomaly_dict, instance_id, acc_id, bucket_name = response_list[0]
 
-        
         outfiles = []
         try:
             self.isActive = True
@@ -39,11 +38,17 @@ class Camera(sensor_interface):
             print('Camera Failed')
         finally:
             self.isActive = False
-        
+
+        # get user faces
+        user_files = self.get_user_faces(acc_id, bucket_name)
+
+        image_dict = {}
+        image_dict['users'] = user_files
+        image_dict['sampled'] = outfiles
         # check if anomaly in cam data
         print('camera anomaly detection')
         camProc = CamProc()
-        isAnomaly = camProc.isAnomaly(outfiles)
+        isAnomaly = camProc.isAnomaly(image_dict)
         anomaly_dict['cam'] = isAnomaly
         
         # wait until every thread has processed their files
@@ -75,6 +80,11 @@ class Camera(sensor_interface):
         end = time.time()
         print("Total ultra time to execute : [" + str(end - start) + "]")          
 
+    def get_user_faces(self, acc_id, bucket_name):
+        client = S3_Client()
+        files = client.get_user_face_files(bucket_name, acc_id)
+        return files
+        
     def connect(self):
         print('Camera Connecting')
         try:
