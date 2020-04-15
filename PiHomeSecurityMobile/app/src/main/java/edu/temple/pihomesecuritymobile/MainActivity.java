@@ -30,13 +30,27 @@ public class MainActivity extends AppCompatActivity implements HomeFragment.soun
         setContentView(R.layout.activity_main);
         BottomNavigationView navView = findViewById(R.id.nav_view);
         Bundle formBundle = getIntent().getExtras();
-        client = new Client("192.168.0.11",5000);
+        client = new Client("3.16.163.252",5001);
         clientThread = new ClientThread(client);
         clientThread.start();
+        JSONObject json = new JSONObject();
+        try{
+            json.put("pi_mobile","pi_mobile");
+            client.send("pi_mobile");
+        } catch (Exception e){
+
+        }
         sharePrefs = getSharedPreferences("PREF_NAME",MODE_PRIVATE);
         if(formBundle != null){
             String form[] = formBundle.getStringArray("form");
             sharePrefs.edit().putString("HomeID",form[0]).apply();
+            sharePrefs.edit().putString("UserName",form[1]).apply();
+        }
+        String username = sharePrefs.getString("UserName", "");
+        if (username!=null) {
+            Log.d("username", "" + username);
+            ContentManager contentManager = new ContentManager();
+            contentManager.updateStatement("UserAccounts", "LastLogin", "current_timestamp()", "Username", username);
         }
         // Passing each menu ID as a set of Ids because each
         // menu should be considered as top level destinations.
@@ -50,7 +64,7 @@ public class MainActivity extends AppCompatActivity implements HomeFragment.soun
     }
 
 
-    /*
+    /**
     * Method: soundAlarm()
     * Purpose: to make the alarm start playing a noise to scare off an intruder
     * Parameters: None
@@ -63,14 +77,14 @@ public class MainActivity extends AppCompatActivity implements HomeFragment.soun
         try {
             message.put("message_type", "alert_message");
             message.put("alert_type","sound_alarm");
-            client.send(message);
+            //client.send(message);
         } catch (JSONException e){
             Log.e("SENDING ALARM MESSAGE", e.toString());
         }
         Toast.makeText(getApplicationContext(),"Sounding Alarm", Toast.LENGTH_SHORT).show();
     }
 
-    /*
+    /**
      * Method: setAlarm()
      * Purpose: to make the security system activate and deactivate
      * Parameters: setFlag true if alarm should be turned on or false if it should be turned off
@@ -87,9 +101,20 @@ public class MainActivity extends AppCompatActivity implements HomeFragment.soun
             } else {
                 message.put("arm_type",0);
             }
-            client.send(message);
+            client.send("ARM");
         } catch (JSONException e){
             Log.e("SENDING ARM MESSAGE", e.toString());
         }
+    }
+
+
+    @Override
+    public void escalateRsp(JSONObject msg) {
+        //client.send(msg);
+    }
+
+    @Override
+    public void resolveRsp(JSONObject msg) {
+        //client.send(msg);
     }
 }

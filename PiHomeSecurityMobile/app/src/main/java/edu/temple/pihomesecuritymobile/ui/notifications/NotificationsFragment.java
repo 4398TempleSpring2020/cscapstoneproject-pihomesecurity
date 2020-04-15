@@ -131,6 +131,7 @@ public class NotificationsFragment extends Fragment {
      * copied from android developer guide
      */
     public void openCamera() {
+        Toast.makeText(parent, "Opening camera", Toast.LENGTH_LONG).show();
         Intent cameraIntent = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
         File photoFile = null;
         try {
@@ -193,6 +194,7 @@ public class NotificationsFragment extends Fragment {
             try {
                 File file = new File(currentPhotoPath);
                 S3Manager s3Manager = new S3Manager(parent, homeID);
+                Toast.makeText(parent, "Uploading photo to Raspberry Pi", Toast.LENGTH_LONG).show();
                 s3Manager.upload(file);
                 //Bitmap bitmap = MediaStore.Images.Media.getBitmap(parent.getContentResolver(), Uri.fromFile(file));
             } catch (Exception e) {
@@ -214,6 +216,7 @@ public class NotificationsFragment extends Fragment {
                 fileOutputStream.close();
                 inputStream.close();
                 S3Manager s3Manager = new S3Manager(parent, homeID);
+                Toast.makeText(parent, "Uploading photo to Raspberry Pi", Toast.LENGTH_LONG).show();
                 s3Manager.upload(file);
             } catch (Exception e) {
                 e.printStackTrace();

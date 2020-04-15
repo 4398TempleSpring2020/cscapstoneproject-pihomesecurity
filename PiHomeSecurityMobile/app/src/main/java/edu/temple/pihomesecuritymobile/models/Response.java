@@ -5,6 +5,11 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Locale;
+import java.util.TimeZone;
+
 /**
  * Request is a class that will be used to hold request related information needed for a POST request
  */
@@ -137,6 +142,8 @@ public class Response {
     public String fixDate(String body) {
         String[] tokens = body.split("datetime.datetime");
         String newDate;
+        String newTime;
+        String newDateTime;
         String newBody = "";
         if (tokens.length <= 1 ) {
             return body;
@@ -147,9 +154,24 @@ public class Response {
             String[] date_tokens = tokens_temp[0].split(", ");
             date_tokens[0] = date_tokens[0].substring(1);
             newDate = date_tokens[1] + "-" + date_tokens[2] + "-" + date_tokens[0];
-            //Log.d("date: ", "" + newDate);
+            newTime = date_tokens[3] + ":" + date_tokens[4] + ":" + date_tokens[5];
+            newDateTime = newDate + " " + newTime;
+            //now need to convert to local time....
+            SimpleDateFormat df = new SimpleDateFormat("MM-dd-yyyy HH:mm:ss", Locale.ENGLISH);
+            df.setTimeZone(TimeZone.getTimeZone("UTC"));
+            String formattedDate;
+            try {
+                Date date = df.parse(newDateTime);
+                df.setTimeZone(TimeZone.getDefault());
+                formattedDate = df.format(date);
+                newDateTime = formattedDate;
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
+            //Log.d("date: ", "" + newDateTime);
             tokens[i] = "";
-            tokens[i] = newDate + tokens_temp[1];
+            tokens[i] = newDateTime + tokens_temp[1];
             //Log.d("date added back: ", "" + tokens[i]);
 
         }

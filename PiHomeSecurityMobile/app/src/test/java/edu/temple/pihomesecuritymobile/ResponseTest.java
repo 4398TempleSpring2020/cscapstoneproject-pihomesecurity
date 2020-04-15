@@ -100,11 +100,18 @@ public class ResponseTest {
     @Test
     public void testDateCorrect() {
         String date = "\"datetime.datetime(2020, 3, 11, 20, 5, 41)\"";
-        String correct_date = "\"3-11-2020\"";
+        String correct_date = "\"03-11-2020 16:05:41\"";
         assertEquals(correct_date, response.fixDate(date));
 
         String date2 = "{\"LastLogin\":\"datetime.datetime(2020, 3, 11, 20, 5, 41)\"}, {\"LastLogin\":\"datetime.datetime(2020, 03, 06, 26, 10, 41)\"}";
-        String correct_date2 = "{\"LastLogin\":\"3-11-2020\"}, {\"LastLogin\":\"03-06-2020\"}";
+        String correct_date2 = "{\"LastLogin\":\"03-11-2020 16:05:41\"}, {\"LastLogin\":\"03-06-2020 21:10:41\"}";
         assertEquals(correct_date2, response.fixDate(date2));
+    }
+
+    @Test
+    public void testDateCorrectEST() {
+        String date = "\"datetime.datetime(2020, 3, 11, 00, 5, 41)\"";
+        String correct_date = "\"03-10-2020 20:05:41\"";
+        assertEquals(correct_date, response.fixDate(date));
     }
 }
