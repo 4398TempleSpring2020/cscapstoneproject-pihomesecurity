@@ -36,5 +36,5 @@ if __name__ == '__main__':
     message_handler_thread = MessageHandlerThread(shared_resources)
     message_handler_thread.start()
 
-    #logic_handler_thread = LogicHandlerThread(shared_resources)    # comment out if you do not have sensors
-    #logic_handler_thread.start()                                   # comment out if you do not have sensors
+    logic_handler_thread = LogicHandlerThread(shared_resources)    # comment out if you do not have sensors
+    logic_handler_thread.start()                                   # comment out if you do not have sensors
