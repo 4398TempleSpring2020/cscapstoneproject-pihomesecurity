@@ -14,18 +14,19 @@ class LogicHandlerThread(threading.Thread):
     def run(self):
         while True:
             record_incident = False
-            ret_dict = run_everything(11)
             self.shared_resources.q_lock.acquire()  # get lock for shared resource is_armed
-            if ret_dict["wasAlert"] is True and self.shared_resources.is_armed is True:  # reduce time holding lock
-                record_incident = True
-                self.shared_resources.is_ongoing_threat = True
-                self.shared_resources.was_alert = True
+            if self.shared_resources.is_armed is True:
+                ret_dict = run_everything(11)
+                if ret_dict["wasAlert"] is True:  # reduce time holding lock
+                    record_incident = True
+                    self.shared_resources.is_ongoing_threat = True
+                    self.shared_resources.was_alert = True
             self.shared_resources.q_lock.release()  # release lock
             if record_incident is True:
                 incident_id = str(ret_dict["instance_id"])
                 face_match_flag = str(ret_dict["face_match_flag"])
                 image_path = ret_dict["camera"]
-                mic_path = ret_dict["microphone"][0]
+                mic_path = ret_dict["mic"][0]
                 ultrasonic_path = ret_dict["ultrasonic"][0]
                 temp = IncidentData(Constant.ACCOUNT_ID, incident_id, face_match_flag, image_path, mic_path,
                                     ultrasonic_path)  # create incident data
