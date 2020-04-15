@@ -3,6 +3,7 @@
 import logging
 import boto3
 from botocore.exceptions import ClientError
+import os
 
 class S3_Client():
     s3_client = None
@@ -96,6 +97,56 @@ class S3_Client():
                 keys.append(cur_file)
         return keys
 
+    # stores face files from s3 on local machine
+    def get_user_face_files(self, bucket_name, acc_id):
+        face_path = str(acc_id) + '/faces/'
+        result = self.s3_client.list_objects_v2(Bucket=bucket_name)
+
+        keys = []
+        total_size = 0.0
+        if 'Contents' in result:
+            for obj in result.get('Contents'):
+                cur_file = obj.get('Key')                
+                cur_meta = obj.get("LastModified")
+                if(cur_file.startswith(face_path)):
+                    keys.append((cur_file, cur_meta))
+
+        ret_files = []
+        meta_files = []
+        for face_file, meta in keys:
+            path_a = face_file.split('/')[1:]
+            path_a = path_a[0] + '/' + path_a[1]
+            ret_files.append(path_a)
+
+            meta_path = path_a.split('.')[:-1][0] + "_meta.txt"
+            meta_files.append(meta_path)
+            
+            if(not os.path.exists(face_file) or not os.path.exists(meta_path)):
+                # if files are not already downloaded, download images, remake meta
+                self.download_from_s3(bucket_name, path_a, face_file)                
+                with open(meta_path, "w") as meta_file:
+                    meta_file.write(str(meta))
+
+            # read meta data
+            meta_old = None        
+            with open(meta_path, 'r') as meta_file:
+                meta_old = meta_file.readlines()[0]
+
+            if(not str(meta) == meta_old):
+                # if files are not up to date, download images, remake meta
+                self.download_from_s3(bucket_name, path_a, face_file)                
+                with open(meta_path, "w") as meta_file:
+                    meta_file.write(str(meta))
+
+        # remove files from local machine that do not exist in s3
+        local_files = os.listdir("faces/")
+        for lfile in local_files:
+            lfile = 'faces/' + lfile
+            if(not(lfile in ret_files or lfile in meta_files)):
+                print('deleting [' + lfile + "]")
+                os.remove(lfile)
+        return ret_files
+    
     def delete_from_s3(self, bucketname, filename):
         # Upload the file
         obj = self.s3.Object(bucketname, filename)
