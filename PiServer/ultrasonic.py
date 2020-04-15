@@ -82,6 +82,8 @@ class Ultrasonic(sensor_interface):
         ultraProc = UltraProc()
         isAnomaly = ultraProc.isAnomaly(outfiles)
         anomaly_dict['ultra'] = isAnomaly
+        print('ULTRA ANOM : ' + str(isAnomaly))
+
         
         # wait until every thread has processed their files
         barrier.wait()
