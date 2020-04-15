@@ -4,6 +4,8 @@ from sensor_interface import sensor_interface
 import os
 import RPi.GPIO as GPIO
 import time
+from ultra_proc import UltraProc
+from s3_client import S3_Client
 
 class Ultrasonic(sensor_interface):
     frequency = None
@@ -47,7 +49,7 @@ class Ultrasonic(sensor_interface):
     def initiate(self, response_list, outPath):
         start = time.time()
         print(response_list)
-        list_lock = response_list[0]
+        list_lock, barrier, anomaly_dict, instance_id, acc_id, bucket_name = response_list[0]
 
         outfiles = []
         outfiles.append(outPath + 'ultra.txt')
@@ -75,11 +77,38 @@ class Ultrasonic(sensor_interface):
             GPIO.cleanup()
             self.isActive = False
 
+        # check if anomaly in ultra data
+        print('Ultrasonic anomaly detection')
+        ultraProc = UltraProc()
+        isAnomaly = ultraProc.isAnomaly(outfiles)
+        anomaly_dict['ultra'] = isAnomaly
+        
+        # wait until every thread has processed their files
+        barrier.wait()
+        print('ultra passed barrier')
+
+        # check if any anomalies detected
+        wasAnom = False
+        for anomaly in anomaly_dict.values():
+            if(anomaly):
+                wasAnom = True
+                break
+
+        # list of objects
+        obj_list = []
+        if(wasAnom):
+            client = S3_Client()
+            # upload to s3
+            for file_a in outfiles:
+                object_name = file_a.split('/')[-1]
+                object_name = str(acc_id) + "/" + str(instance_id) + '/' + 'ultrasonic' + '/' + object_name
+                obj_list.append(object_name)
+                client.upload_file(file_a, bucket_name, object_name)
+
         print('acquiring lock')
-
         with list_lock:
-            response_list.append((outfiles, "ultrasonic"))
-
+            response_list.append((obj_list, "ultrasonic"))
+        
         end = time.time()
         print("Total ultra time to execute : [" + str(end - start) + "]")
 
@@ -100,4 +129,3 @@ class Ultrasonic(sensor_interface):
     def __init__(self, duration, frequency):
         self.duration = duration
         self.frequency = frequency
-

@@ -1,6 +1,8 @@
 import numpy as np
 import os
 import matplotlib.pyplot as plt
+from scipy import stats
+import statistics
 
 class UltraProc():
     def plot_signals(self, x, x_lab, fig_title):
@@ -46,11 +48,75 @@ class UltraProc():
                 fcontents.append(np.asarray(curf))
                 fnames.append(fname)        
         return(fcontents, fnames)
-'''    
-if __name__ == "__main__":
-    ultra_dir = "../data/ultra/"
-    ultra_signals, ultra_names = get_files(ultra_dir)
 
-    plot_signals(ultra_signals, ultra_names, "Ultrasonic Sensor Signals")
-    plot_each_signals(ultra_signals, ultra_names, "Individual Ultrasonic Sensor Signals")
-'''
+    def isAnomaly(self, files):
+        # read the data
+        data, fname = self.get_files(files)
+        data = data[0]
+
+        # assume no anomaly
+        isAnom = False
+
+        # get the std and mean
+        std = statistics.stdev(data)
+        mean = statistics.mean(data)
+        std_rat = std / mean
+
+        if std_rat > .01:
+            # find everything that is within 2 std of mean
+            z = np.abs(stats.zscore(data))
+            z_new = (z < 2)
+            
+            # find all points outside 2 std
+            z_flip = []
+            anom_indices = []
+            for i,val in enumerate(z_new):
+                if(val == True):
+                    z_flip.append(False)
+                else:
+                    z_flip.append(True)
+                    anom_indices.append(i)
+                
+            # select only outliars
+            outliars = data[z_flip]
+            
+            # anom spacing of 1.5 seconds
+            dist_thresh = 15
+            chunks = []
+            chunk = []
+            for (i,val), outliar in zip(enumerate(anom_indices), outliars):
+                if(len(chunk) == 0):
+                    # initialize
+                    prev = val
+                    chunk.append(outliar)
+                else:
+                    # get distance from previous spike
+                    distance = val - prev
+                    if(distance < dist_thresh):
+                        # if new spike is close add it to the chunk
+                        chunk.append(outliar)
+                    else:
+                        # if spike is far, add it to different chunk
+                        chunks.append(chunk[:])
+                        
+                        # reset our chunk
+                        chunk = []
+                        chunk.append(outliar)
+                        
+                if(i == len(anom_indices) -1):
+                    chunks.append(chunk)
+                prev = val
+
+            # establish upper and lower bounds that are 4 standard deviations away
+            thresh_up = mean + std*4
+            thresh_down = mean - std*4
+
+            # at least x consecutive samples needed
+            count_thresh = 3
+
+            # for every chunck of consecutive statistically significant data
+            for chunk in chunks:
+                # if we exceed count for consec, there is an anomaly
+                if(len(chunk) >= count_thresh):
+                    isAnom = True
+        return isAnom

@@ -19,9 +19,9 @@ def lambda_handler(event, context):
     with conn:
         cur = conn.cursor()
         homeID = event['homeID']
-        select_part = "SELECT inc.IncidentID, inc.DateRecorded, inc.BadIncidentFlag, inc.AdminComments, inc.ImagePath, inc.FriendlyMatchFlag, inc.SensorFile "
+        select_part = "SELECT inc.IncidentID, inc.DateRecorded, inc.BadIncidentFlag, inc.ImagePaths, inc.FriendlyMatchFlag, inc.MicrophonePath, inc.UltrasonicPath "
         table_part = "FROM IncidentData inc "
-        where_part = "WHERE inc.AccountID=%s ORDER BY inc.IncidentID" % (homeID)
+        where_part = "WHERE inc.AccountID=%s ORDER BY inc.DateRecorded DESC" % (homeID)
         query = select_part + table_part + where_part
         #print(query)
         try:
@@ -34,17 +34,18 @@ def lambda_handler(event, context):
             }
         cols = cur.description 
         result = [{cols[index][0]:col for index, col in enumerate(value)} for value in cur.fetchall()]
+        print(result)
+        print(result[0])
         cur.close()
         if len(result)>0:
             return {
             'statusCode' : 200,
             'message': "Retrieved records successfully",
-            'body' : str(result)
+            'body' : '[' + str(result[0]) + ']'
             }
         else:
             return {
             'statusCode' : 411,
             'message': "No records found",
-            'body' : str(result)
+            'body' : " "
             }
-        
