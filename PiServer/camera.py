@@ -37,6 +37,8 @@ class Camera(sensor_interface):
         except:
             print('Camera Failed')
         finally:
+            print('--------------- INITIATE CAM : ' + str(self.camera))
+            self.camera.close()
             self.isActive = False
 
         # get user faces
@@ -76,9 +78,9 @@ class Camera(sensor_interface):
         print('acquiring lock')
         with list_lock:
             response_list.append((obj_list, "camera"))
-        
+
         end = time.time()
-        print("Total ultra time to execute : [" + str(end - start) + "]")          
+        print("Total cam time to execute : [" + str(end - start) + "]")
 
     def get_user_faces(self, acc_id, bucket_name):
         client = S3_Client()
@@ -92,10 +94,12 @@ class Camera(sensor_interface):
             # Take out this if no rotation is needed
             self.camera.rotation = 180
             self.isActive = True
-            return True
+            print('Cam success')
         except:
             print("camera error")
-            return False
+        print('--------------- CONNECT CAM : ' + str(self.camera))
+
+        return True
     
     def test(self):
         pass
