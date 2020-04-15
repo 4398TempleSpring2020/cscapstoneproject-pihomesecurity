@@ -19,6 +19,7 @@ class MessageHandlerThread(threading.Thread):
                     break
                 if message == "DISARM" and self.shared_resources.is_armed is True:
                     self.shared_resources.is_armed = False
+                    self.shared_resources.is_ongoing_threat = False
                     break
                 if message == "RESOLVE" and self.shared_resources.is_ongoing_threat is True:
                     self.shared_resources.is_ongoing_threat = False
