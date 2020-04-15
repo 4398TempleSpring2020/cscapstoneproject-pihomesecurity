@@ -1,10 +1,13 @@
 from datetime import datetime
-import boto3
 import pymysql
 import sys
 import json
 from time import sleep
 from dateutil import tz
+import base64
+import os
+import urllib
+from urllib import request, parse
 
 REGION = 'region'
 
@@ -14,9 +17,11 @@ password = "password"
 db_name = "database"
 mybucket = "bucket"
 
+TWILIO_SMS_URL = "https://api.twilio.com/2010-04-01/Accounts/{}/Messages.json"
+TWILIO_ACCOUNT_SID = os.environ.get("TWILIO_ACCOUNT_SID")
+TWILIO_AUTH_TOKEN = os.environ.get("TWILIO_AUTH_TOKEN")
+
 def lambda_handler(event, context):
-    session = boto3.Session(region_name="us-east-1")
-    sns = session.client('sns')
     result = []
     phonenums = []
     homeAddress = ""
@@ -26,7 +31,7 @@ def lambda_handler(event, context):
     eventTime = event['Records'][0]['eventTime']
     eventName = event['Records'][0]['eventName']
     ipAddress = event['Records'][0]['requestParameters']['sourceIPAddress']
-    error = 0
+    #error = 0
     #eventMessage = "event name: " + eventName + ", event time: " + eventTime + ", ip address: " + ipAddress
     #s3Message = "file: " + key + ", bucket: " + bucket
     if bucket == mybucket and "Put" in eventName and "faces" not in key and "camera" in key: #and ipAddress==myipaddress:
@@ -34,7 +39,7 @@ def lambda_handler(event, context):
         keys = key.split('/')
         #print(keys)
         homeID=keys[0]
-        incidentID=keys[1]
+        #incidentID=keys[1]
         #print(incidentID)
         #print(homeID)
         image = keys[len(keys)-1]
@@ -43,8 +48,7 @@ def lambda_handler(event, context):
             conn = pymysql.connect(rds_host, user=name, passwd=password, db=db_name, connect_timeout=5)
             with conn:
                 cur = conn.cursor()
-                
-                query = "SELECT FriendlyMatchFlag, BadIncidentFlag FROM IncidentData WHERE IncidentID = '%s'" % (incidentID)
+                '''query = "SELECT FriendlyMatchFlag, BadIncidentFlag FROM IncidentData WHERE IncidentID = '%s'" % (incidentID)
                 for i in range(0,5):
                     try:
                         cur.execute(query)
@@ -56,14 +60,14 @@ def lambda_handler(event, context):
                         break
                     else:
                         sleep(0.4)
-                '''if result is not None:
+                if result is not None:
                     if result[1]==0 and result[0]==1:
                         return {
                             "status":"Not sending sms to user; friendly match flag is true and bad incident flag is false"
                             }
-                    '''
                 if result is None:
                     error = -1
+                    '''
                 select_part = "SELECT DISTINCT ua.UserPhoneNumber, ha.HomeAccountAddress, ha.NumOfUsers "
                 table_part = "FROM HomeAccount ha JOIN UserAccounts ua "
                 where_part = "WHERE ua.AccountID=ha.AccountID AND ha.AccountID=%s GROUP BY ua.UserPhoneNumber, ha.HomeAccountAddress, ha.NumOfUsers" % (homeID)
@@ -125,23 +129,30 @@ def lambda_handler(event, context):
             #print(newDateTime)
             incAlertMessage = "An incident was detected by PiHomeSecurity at " + newDateTime + " EST at home address " + newAddress + ". "
             appNotMessage = "Please open the PiHomeSecurityMobile app and take action within the next 5 minutes or the authorities will be contacted."
-            incErrorMessage = "A possible incident was detected by PiHomeSecurity at " + newDateTime + " EST at home address " + newAddress + " but something went wrong. "
-            incErrorMessage2 = "Please contact the PiHomeSecurity Administration for help."
+            #incErrorMessage = "A possible incident was detected by PiHomeSecurity at " + newDateTime + " EST at home address " + newAddress + " but something went wrong. "
+            #incErrorMessage2 = "Please contact the PiHomeSecurity Administration for help."
             #print(incAlertMessage + "\n" + appNotMessage)
-            if error == -1:
-                for number in phonenums:
-                    response = sns.publish(
-                        PhoneNumber = number,
-                        Message =  inErrorMessage + "\n" + incErrorMessage2
-                    )
-                return {
-                    "status": "Successfully sent error sms alert to users. Something went wrong with incident upload"
-                }
+            body = incAlertMessage + appNotMessage
             for number in phonenums:
-                response = sns.publish(
-                    PhoneNumber = number,
-                    Message =  incAlertMessage + "\n" + appNotMessage
-                )
+                from_number = os.environ.get("FROM_NUMBER")
+                populated_url = TWILIO_SMS_URL.format(TWILIO_ACCOUNT_SID)
+                post_params = {"To": number, "From": from_number, "Body": body}
+            
+                # encode the parameters for Python's urllib
+                data = parse.urlencode(post_params).encode()
+                req = request.Request(populated_url)
+            
+                # add authentication header to request based on Account SID + Auth Token
+                authentication = "{}:{}".format(TWILIO_ACCOUNT_SID, TWILIO_AUTH_TOKEN)
+                base64string = base64.b64encode(authentication.encode('utf-8'))
+                req.add_header("Authorization", "Basic %s" % base64string.decode('ascii'))
+                try:
+                    # perform HTTP POST request
+                    with request.urlopen(req, data) as f:
+                        print("Twilio returned {}".format(str(f.read().decode('utf-8'))))
+                except Exception as e:
+                    # something went wrong!
+                    return e
             return {
                 "status": "Successfully sent sms alert to users for incident detected"   
             }
