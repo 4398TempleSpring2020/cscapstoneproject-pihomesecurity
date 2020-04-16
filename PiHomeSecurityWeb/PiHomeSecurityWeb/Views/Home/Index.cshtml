@@ -1,0 +1,29 @@
+﻿@model HomeAccount
+
+@{
+    ViewData["Title"] = "Welcome";
+    ViewData["linkVis"] = "visibility: hidden;";
+    ViewData["link1Content"] = "";
+    ViewData["link2Content"] = "";
+}
+
+<input type="radio" checked id="toggle--login" name="toggle" class="ghost" />
+<input type="radio" id="toggle--signup" name="toggle" class="ghost" />
+
+
+
+<form class="form form--login framed" method="post">
+    <div class="inputWrap">
+        <img class="logo" src="~/pics/logo.png">
+        <input asp-for="AccountUsername" type="text" placeholder="Username" class="input input--top" />
+        <input asp-for="AccountPassword" type="password" placeholder="Password" class="input" />
+        <input type="submit" value="Sign in" class="input input--submit" />
+        <div class="logonErrorMsg">@ViewBag.Message</div>
+
+        <label class="text text--small text--centered">New? <a asp-area="" asp-controller="Home" asp-action="Register">Sign up</a></label>
+        <label class="text text--small text--centered">Employee? <a asp-area="" asp-controller="Home" asp-action="EmpLogon">Sign in</a></label>
+    </div>
+</form>
+
+
+
