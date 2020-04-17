@@ -18,27 +18,6 @@ USE `mypidb`;
 /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
 
 --
--- Table structure for table `CameraData`
---
-
-DROP TABLE IF EXISTS `CameraData`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `CameraData` (
-  `CameraDataID` int(11) NOT NULL AUTO_INCREMENT,
-  `IncidentID` int(11) NOT NULL,
-  `ImagePath` varchar(255) NOT NULL,
-  `ImageSize` int(11) DEFAULT NULL,
-  `ImageType` varchar(3) NOT NULL,
-  `FriendlyMatchFlag` tinyint(4) NOT NULL DEFAULT '0',
-  PRIMARY KEY (`CameraDataID`),
-  UNIQUE KEY `idCameraData_UNIQUE` (`CameraDataID`),
-  KEY `idIncident_idx` (`IncidentID`),
-  CONSTRAINT `idIncident2` FOREIGN KEY (`IncidentID`) REFERENCES `IncidentData` (`IncidentID`) ON DELETE NO ACTION ON UPDATE NO ACTION
-) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
 -- Table structure for table `Employee`
 --
 
@@ -97,8 +76,9 @@ CREATE TABLE `HomeAccount` (
   `IncidentPhoneNumber` bigint(11) NOT NULL DEFAULT '911',
   PRIMARY KEY (`AccountID`),
   UNIQUE KEY `idCustomer_UNIQUE` (`AccountID`),
-  UNIQUE KEY `AccountUsername_UNIQUE` (`AccountUsername`)
-) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8;
+  UNIQUE KEY `AccountUsername_UNIQUE` (`AccountUsername`),
+  UNIQUE KEY `HomeAccountAddress_UNIQUE` (`HomeAccountAddress`)
+) ENGINE=InnoDB AUTO_INCREMENT=12 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -109,7 +89,7 @@ DROP TABLE IF EXISTS `IncidentData`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `IncidentData` (
-  `IncidentID` int(11) NOT NULL AUTO_INCREMENT,
+  `IncidentID` varchar(32) NOT NULL,
   `AccountID` int(11) NOT NULL,
   `DateRecorded` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `BadIncidentFlag` tinyint(4) DEFAULT '0',
@@ -118,30 +98,15 @@ CREATE TABLE `IncidentData` (
   `AdminComments` varchar(255) DEFAULT NULL,
   `DeletionBlockFlag` tinyint(4) NOT NULL DEFAULT '1',
   `EmergencyContactedFlag` tinyint(4) NOT NULL DEFAULT '0',
+  `MicrophonePath` varchar(255) NOT NULL,
+  `ImagePaths` varchar(1054) NOT NULL,
+  `FriendlyMatchFlag` tinyint(4) NOT NULL DEFAULT '0',
+  `UltrasonicPath` varchar(255) NOT NULL,
   PRIMARY KEY (`IncidentID`),
   UNIQUE KEY `idIncident_UNIQUE` (`IncidentID`),
   KEY `idCustomer_idx` (`AccountID`),
   CONSTRAINT `idCustomer` FOREIGN KEY (`AccountID`) REFERENCES `HomeAccount` (`AccountID`) ON DELETE NO ACTION ON UPDATE NO ACTION
-) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Table structure for table `SensorData`
---
-
-DROP TABLE IF EXISTS `SensorData`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `SensorData` (
-  `SensorDataID` int(11) NOT NULL AUTO_INCREMENT,
-  `IncidentID` int(11) NOT NULL,
-  `SensorFile` varchar(255) NOT NULL,
-  `Length` int(11) NOT NULL,
-  PRIMARY KEY (`SensorDataID`),
-  UNIQUE KEY `idSensorData_UNIQUE` (`SensorDataID`),
-  KEY `idIncident_idx` (`IncidentID`),
-  CONSTRAINT `idIncident` FOREIGN KEY (`IncidentID`) REFERENCES `IncidentData` (`IncidentID`) ON DELETE NO ACTION ON UPDATE NO ACTION
-) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -166,7 +131,7 @@ CREATE TABLE `UserAccounts` (
   UNIQUE KEY `Usermame_UNIQUE` (`Username`),
   KEY `idCustomer_idx` (`AccountID`),
   CONSTRAINT `idCustomer2` FOREIGN KEY (`AccountID`) REFERENCES `HomeAccount` (`AccountID`) ON DELETE NO ACTION ON UPDATE NO ACTION
-) ENGINE=InnoDB AUTO_INCREMENT=22 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=31 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
@@ -178,4 +143,4 @@ CREATE TABLE `UserAccounts` (
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2020-03-24 10:57:44
+-- Dump completed on 2020-04-15 17:06:32

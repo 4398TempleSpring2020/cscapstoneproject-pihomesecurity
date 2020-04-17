@@ -1,5 +1,9 @@
 import pymysql
 import sys
+import os
+import urllib
+from urllib import request, parse
+import json
 
 REGION = 'region'
 
@@ -8,9 +12,12 @@ name = "username"
 password = "password"
 db_name = "database"
 
+
+TWILIO_SMS_URL = "https://api.twilio.com/2010-04-01/Accounts/{}/Messages.json"
+TWILIO_ACCOUNT_SID = os.environ.get("TWILIO_ACCOUNT_SID")
+TWILIO_AUTH_TOKEN = os.environ.get("TWILIO_AUTH_TOKEN")
+
 def lambda_handler(event, context):
-    session = boto3.Session(region_name="us-east-1")
-    sns = session.client('sns')
     result = []
     conn = pymysql.connect(rds_host, user=name, passwd=password, db=db_name, connect_timeout=5)
     homeID = event['homeID']
@@ -85,11 +92,27 @@ def lambda_handler(event, context):
         cur.close()
     incAlertMessage = "No response received for the incident detected by PiHomeSecurity at home address " + newAddress + ". "
     appNotMessage = "The incident has been auto-escalated and authorities will be contacted immediately."
+    body = incAlertMessage + "\n" + appNotMessage
     for number in phonenums:
-        response = sns.publish(
-            PhoneNumber = number,
-            Message =  incAlertMessage + "\n" + appNotMessage
-        )
+        from_number = os.environ.get("FROM_NUMBER")
+        populated_url = TWILIO_SMS_URL.format(TWILIO_ACCOUNT_SID)
+        post_params = {"To": number, "From": from_number, "Body": body}
+    
+        # encode the parameters for Python's urllib
+        data = parse.urlencode(post_params).encode()
+        req = request.Request(populated_url)
+        
+        # add authentication header to request based on Account SID + Auth Token
+        authentication = "{}:{}".format(TWILIO_ACCOUNT_SID, TWILIO_AUTH_TOKEN)
+        base64string = base64.b64encode(authentication.encode('utf-8'))
+        req.add_header("Authorization", "Basic %s" % base64string.decode('ascii'))
+        try:
+            # perform HTTP POST request
+            with request.urlopen(req, data) as f:
+                print("Twilio returned {}".format(str(f.read().decode('utf-8'))))
+        except Exception as e:
+            # something went wrong!
+            return e
     return {
         "status": "Successfully sent sms alert to users for incident detected"   
     }
