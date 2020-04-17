@@ -1,2 +1,2 @@
-include ':app'
+include ':app', ':android-beacon-library-2.16.4'
 rootProject.name='BluetoothApp'
