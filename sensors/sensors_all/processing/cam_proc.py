@@ -1,6 +1,7 @@
 import cv2
 from matplotlib import pyplot as plt
 import numpy as np
+import face_recognition
 
 #This line of code adds a grayscale filter to the image
 #img = cv2.imread('../data/cam/luke/image_18.jpg', cv2.IMREAD_GRAYSCALE)
@@ -95,9 +96,71 @@ class CamProc():
         cv2.destroyAllWindows()
         cap.release()
 
+    def facial_detection():
+        face_cascade = cv2.CascadeClassifier('haarcascade_frontalface_default.xml')
+        eye_cascade = cv2.CascadeClassifier('haarcascade_eye.xml')
+        cap = cv2.VideoCapture(0)
+        while True:
+            ret, img = cap.read()
+            img = cv2.rotate(img, cv2.ROTATE_180)
+            gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+            faces = face_cascade.detectMultiScale(gray, 1.3, 5)
+            for (x,y,w,h) in faces:
+                cv2.rectangle(img, (x,y), (x+w, y+h), (255,0,0), 2)
+                roi_gray = gray[y:y+h, x:x+w]
+                roi_color = img[y:y+h, x:x+h]
+                eyes = eye_cascade.detectMultiScale(roi_gray)
+                for (ex,ey,ew,eh) in eyes:
+                    cv2.rectangle(roi_color, (ex, ey), (ex + ew, ey+eh), (0, 255, 0), 2)
+            cv2.imshow('img', img)
+            k = cv2.waitKey(30) & 0xff
+            if k==27:
+                break
+        cap.release()
+        cv2.destroyAllWindows()
+
+    def facial_recognition(image_path):
+        # Load the jpg files into numpy arrays
+        charles_image = face_recognition.load_image_file("known_people/charles.jpg")
+        luke_image = face_recognition.load_image_file("known_people/luke.jpg")
+        cat_image = face_recognition.load_image_file("known_people/cat.jpg")
+        unknown_image = face_recognition.load_image_file(image_path)
+
+        # Get the face encodings for each face in each image file
+        # Since there could be more than one face in each image, it returns a list of encodings.
+        # But since I know each image only has one face, I only care about the first encoding in each image, so I grab index 0.
+        try:
+            charles_face_encoding = face_recognition.face_encodings(charles_image)[0]
+            luke_face_encoding = face_recognition.face_encodings(luke_image)[0]
+            cat_face_encoding = face_recognition.face_encodings(cat_image)[0]
+            unknown_face_encoding = face_recognition.face_encodings(unknown_image)[0]
+        except IndexError:
+            print("I wasn't able to locate any faces in at least one of the images. Check the image files. Aborting...")
+            quit()
+
+        known_faces = [
+            charles_face_encoding,
+            luke_face_encoding,
+            cat_face_encoding
+        ]
+
+        # results is an array of True/False telling if the unknown face matched anyone in the known_faces array
+        results = face_recognition.compare_faces(known_faces, unknown_face_encoding)
+
+        print("Is the unknown face a picture of Charles? {}".format(results[0]))
+        print("Is the unknown face a picture of Luke? {}".format(results[1]))
+        print("Is the unknown face a picture of Cat's daughter? {}".format(results[2]))
+        print("Is the unknown face a new person that we've never seen before? {}".format(not True in results))
+
+            
+
 # CamProc.get_image('../data/cam/charles/charles_5.jpg', 400, 900, 550, 950)
 # CamProc.test_draw_on_image('../data/cam/charles/charles_5.jpg')
 # CamProc.test_matlab_plot('../data/cam/charles/charles_5.jpg')
 # CamProc.test_video()
 # CamProc.test_threshold('../data/cam/charles/charles_5.jpg')
-CamProc.color_filtering()
+# CamProc.color_filtering()
+CamProc.facial_recognition("unknown_people/unknown1.jpg")
+CamProc.facial_recognition("unknown_people/unknown2.jpg")
+CamProc.facial_recognition("unknown_people/unknown3.jpg")
+CamProc.facial_recognition("unknown_people/unknown4.jpg")
