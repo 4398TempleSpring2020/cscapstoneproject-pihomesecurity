@@ -151,8 +151,12 @@ class CamProc():
         print("Is the unknown face a picture of Luke? {}".format(results[1]))
         print("Is the unknown face a picture of Cat's daughter? {}".format(results[2]))
         print("Is the unknown face a new person that we've never seen before? {}".format(not True in results))
-
-            
+        
+        for i in range(0, len(known_faces)):
+            if(results[i] == True):
+                return True
+            #print(results[i])
+        return False
 
 # CamProc.get_image('../data/cam/charles/charles_5.jpg', 400, 900, 550, 950)
 # CamProc.test_draw_on_image('../data/cam/charles/charles_5.jpg')
@@ -160,7 +164,7 @@ class CamProc():
 # CamProc.test_video()
 # CamProc.test_threshold('../data/cam/charles/charles_5.jpg')
 # CamProc.color_filtering()
-CamProc.facial_recognition("unknown_people/unknown1.jpg")
-CamProc.facial_recognition("unknown_people/unknown2.jpg")
-CamProc.facial_recognition("unknown_people/unknown3.jpg")
-CamProc.facial_recognition("unknown_people/unknown4.jpg")
+print(CamProc.facial_recognition("unknown_people/unknown1.jpg"))
+print(CamProc.facial_recognition("unknown_people/unknown2.jpg"))
+print(CamProc.facial_recognition("unknown_people/unknown3.jpg"))
+print(CamProc.facial_recognition("unknown_people/unknown4.jpg"))
