@@ -5,4 +5,4 @@ class CamProc():
         print(cv2.__version__)
 
     def isAnomaly(self, files):
-        return True
+        return False
