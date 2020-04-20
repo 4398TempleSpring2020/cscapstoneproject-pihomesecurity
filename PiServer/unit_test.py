@@ -12,7 +12,6 @@ from camera_proc_help import facial_recognition
 from s3_client import S3_Client
 
 class TestSensors(unittest.TestCase):
-    '''
     # ensure running sensors returns a tuple with 4 items, each containing non null information
     def test_running_sensors(self):
         print('testing running all sensors')
@@ -32,11 +31,10 @@ class TestSensors(unittest.TestCase):
         self.assertEqual(len(anomaly_dict), 4)
         self.assertTrue(not instance_id is None)
         self.assertTrue(acc_id == acc_old_id)
-
-    '''
+        
     # test image processing script for known output (hostile / friendly)
-    def test_image_proc_individual(self):
-        print('Testing image processing indiv')
+    def test_image_proc_all(self):
+        print('Testing image processing')
         known = ['./known_people/cat.jpg',
                  './known_people/charles.jpg', './known_people/luke.jpg']
         # true
@@ -61,20 +59,6 @@ class TestSensors(unittest.TestCase):
         
         isAnom, face_match = facial_recognition(["unknown_people/unknown4.jpg"], known)
         print("Isanom " + str(isAnom) + " face match " + str(face_match))
-
-        # true, true
-        self.assertTrue(isAnom)
-        self.assertTrue(face_match)
-
-    
-    # test image processing script for known output (hostile / friendly)
-    def test_image_proc_all(self):
-        print('Testing image processing all')
-        known = ['./known_people/cat.jpg',
-                 './known_people/charles.jpg', './known_people/luke.jpg']
-
-        # true
-        isAnom, face_match = facial_recognition(["unknown_people/unknown1.jpg", "unknown_people/unknown2.jpg", "unknown_people/unknown3.jpg", "unknown_people/unknown4.jpg"], known)
 
         # true, true
         self.assertTrue(isAnom)

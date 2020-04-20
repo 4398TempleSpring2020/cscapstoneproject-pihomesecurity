@@ -190,7 +190,7 @@ def facial_recognition(image_path_list, face_list):
         return(True, False)
     
     # results is an array of True/False telling if the unknown face
-    matched anyone in the known_faces array
+    #matched anyone in the known_faces array
     print('Performing face matching')
 
     results_list = []
