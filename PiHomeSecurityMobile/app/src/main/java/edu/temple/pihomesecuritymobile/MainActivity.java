@@ -24,22 +24,17 @@ public class MainActivity extends AppCompatActivity implements HomeFragment.soun
     SharedPreferences sharePrefs;
     Client client;
     ClientThread clientThread;
+    final String HOST ="3.16.163.252";
+    final int PORT = 5002;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         BottomNavigationView navView = findViewById(R.id.nav_view);
         Bundle formBundle = getIntent().getExtras();
-        client = new Client("3.16.163.252",5001);
-        clientThread = new ClientThread(client);
-        clientThread.start();
-        JSONObject json = new JSONObject();
-        try{
-            json.put("Pi_mobile","pi_mobile");
-            client.send("Pi_mobile");
-        } catch (Exception e){
-
-        }
+        //client = new Client("3.16.163.252",5002);
+        //clientThread = new ClientThread(client);
+        //clientThread.start();
         sharePrefs = getSharedPreferences("PREF_NAME",MODE_PRIVATE);
         if(formBundle != null){
             String form[] = formBundle.getStringArray("form");
@@ -73,16 +68,11 @@ public class MainActivity extends AppCompatActivity implements HomeFragment.soun
     */
     @Override
     public void soundAlarm() {
-        JSONObject message = new JSONObject();
-        try {
-            message.put("message_type", "alert_message");
-            message.put("alert_type","sound_alarm");
-            //client.send(message);
-            client.send("PANIC");
-        } catch (JSONException e){
-            Log.e("SENDING ALARM MESSAGE", e.toString());
-        }
+        client = new Client(HOST,PORT, "PANIC");
+        clientThread = new ClientThread(client);
+        clientThread.start();
         Toast.makeText(getApplicationContext(),"Sounding Alarm", Toast.LENGTH_SHORT).show();
+
     }
 
     /**
@@ -94,31 +84,29 @@ public class MainActivity extends AppCompatActivity implements HomeFragment.soun
      */
     @Override
     public void setAlarm(boolean setFlag) {
-        JSONObject message = new JSONObject();
-        try{
-            message.put("message_type","arm_message");
-            if(setFlag){
-                message.put("arm_type",1);
-                client.send("ARM");
-            } else {
-                message.put("arm_type",0);
-                client.send("DISARM");
-            }
-        } catch (JSONException e){
-            Log.e("SENDING ARM MESSAGE", e.toString());
+        if(setFlag){
+            client = new Client(HOST,PORT, "ARM");
+            clientThread = new ClientThread(client);
+            clientThread.start();
+        } else {
+            client = new Client(HOST,PORT, "DISARM");
+            clientThread = new ClientThread(client);
+            clientThread.start();
         }
     }
 
 
     @Override
-    public void escalateRsp(JSONObject msg) {
-        client.send("ESCALATE");
-        //client.send(msg);
+    public void escalateRsp() {
+        client = new Client(HOST,PORT, "ESCALATE");
+        clientThread = new ClientThread(client);
+        clientThread.start();
     }
 
     @Override
-    public void resolveRsp(JSONObject msg) {
-        client.send("RESOLVE");
-        //client.send(msg);
+    public void resolveRsp() {
+        client = new Client(HOST,PORT, "RESOLVE");
+        clientThread = new ClientThread(client);
+        clientThread.start();
     }
 }

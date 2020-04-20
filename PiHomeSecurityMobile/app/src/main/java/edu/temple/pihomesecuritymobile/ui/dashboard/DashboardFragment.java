@@ -108,13 +108,6 @@ public class DashboardFragment extends Fragment {
         escalateButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                final JSONObject msg = new JSONObject();
-                try {
-                    msg.put("message_type","escalate");
-                    msg.put("rsp_type",1);
-                } catch (Exception e){
-                    Log.e("ESC_FAIL",e.toString());
-                }
                 new AlertDialog.Builder(parent)
                         .setTitle("Confirm Action")
                         .setMessage("You are about to escalate this incident which will contact the authorities. Are you sure you want to continue?")
@@ -133,7 +126,7 @@ public class DashboardFragment extends Fragment {
                                     e.printStackTrace();
                                 }
                                 if (seconds <= SECONDS_DIFF && seconds>=0 && authoritiesContacted==0) {
-                                    mList.escalateRsp(msg);
+                                    mList.escalateRsp();
                                     mngr.alertResponse(home_ID, "yes");
                                     Toast.makeText(parent.getApplicationContext(), "Sending escalation response.", Toast.LENGTH_SHORT).show();
                                 } else if (seconds > SECONDS_DIFF || authoritiesContacted == 1) {
@@ -167,13 +160,6 @@ public class DashboardFragment extends Fragment {
         resolveButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                final JSONObject msg = new JSONObject();;
-                try{
-                    msg.put("message_type","escalate");
-                    msg.put("rsp_type",0);
-                } catch (Exception e){
-                    Log.e("ESC_FAIL",e.toString());
-                }
                 new AlertDialog.Builder(parent)
                         .setTitle("Confirm Action")
                         .setMessage("You are about to mark this incident as resolved. Are you sure you want to continue?")
@@ -192,7 +178,7 @@ public class DashboardFragment extends Fragment {
                                     e.printStackTrace();
                                 }
                                 if (seconds <= SECONDS_DIFF && seconds>=0 && authoritiesContacted==0) {
-                                    mList.resolveRsp(msg);
+                                    mList.resolveRsp();
                                     mngr.alertResponse(home_ID, "no");
                                     Toast.makeText(parent.getApplicationContext(), "Sending de-escalation response.", Toast.LENGTH_SHORT).show();
                                 } else if (seconds > SECONDS_DIFF || authoritiesContacted == 1) {
@@ -298,8 +284,8 @@ public class DashboardFragment extends Fragment {
     }
 
     public interface onFragListener{
-        void escalateRsp(JSONObject msg);
-        void resolveRsp(JSONObject msg);
+        void escalateRsp();
+        void resolveRsp();
     }
 
     /**
