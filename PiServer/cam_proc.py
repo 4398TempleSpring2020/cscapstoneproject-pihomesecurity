@@ -9,20 +9,6 @@ class CamProc():
         users = image_dict['users']
 
         sampled = image_dict['sampled']
-        isAnom = False
-        face_match = False
-        for file_a in sampled:
-            # attempt to recognize faces
-            isAnom_temp, face_rec_temp = facial_recognition(file_a, users)
-            
-            # per image anom detection
-            if(isAnom_temp):
-                isAnom = True
-            if(face_rec_temp):
-                face_match = True
+        isAnom, face_match = facial_recognition(sampled, users)
 
-            # end early if user face at all
-            if(isAnom and face_match):
-                break
-        
         return(isAnom, face_match)
