@@ -9,7 +9,7 @@ import os
 import unittest
 from run_sensors import run_sensors
 from camera_proc_help import facial_recognition
-import threading
+from s3_client import S3_Client
 
 class TestSensors(unittest.TestCase):
     # ensure running sensors returns a tuple with 4 items, each containing non null information
@@ -22,38 +22,48 @@ class TestSensors(unittest.TestCase):
         ret_vals = run_sensors(10, acc_old_id, bucket_name)
 
         # check length
-        self.assertEquals(len(ret_vals), 4)        
+        self.assertEqual(len(ret_vals), 4)        
 
         # unpack it and check existance
         ret_list, anomaly_dict, instance_id, acc_id = ret_vals
         self.assertTrue(not ret_list is None)
         self.assertTrue(not anomaly_dict is None)
-        self.assertEquals(len(anomaly_dict), 4)
+        self.assertEqual(len(anomaly_dict), 4)
         self.assertTrue(not instance_id is None)
         self.assertTrue(acc_id == acc_old_id)
-
+        
     # test image processing script for known output (hostile / friendly)
-    def test_image_proc(self):
+    def test_image_proc_all(self):
         print('Testing image processing')
-        faces = os.listdir("./known_people")
+        known = ['./known_people/cat.jpg',
+                 './known_people/charles.jpg', './known_people/luke.jpg']
+        # true
+        isAnom, face_match = facial_recognition(["unknown_people/unknown1.jpg"], known)
+        self.assertTrue(isAnom)
+        self.assertTrue(face_match)
 
-        known = []
-        for fn in faces:
-            known.append('./known_people/' + fn)
+        print("Isanom " + str(isAnom) + " face match " + str(face_match))
+        isAnom, face_match = facial_recognition(["unknown_people/unknown2.jpg"], known)
+        print("Isanom " + str(isAnom) + " face match " + str(face_match))
+
+        # true, true
+        self.assertTrue(isAnom)
+        self.assertTrue(face_match)
         
-        # true
-        self.assertTrue(facial_recognition("unknown_people/unknown1.jpg", known))
+        isAnom, face_match = facial_recognition(["unknown_people/unknown3.jpg"], known)
+        print("Isanom " + str(isAnom) + " face match " + str(face_match))
 
-        # true
-        self.assertTrue(facial_recognition("unknown_people/unknown2.jpg", known))
-
-        # false
-        self.assertTrue(facial_recognition("unknown_people/unknown3.jpg", known))
-
-        # true
-        self.assertTrue(facial_recognition("unknown_people/unknown4.jpg", known))
-
+        # false, true
+        self.assertTrue(isAnom)
+        self.assertFalse(face_match)
         
+        isAnom, face_match = facial_recognition(["unknown_people/unknown4.jpg"], known)
+        print("Isanom " + str(isAnom) + " face match " + str(face_match))
+
+        # true, true
+        self.assertTrue(isAnom)
+        self.assertTrue(face_match)
+ 
     # test that we recognize far anomalies for ultra
     def test_ultra_proc_far(self):
         print('Testing ultra processing far')
@@ -62,7 +72,7 @@ class TestSensors(unittest.TestCase):
         fname = ["./data/ultra/far_anomaly.txt"]
         isAnom = ultraProc.isAnomaly(fname)
 
-        self.assertEquals(isAnom, True)
+        self.assertEqual(isAnom, True)
 
     # test that we recognize medium anomalies for ultra
     def test_ultra_proc_med(self):
@@ -72,7 +82,7 @@ class TestSensors(unittest.TestCase):
         fname = ["./data/ultra/medium_anomaly.txt"]
         isAnom = ultraProc.isAnomaly(fname)
 
-        self.assertEquals(isAnom, True)
+        self.assertEqual(isAnom, True)
 
     # test that we recognize close anomalies for ultra
     def test_ultra_proc_close(self):
@@ -82,17 +92,17 @@ class TestSensors(unittest.TestCase):
         fname = ["./data/ultra/close_anomaly.txt"]
         isAnom = ultraProc.isAnomaly(fname)
 
-        self.assertEquals(isAnom, True)
+        self.assertEqual(isAnom, True)
 
     # test that we do not recognize static anomalies for ultra
     def test_ultra_proc_static(self):
         print('Testing ultra processing static')
 
         ultraProc = UltraProc()
-        fname = ["./data/ultra/static_anomaly.txt"]
+        fname = ["./data/ultra/static.txt"]
         isAnom = ultraProc.isAnomaly(fname)
 
-        self.assertEquals(isAnom, False)
+        self.assertEqual(isAnom, False)
 
     # test that we do not recognize distant walking anomalies for ultra
     def test_ultra_proc_offscreen(self):
@@ -102,7 +112,7 @@ class TestSensors(unittest.TestCase):
         fname = ["./data/ultra/offscreenwalking.txt"]
         isAnom = ultraProc.isAnomaly(fname)
 
-        self.assertEquals(isAnom, False)
+        self.assertEqual(isAnom, False)
 
     # test that we recognize close anomalies for mic
     def test_mic_proc_close(self):
@@ -112,7 +122,7 @@ class TestSensors(unittest.TestCase):
         fname = ["./data/mic/close_talking.wav"]
         isAnom = micProc.isAnomaly(fname)
 
-        self.assertEquals(isAnom, True)
+        self.assertEqual(isAnom, True)
 
     # test that we recognize loud clapping for mic
     def test_mic_proc_loud(self):
@@ -122,7 +132,7 @@ class TestSensors(unittest.TestCase):
         fname = ["./data/mic/loud_clapping.wav"]
         isAnom = micProc.isAnomaly(fname)
 
-        self.assertEquals(isAnom, True)
+        self.assertEqual(isAnom, True)
 
     # test that we do not recognize silent fo mic
     def test_mic_proc_silent(self):
@@ -132,7 +142,7 @@ class TestSensors(unittest.TestCase):
         fname = ["./data/mic/silent.wav"]
         isAnom = micProc.isAnomaly(fname)
 
-        self.assertEquals(isAnom, False)
+        self.assertEqual(isAnom, False)
 
     # test that exactly twice the number of files downloaded are in the downloads folder
     # (i.e. each face has a corresponding meta file)
@@ -145,7 +155,7 @@ class TestSensors(unittest.TestCase):
 
         downloaded_contents = os.listdir('./faces')
         num_downloaded = len(downloaded_contents)
-        self.assertEquals(num_files * 2, num_downloaded)
+        self.assertEqual(num_files * 2, num_downloaded)
 
     # test that each meta file exists after downloading faces
     def test_s3_user_face_download_meta(self):
@@ -156,10 +166,10 @@ class TestSensors(unittest.TestCase):
 
         meta_files = []
         for file_a in files:
-            meta_files.append(path_a.split('.')[:-1][0] + "_meta.txt")
+            meta_files.append(file_a.split('.')[:-1][0] + "_meta.txt")
 
         for mfile in meta_files:
-            assertEquals(os.path.exists(mfile), True)
+            self.assertEqual(os.path.exists(mfile), True)
 
     # test that each face file exists after downloading faces
     def test_s3_user_face_download(self):
@@ -169,7 +179,7 @@ class TestSensors(unittest.TestCase):
         files = client.get_user_face_files("mypishield", 11)
 
         for file_a in files:
-            assertEquals(os.path.exists(file_a), True)
+            self.assertEqual(os.path.exists(file_a), True)
 
 if __name__ == '__main__':
     unittest.main()

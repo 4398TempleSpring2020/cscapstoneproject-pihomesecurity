@@ -3,6 +3,8 @@ from matplotlib import pyplot as plt
 import numpy as np
 import face_recognition
 from s3_client import S3_Client
+import pickle
+import os
 
 # Test that moves an image in xstart:xend ystart:yend to the top left corner of the picture
 def get_image(image_path, xstart, xend, ystart, yend):
@@ -116,38 +118,91 @@ def facial_detection():
             break
     cap.release()
     cv2.destroyAllWindows()
-
-def facial_recognition(image_path, face_list):
+    
+def facial_recognition(image_path_list, face_list):
     isAnom = False
     face_rec = False
+    
     # Load the jpg files into numpy arrays
     image_list = []
-    for face_file in face_list:
-        image_list.append(face_recognition.load_image_file(face_file))
-    unknown_image = face_recognition.load_image_file(image_path)
+    unknown_image_list = []
 
     # Get the face encodings for each face in each image file
     # Since there could be more than one face in each image, it returns a list of encodings.
-    # But since I know each image only has one face, I only care about the first encoding in each image, so I grab index 0.
-    known_faces = []
-    try:
-        for image in image_list:
-            known_faces.append(face_recognition.face_encodings(image)[0])
-        unknown_face_encoding = face_recognition.face_encodings(unknown_image)[0]
+    # But since I know each image only has one face, I only care about
+    # the first encoding in each image, so I grab index 0.
+    unknown_face_present = False
+    print('Embedding unknown faces')
+    unknown_encs = []
+    # get each unknown as np
+    for image_path in image_path_list: 
+        unknown_image_list.append(face_recognition.load_image_file(image_path))
+
+    for unknown_image in unknown_image_list:
+        try:
+            unknown_encs.append(face_recognition.face_encodings(unknown_image)[0])
+            print('UNKNOWN FACE PRESENT')
+            unknown_face_present = True
+        except IndexError:
+            # no faces present
+            print("No unknown face in unknown image")
+
+    # if no faces detected, return false false
+    if not unknown_face_present:
+        return(False, False)
     
-    except IndexError:
-        # no faces present
-        print("I wasn't able to locate any faces in at least one of the images. Check the image files. Aborting...")
-        
-        return(isAnom, face_rec)
+    known_faces = []
+    user_face_present = False
+    print('Embedding known faces')
 
-    # results is an array of True/False telling if the unknown face matched anyone in the known_faces array
-    results = face_recognition.compare_faces(known_faces, unknown_face_encoding)
+    # check if path to embedded file exists
+    for face_file in face_list:
+        print(face_file)
+        face_path = face_file.split(".jpg")[0]
+        face_path += "_emb.txt"
+        print(face_path)
+        if(os.path.exists(face_path)):
+            print('We have seen this face before ' + face_path)
 
-    isAnom = True
-    for result in results:
-        if(result):
-            # return true if user recognized
-            face_rec = True
+            user_face_present = True
+            with open(face_path, "rb") as ffile:
+                known_faces.append(pickle.load(ffile))
+        else:
+            print('We have not seen this face before' + face_path + " " + str(face_file))
+            # get each face as np
+            image = face_recognition.load_image_file(face_file)
+
+            print('Image file loaded')
+            try:
+                cur_face = face_recognition.face_encodings(image)[0]
+                known_faces.append(cur_face)
+                print('Known Face Present')
+                with open(face_path, "wb") as ffile:
+                    known_faces.append(pickle.dump(cur_face, ffile))
+
+                user_face_present = True
+            except IndexError:
+                # no face present
+                print("ERROR: Unable to detect any faces in user uploaded image")
+    # if no user faces detected in uploaded images but a unknown face is present
+    # return True False
+    if not user_face_present:
+        return(True, False)
+    
+    # results is an array of True/False telling if the unknown face
+    #matched anyone in the known_faces array
+    print('Performing face matching')
+
+    results_list = []
+    for unknown_face_encoding in unknown_encs:
+        results = face_recognition.compare_faces(known_faces, unknown_face_encoding)
+        for result in results:
+            if(result):
+                print('user was recognized')
+                # return true if user recognized
+                return(True, True)        
+
+    print('user was recognized')
+                    
     # return that face is present, but not recognized
-    return(isAnom, face_rec)
+    return(True, False)

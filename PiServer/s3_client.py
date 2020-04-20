@@ -113,7 +113,9 @@ class S3_Client():
 
         ret_files = []
         meta_files = []
+        emb_files = []
         for face_file, meta in keys:
+            emb_flag = False
             path_a = face_file.split('/')[1:]
             path_a = path_a[0] + '/' + path_a[1]
             ret_files.append(path_a)
@@ -121,11 +123,21 @@ class S3_Client():
             meta_path = path_a.split('.')[:-1][0] + "_meta.txt"
             meta_files.append(meta_path)
             
+            # we should delete these
+            emb_path = path_a.split('.')[:-1][0] + "_emb.txt"
+
             if(not os.path.exists(face_file) or not os.path.exists(meta_path)):
                 # if files are not already downloaded, download images, remake meta
                 self.download_from_s3(bucket_name, path_a, face_file)                
                 with open(meta_path, "w") as meta_file:
                     meta_file.write(str(meta))
+
+                    emb_flag = True
+                    # delete embedded file
+                    try:
+                        os.remove(emb_path)
+                    except:
+                        pass
 
             # read meta data
             meta_old = None        
@@ -138,11 +150,21 @@ class S3_Client():
                 with open(meta_path, "w") as meta_file:
                     meta_file.write(str(meta))
 
+                emb_flag = True
+                # delete embedded file
+                try:
+                    os.remove(emb_path)
+                except:
+                    pass
+
+            if(not emb_flag):
+                emb_files.append(emb_path)                
+
         # remove files from local machine that do not exist in s3
         local_files = os.listdir("faces/")
         for lfile in local_files:
             lfile = 'faces/' + lfile
-            if(not(lfile in ret_files or lfile in meta_files)):
+            if(not(lfile in ret_files or lfile in meta_files or lfile in enb_files)):
                 print('deleting [' + lfile + "]")
                 os.remove(lfile)
         return ret_files
