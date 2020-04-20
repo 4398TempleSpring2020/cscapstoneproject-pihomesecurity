@@ -52,6 +52,7 @@ class Camera(sensor_interface):
         camProc = CamProc()
         isAnomaly = camProc.isAnomaly(image_dict)
         anomaly_dict['cam'] = isAnomaly
+        print('CAM ANOM : ' + str(isAnomaly))
         
         # wait until every thread has processed their files
         barrier.wait()

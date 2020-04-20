@@ -3,3 +3,5 @@
 **/bin
 **/lib
 **/pyvenv.cfg
+**/__pycache__
+**/PiServer/*.jpg
