@@ -4,6 +4,7 @@ from microphone import Microphone
 from camera import Camera
 from ultra_proc import UltraProc
 from mic_proc import MicProc
+from cam_proc import CamProc
 import os
 import unittest
 from run_sensors import run_sensors
@@ -27,6 +28,25 @@ class TestSensors(unittest.TestCase):
         self.assertEquals(len(anomaly_dict), 3)
         self.assertTrue(instance_id not None)
         self.assertTrue(acc_id not 11)
+
+    # test image processing script for known output (hostile / friendly)
+    def test_image_proc(self):
+        camProc = CamProc()
+
+        known = os.listdir("./known_people")
+
+        # true
+        self.assertTrue(CamProc.facial_recognition("unknown_people/unknown1.jpg"), known)
+
+        # true
+        self.assertTrue(CamProc.facial_recognition("unknown_people/unknown2.jpg"), known)
+
+        # false
+        self.assertTrue(CamProc.facial_recognition("unknown_people/unknown3.jpg", known)
+
+        # true
+        self.assertTrue(CamProc.facial_recognition("unknown_people/unknown4.jpg"), known)
+
         
     # test that we recognize far anomalies for ultra
     def test_ultra_proc_far(self):

@@ -13,7 +13,7 @@ def run_sensors(duration, acc_id, bucket_name):
     sm = Sensor_Manager() # takes in acc iD
     sm.add_sensor(Microphone(duration=duration, frequency=44100))
     
-    sm.add_sensor(Camera(duration=duration, frequency=.5))
+    sm.add_sensor(Camera(duration=int(duration/2), frequency=.5))
     sm.add_sensor(Ultrasonic(duration=duration, frequency=.1))
     sm.connect_all()
     return(sm.initiate_all(acc_id, bucket_name))
@@ -31,6 +31,9 @@ def run_everything(acc_id):
     print('-------------- RUNNING SENSORS ---------------------')
     ret_list, anomaly_dict, instance_id, acc_id = run_sensors(10, acc_id, bucket_name)
 
+    face_match = anomaly_dict['face']
+    del anomaly_dict['face']    
+    
     print('------------ Sensors Complete -----------------')
     for item in ret_list:
         print(item)
@@ -57,7 +60,7 @@ def run_everything(acc_id):
 
     ret_dict['bucket'] = bucket_name
     ret_dict['instance_id'] = instance_id
-    ret_dict['face_match_flag'] = False
+    ret_dict['face_match_flag'] = face_match
     ret_dict['wasAlert'] = wasAlert
     ret_dict['trigger_sensor_type'] = trig_type
     

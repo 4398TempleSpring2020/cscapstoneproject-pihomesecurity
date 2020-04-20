@@ -1,32 +1,12 @@
 import cv2
+from matplotlib import pyplot as plt
+import numpy as np
+import face_recognition
 
+#This line of code adds a grayscale filter to the image
+#img = cv2.imread('../data/cam/luke/image_18.jpg', cv2.IMREAD_GRAYSCALE)
 class CamProc():
-    def test_cv(self):
-        print(cv2.__version__)
-
-    def isAnomaly(self, image_dict):
-        users = image_dict['users']
-
-        sampled = image_dict['sampled']
-        isAnom = False
-        face_match = False
-        for file_a in sampled:
-            # attempt to recognize faces
-            isAnom_temp, face_rec_temp = CamProc.facial_recognition(file_a, users)
-
-            # per image anom detection
-            if(isAnom_temp):
-                isAnom = True
-            if(face_rec_temp):
-                face_match = True
-
-            # end early if user face at all
-            if(isAnom and face_match):
-                break
-        
-        return(isAnom, face_match)
-
-        # Test that moves an image in xstart:xend ystart:yend to the top left corner of the picture
+    # Test that moves an image in xstart:xend ystart:yend to the top left corner of the picture
     def get_image(image_path, xstart, xend, ystart, yend):
         img = cv2.imread(image_path, cv2.IMREAD_COLOR)
         #img[400:900, 550:950] = [255, 255, 255]
@@ -139,36 +119,52 @@ class CamProc():
         cap.release()
         cv2.destroyAllWindows()
 
-    def facial_recognition(image_path, face_list):
-        isAnom = False
-        face_rec = False
+    def facial_recognition(image_path):
         # Load the jpg files into numpy arrays
-        image_list = []
-        for face_file in face_list:
-            image_list.append(face_recognition.load_image_file(face_file))
+        charles_image = face_recognition.load_image_file("known_people/charles.jpg")
+        luke_image = face_recognition.load_image_file("known_people/luke.jpg")
+        cat_image = face_recognition.load_image_file("known_people/cat.jpg")
+        unknown_image = face_recognition.load_image_file(image_path)
 
         # Get the face encodings for each face in each image file
         # Since there could be more than one face in each image, it returns a list of encodings.
         # But since I know each image only has one face, I only care about the first encoding in each image, so I grab index 0.
-        known_faces = []
         try:
-            for image in image_list:
-                known_faces.append(face_recognition.face_encodings(image)[0])
+            charles_face_encoding = face_recognition.face_encodings(charles_image)[0]
+            luke_face_encoding = face_recognition.face_encodings(luke_image)[0]
+            cat_face_encoding = face_recognition.face_encodings(cat_image)[0]
             unknown_face_encoding = face_recognition.face_encodings(unknown_image)[0]
-    
         except IndexError:
-            # no faces present
             print("I wasn't able to locate any faces in at least one of the images. Check the image files. Aborting...")
+            quit()
 
-            return(isAnom, face_rec)
+        known_faces = [
+            charles_face_encoding,
+            luke_face_encoding,
+            cat_face_encoding
+        ]
 
         # results is an array of True/False telling if the unknown face matched anyone in the known_faces array
         results = face_recognition.compare_faces(known_faces, unknown_face_encoding)
 
-        isAnom = True
-        for result in results:
-            if(result):
-                # return true if user recognized
-                face_rec = True
-        # return that face is present, but not recognized
-        return(isAnom, face_rec)
+        print("Is the unknown face a picture of Charles? {}".format(results[0]))
+        print("Is the unknown face a picture of Luke? {}".format(results[1]))
+        print("Is the unknown face a picture of Cat's daughter? {}".format(results[2]))
+        print("Is the unknown face a new person that we've never seen before? {}".format(not True in results))
+        
+        for i in range(0, len(known_faces)):
+            if(results[i] == True):
+                return True
+            #print(results[i])
+        return False
+
+# CamProc.get_image('../data/cam/charles/charles_5.jpg', 400, 900, 550, 950)
+# CamProc.test_draw_on_image('../data/cam/charles/charles_5.jpg')
+# CamProc.test_matlab_plot('../data/cam/charles/charles_5.jpg')
+# CamProc.test_video()
+# CamProc.test_threshold('../data/cam/charles/charles_5.jpg')
+# CamProc.color_filtering()
+print(CamProc.facial_recognition("unknown_people/unknown1.jpg"))
+print(CamProc.facial_recognition("unknown_people/unknown2.jpg"))
+print(CamProc.facial_recognition("unknown_people/unknown3.jpg"))
+print(CamProc.facial_recognition("unknown_people/unknown4.jpg"))

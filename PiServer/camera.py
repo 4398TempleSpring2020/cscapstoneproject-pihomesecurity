@@ -50,7 +50,7 @@ class Camera(sensor_interface):
         # check if anomaly in cam data
         print('camera anomaly detection')
         camProc = CamProc()
-        isAnomaly = camProc.isAnomaly(image_dict)
+        isAnomaly, face_match = camProc.isAnomaly(image_dict)
         anomaly_dict['cam'] = isAnomaly
         print('CAM ANOM : ' + str(isAnomaly))
         
@@ -67,7 +67,13 @@ class Camera(sensor_interface):
 
         # list of objects
         obj_list = []
+
+        anomaly_dict['face'] = False
+        # upload to s3 on anomaly
         if(wasAnom):
+            # show if we got a face_match
+            anomaly_dict['face'] = face_match
+            
             client = S3_Client()
             # upload to s3
             for file_a in outfiles:
