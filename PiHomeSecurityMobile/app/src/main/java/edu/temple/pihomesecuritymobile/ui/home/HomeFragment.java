@@ -17,6 +17,8 @@ import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 
+import org.json.JSONException;
+
 import edu.temple.pihomesecuritymobile.MainActivity;
 import edu.temple.pihomesecuritymobile.R;
 
@@ -62,6 +64,7 @@ public class HomeFragment extends Fragment {
                 } else {
                     alarmStr.setText("Alarm: unactive");
                 }
+                mList.setAlarm(b);
             }
         });
         soundButton.setOnClickListener(new View.OnClickListener() {
@@ -81,5 +84,6 @@ public class HomeFragment extends Fragment {
 
     public interface soundButtonListener{
         public void soundAlarm();
+        public void setAlarm(boolean setFlag);
     }
 }

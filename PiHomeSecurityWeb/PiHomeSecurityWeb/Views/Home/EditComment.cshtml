@@ -1,0 +1,21 @@
+﻿@model IncidentData
+@{
+    ViewData["Title"] = "Employee Table";
+    ViewData["linkVis"] = "color: white; " +
+                "visibility: visible; " +
+                "font-size: small";
+    ViewData["link1"] = "Incidents";
+    ViewData["link2"] = "Logoff";
+    ViewData["link3"] = "";
+
+    ViewData["link1Action"] = "EmpTable";
+    ViewData["link2Action"] = "Logoff";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h1>Edit comment for incident: @ViewBag.IncidentId</h1>
+<form asp-action="EditComment" asp-route-id="@ViewBag.IncidentId" method="post">
+    <textarea class="commentEditBox" asp-for="AdminComments"></textarea>
+    <input class="commentConfirmButton" type="submit" value="Submit" />
+</form>
+

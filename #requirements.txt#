@@ -1,0 +1,29 @@
+boto3 (1.12.32)
+botocore (1.15.32)
+numpy (1.18.2)
+pandas (1.0.3)
+PyWavelets (1.1.1)
+s3transfer (0.3.3)
+scikit-image (0.16.2)
+scikit-learn (0.22.2.post1)
+scipy (1.4.1)
+seaborn (0.10.0)
+sounddevice (0.3.15)
+sSoundFile (0.10.3.post1)
+sqlparse (0.3.1)
+tensorflow (1.14.0)
+usb-creator (0.3.3)
+virtualenv (15.1.0)
+
+
+sudo pip3 install boto3
+sudo apt-get install python3-opencv
+sudo pip3 install picamera
+sudo pip3 install scipy
+sudo pip3 install sounddevice
+sudo pip3 install soundfile
+sudo pip3 isntall wave
+sudo pip3 install numpy
+sudo pip3 install sqlparse
+
+

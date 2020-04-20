@@ -4,6 +4,7 @@ from sensor_interface import sensor_interface
 from picamera import PiCamera
 from time import sleep
 import os
+import time
 
 class Camera(sensor_interface):
     camera = None
@@ -11,25 +12,42 @@ class Camera(sensor_interface):
     duration = None
     frequency = None
 
-    def initiate(self):
-        if self.isActive:
-            self.camera.start_preview()
-            sleep(5)
-
+    def initiate(self, response_list, outPath):
+        start = time.time()
+        print(response_list)
+        list_lock = response_list[0]
+        
+        outfiles = []
+        try:
+            self.isActive = True
+            #self.camera.start_preview()
             print('Initiating Camera')
             for i in range(self.duration):
-                cur_path = './image_' + str(i) + '.jpg'
-                print('\tCapturing [' + cur_path + ']')
+                cur_path = outPath + 'image_' + str(i) + '.jpg'
+                outfiles.append(cur_path)
+                
+                print('\tCapturing [' + str(i) + ']')
 
                 self.camera.capture(cur_path)
-                sleep(1)
+                sleep(self.frequency)
 
-            self.camera.stop_preview()
-            return True
-        else:
+            #self.camera.stop_preview()
+        except:
             print('Camera Failed')
-            return False
-    
+        finally:
+            self.isActive = False
+
+        print('Camera locking')
+        with list_lock:
+            print('Camera locked')
+
+            response_list.append((outfiles, "camera"))
+            print('Camera added to list')
+            
+        end = time.time()
+        print("Total camera time to execute : [" + str(end - start) + "]")
+
+            
     def connect(self):
         print('Camera Connecting')
         try:
