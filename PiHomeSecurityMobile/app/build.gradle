@@ -16,6 +16,11 @@ android {
             returnDefaultValues = true
         }
     }
+    testOptions.unitTests.all {
+        testLogging {
+            events 'passed', 'skipped', 'failed', 'standardOut', 'standardError'
+        }
+    }
     buildTypes {
         release {
             minifyEnabled false
@@ -41,4 +46,7 @@ dependencies {
     testImplementation 'org.json:json:20080701'
     implementation 'com.amazonaws:aws-android-sdk-s3:2.6.30'
     implementation 'com.squareup.picasso:picasso:2.71828'
+    androidTestImplementation 'org.mockito:mockito-core:1.10.19'
+    androidTestImplementation "com.google.dexmaker:dexmaker-mockito:1.2"
+
 }
