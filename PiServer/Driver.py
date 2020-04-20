@@ -20,7 +20,9 @@ class Driver:
         self.db_conn = db               # connection to database
         self.is_armed = False           # is system armed?
         self.was_alert = False          # comes lukes code on run everything return
-        self.is_ongoing_threat = False  # is there a ongoing threat?
+        self.is_active_alert = False    # is there an active alert
+        self.is_max_alert = False       # is it already escalated / high alert
+        self.is_panic = False           # was this a panic button alert
         self.record_incident = False    # should i record incident?
    
 
