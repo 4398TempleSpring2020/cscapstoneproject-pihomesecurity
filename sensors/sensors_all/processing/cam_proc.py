@@ -33,7 +33,7 @@ class CamProc():
         plt.plot([200,300,400],[100,200,300], 'c', linewidth=5)
         plt.show()
 
-    def test_video():
+        def test_video():
         cap = cv2.VideoCapture(0)
         while True:
             ret, frame = cap.read()
