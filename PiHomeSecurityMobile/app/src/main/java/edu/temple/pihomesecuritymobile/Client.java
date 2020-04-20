@@ -8,7 +8,7 @@ import java.net.*;
 
 import org.json.JSONException;
 import org.json.JSONObject;
-
+/*
 class ListenerThread extends Thread {
     String ipAddr;
     int port;
@@ -54,7 +54,7 @@ class ListenerThread extends Thread {
         }
     }
 }
-
+*/
 // Client class
 public class Client {
 
@@ -64,10 +64,12 @@ public class Client {
     OutputStream output;
     Writer writer;
     BufferedWriter buffer;
+    String stuff;
 
-    public Client(String host, int port) {
+    public Client(String host, int port, String message) {
         this.host = host;
         this.port = port;
+        this.stuff  = message;
         writer = new Writer() {
             @Override
             public void write(char[] chars, int i, int i1) throws IOException {
@@ -86,9 +88,7 @@ public class Client {
         };
         buffer = new BufferedWriter(writer);
     }
-
-
-
+/*
     public boolean send(String stuff){
         try {
             this.buffer.write(stuff);
@@ -100,20 +100,25 @@ public class Client {
             Log.d("client_test","Error sending data");
             return false;}
     }
+  */
     public void start(){
         try {
-            InetAddress ip = InetAddress.getByName("localhost");
-            System.out.println(ip);
-            // establish the connection with server port 5056
+            //InetAddress ip = InetAddress.getByName("localhost");
+            //System.out.println(ip);
             this.client_socket = new Socket(host, port);
             Log.d("client_test","connected to server");
             this.output = this.client_socket.getOutputStream();
             this.writer = new OutputStreamWriter(this.output);
             this.buffer = new BufferedWriter(this.writer);
             this.buffer.flush();
+            this.buffer.write("Pi_Mobile");
+            this.buffer.flush();
+            this.buffer.write(stuff);
+            this.buffer.flush();
 
-            Thread listener_thread = new ListenerThread(host, port, client_socket);
-            listener_thread.start();
+
+            //Thread listener_thread = new ListenerThread(host, port, client_socket);
+            //listener_thread.start();
 
         } catch (Exception e) {
             e.printStackTrace();
