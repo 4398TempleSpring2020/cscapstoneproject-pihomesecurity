@@ -1,17 +1,18 @@
 import threading
 
-
 class MessageHandlerThread(threading.Thread):
 
     def __init__(self, shared_resources):
         threading.Thread.__init__(self)
+        print("Message Handler Thread created")
         self.shared_resources = shared_resources
 
     def run(self):
         while True:
-
-            self.shared_resources.q_lock.acquire()
+            
             while len(self.shared_resources.message_q) > 0:
+                self.shared_resources.q_lock.acquire()
+                print("Message Handler acquired lock and something in queue")
                 message = self.shared_resources.message_q.pop()
                 print("message received: " + message)
 
@@ -78,4 +79,7 @@ class MessageHandlerThread(threading.Thread):
                     # stop beep
                     # play siren
                     break
-            self.shared_resources.q_lock.release()
+
+                self.shared_resources.q_lock.release()
+
+            print("Message Handler relinquished lock")

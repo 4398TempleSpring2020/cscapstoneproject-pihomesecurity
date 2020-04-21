@@ -19,11 +19,11 @@ class Driver:
         self.q_lock = threading.Lock()  # lock for q sync
         self.db_conn = db               # connection to database
         self.is_armed = False           # is system armed?
-        self.was_alert = False          # comes lukes code on run everything return
-        self.is_active_alert = False    # is there an active alert
+        self.is_active_incident = False    # is there an active alert
         self.is_max_alert = False       # is it already escalated / high alert
         self.is_panic = False           # was this a panic button alert
         self.record_incident = False    # should i record incident?
+        self.was_alert = False          # comes lukes code on run everything return
    
 
 if __name__ == '__main__':
@@ -35,6 +35,7 @@ if __name__ == '__main__':
     pi_client = Client(Constant.host_ip, Constant.port, shared_resources)
     pi_system_thread = ClientThread(pi_client, shared_resources)
     pi_system_thread.start()
+
     message_handler_thread = MessageHandlerThread(shared_resources)
     message_handler_thread.start()
 
