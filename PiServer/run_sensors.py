@@ -14,7 +14,7 @@ def run_sensors(duration, acc_id, bucket_name):
     sm.add_sensor(Microphone(duration=duration, frequency=44100))
     
     sm.add_sensor(Camera(duration=1, frequency=.5))
-    sm.add_sensor(Ultrasonic(duration=60, frequency=.1))
+    sm.add_sensor(Ultrasonic(duration=10, frequency=.1))
     sm.connect_all()
     return(sm.initiate_all(acc_id, bucket_name))
     
@@ -53,6 +53,9 @@ def run_everything(acc_id):
         if was_triggered:
             wasAlert = True
             trig_type.append(sensor_type)
+            
+    if face_match and wasAlert:
+        wasAlert = False
             
     ret_dict = {}
     for files, src in ret_list:

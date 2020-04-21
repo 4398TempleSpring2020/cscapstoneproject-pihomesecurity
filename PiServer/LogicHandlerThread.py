@@ -30,8 +30,7 @@ class LogicHandlerThread(threading.Thread):
             
             self.shared_resources.q_lock.acquire()  # get lock for shared resource is_armed
             #if printCt%30 ==0:
-                #print("Logic Handler Aquired Lock")
-                
+                #print("Logic Handler Aquired Lock")   
             if self.shared_resources.is_armed is True:
                 if self.shared_resources.is_active_incident is False:
                     print("Logic Handler has lock, is Armed,is not active incident")
@@ -58,6 +57,8 @@ class LogicHandlerThread(threading.Thread):
     
                         print("CHILD RET DICT : " + str(ret_dict))
                         sys.exit(0)
+                        print("***************child should have died***********")
+                        
     
                     print('RET DICT FINAL : ' + str(ret_dict))
     
@@ -66,9 +67,9 @@ class LogicHandlerThread(threading.Thread):
                         #print("Logic Handler acquired lock for alert detected")
                         record_incident = True     # should this be the line below?
                         #self.shared_resources.record_incident = True
-                        self.shared_resources.is_active_alert = True
+                        self.shared_resources.is_active_incident = True
                         self.shared_resources.was_alert = True
-                        print("\tLogicHandlerThread:\tSet Resource: Is Active Alert", self.shared_resources.is_active_alert)
+                        print("\tLogicHandlerThread:\tSet Resource: Is Active Alert", self.shared_resources.is_active_incident)
                         print("\tLogicHandlerThread:\tSet Resource: Was Alert", self.shared_resources.was_alert)
                         if ret_dict["face_match_flag"] is False:  # is no face match a high alert or a self escalating one???
                             print("\LogicHandlerthread:\t the face match flag is ",ret_dict["face_match_flag"])
@@ -110,9 +111,9 @@ class LogicHandlerThread(threading.Thread):
                 panic = True
                 print("\tLogicHandlerThread:\tCollected Data for Panic")
                 self.shared_resources.was_alert = True
-                self.shared_resources.is_active_alert = True
+                self.shared_resources.is_active_incident = True
                 print("\tLogicHandlerThread:\tSet Resource: Was Alert", self.shared_resources.was_alert)
-                print("\tLogicHandlerThread:\tSet Resource: Is Active Alert", self.shared_resources.is_active_alert)
+                print("\tLogicHandlerThread:\tSet Resource: Is Active Alert", self.shared_resources.is_active_incident)
                 #self.shared_resources.q_lock.release()
 
             self.shared_resources.q_lock.release()  # release lock

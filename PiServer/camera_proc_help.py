@@ -135,7 +135,10 @@ def facial_recognition(image_path_list, face_list):
     print('Embedding unknown faces')
     unknown_encs = []
     # get each unknown as np
-    for image_path in image_path_list: 
+    
+    for image_path in image_path_list:
+        #img = cv2.imread(image_path)
+        #img = cv2.rotate(img, cv2.ROTATE_180)
         unknown_image_list.append(face_recognition.load_image_file(image_path))
 
     for unknown_image in unknown_image_list:
@@ -209,7 +212,7 @@ def facial_recognition(image_path_list, face_list):
             if(result):
                 print('user was recognized')
                 # return true if user recognized
-                return(True, True)        
+                return(False, True)        
 
     print('user was recognized')
                     

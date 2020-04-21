@@ -100,7 +100,7 @@ class Camera(sensor_interface):
         try:
             self.camera = PiCamera()
             # Take out this if no rotation is needed
-            self.camera.rotation = 180
+            #self.camera.rotation = 180
             self.isActive = True
             print('Cam success')
         except:

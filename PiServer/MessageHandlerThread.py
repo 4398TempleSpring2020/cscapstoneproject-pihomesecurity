@@ -74,7 +74,7 @@ class MessageHandlerThread(threading.Thread):
                         
 
                     elif message == "PANIC":
-                        self.shared_resources.is_active_incident = True
+                        self.shared_resources.is_active_incident = False
                         print("\tResources Set:\tIs Active Incident: ", self.shared_resources.is_max_alert)
                         self.shared_resources.is_max_alert = True
                         print("\tResources Set:\tIs Max Alert: ", self.shared_resources.is_max_alert)
