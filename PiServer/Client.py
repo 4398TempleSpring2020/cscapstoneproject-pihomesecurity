@@ -49,6 +49,7 @@ class ListenerThread(threading.Thread):
             self.shared_resources.q_lock.acquire()  # get lock
             self.shared_resources.message_q.appendleft(str(data))
             self.shared_resources.q_lock.release()  # release lock
+            time.sleep(3)
 
 
 
