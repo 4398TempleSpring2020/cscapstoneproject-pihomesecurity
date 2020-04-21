@@ -14,8 +14,8 @@ class Ultrasonic(sensor_interface):
     num_channels = 1
 
     #set GPIO Pins
-    GPIO_TRIGGER = 18
-    GPIO_ECHO = 24
+    GPIO_TRIGGER = 12
+    GPIO_ECHO = 18
 
     def distance(self):
         # set Trigger to HIGH

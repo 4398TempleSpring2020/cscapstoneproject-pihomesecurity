@@ -44,7 +44,8 @@ class MessageHandlerThread(threading.Thread):
                         if self.shared_resources.is_active_incident is True:
                             self.shared_resources.is_active_incident = False
                             print("\tResources Set:\tIs Active Incident: ",self.shared_resources.is_active_incident)
-                        
+                            self.shared_resources.is_armed = False
+                            print("\tResources Set:\tIs Armed: ", self.shared_resources.is_armed)
                         elif self.shared_resources.is_active_incident is False:
                             print("** DISREGARD MESAGE ** no active incident")
                         
@@ -80,6 +81,6 @@ class MessageHandlerThread(threading.Thread):
                         # contact police
                         # stop beep
                         # play siren
-                
+                print("MessageHandler giving up lock end of loop")
                 #self.shared_resources.q_lock.release()
           

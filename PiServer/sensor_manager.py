@@ -20,6 +20,8 @@ class Sensor_Manager():
         list_lock = threading.Lock()
         # create a barrier to wait for all sensors
         barrier = threading.Barrier(len(self.sensors))
+        print("len of self.sensors: ",len(self.sensors))
+        print("barrier in sensor manager: ",barrier)
         anomaly_dict = {}
         anomaly_dict['mic'] = False
         anomaly_dict['ultra'] = False

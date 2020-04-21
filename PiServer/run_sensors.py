@@ -13,8 +13,8 @@ def run_sensors(duration, acc_id, bucket_name):
     sm = Sensor_Manager() # takes in acc iD
     sm.add_sensor(Microphone(duration=duration, frequency=44100))
     
-    sm.add_sensor(Camera(duration=2, frequency=.5))
-    sm.add_sensor(Ultrasonic(duration=duration, frequency=.1))
+    sm.add_sensor(Camera(duration=1, frequency=.5))
+    sm.add_sensor(Ultrasonic(duration=60, frequency=.1))
     sm.connect_all()
     return(sm.initiate_all(acc_id, bucket_name))
     
