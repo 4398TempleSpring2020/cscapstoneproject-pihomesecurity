@@ -44,7 +44,7 @@ class Microphone(sensor_interface):
         isAnomaly = micProc.isAnomaly(outfiles)
         anomaly_dict['mic'] = isAnomaly
         print('MIC ANOM : ' + str(isAnomaly))
-        
+        print("barrier in mic: ", barrier)
         # wait until every thread has processed their files
         barrier.wait()
         print('mic passed barrier')

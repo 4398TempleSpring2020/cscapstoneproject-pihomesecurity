@@ -15,16 +15,25 @@ class LogicHandlerThread(threading.Thread):
         threading.Thread.__init__(self)
         self.shared_resources = shared_resources    # get lock for shared resource is_armed
 
-        def run(self):
-            while True:
+    def run(self):
+        #printCt = 0
+        print("Logic Handler running")
+        while True:
+         
+            #if printCt%30 ==0:
+                #print("Logic Handler Thread running")
+         
 
-                panic = False
-                record_incident = False  # DOES THIS NEED TO BE THE LINE BELOW ?
-                #self.shared_resources.record_incident = False
-                
-                self.shared_resources.q_lock.acquire()  # get lock for shared resource is_armed
-
-                if self.shared_resources.is_armed is True and self.shared_resources.is_active_alert is False:
+            panic = False
+            record_incident = False  # DOES THIS NEED TO BE THE LINE BELOW ?
+            #self.shared_resources.record_incident = False
+            
+            self.shared_resources.q_lock.acquire()  # get lock for shared resource is_armed
+            #if printCt%30 ==0:
+                #print("Logic Handler Aquired Lock")   
+            if self.shared_resources.is_armed is True:
+                if self.shared_resources.is_active_incident is False:
+                    print("Logic Handler has lock, is Armed,is not active incident")
                     ret_dict = None
                     r, w = os.pipe()
                     pid = os.fork()
@@ -48,69 +57,86 @@ class LogicHandlerThread(threading.Thread):
     
                         print("CHILD RET DICT : " + str(ret_dict))
                         sys.exit(0)
+                        print("***************child should have died***********")
+                        
     
                     print('RET DICT FINAL : ' + str(ret_dict))
     
                     if ret_dict["wasAlert"] is True:  # reduce time holding lock
+                        #self.shared_resources.q_lock.acquire()
+                        #print("Logic Handler acquired lock for alert detected")
                         record_incident = True     # should this be the line below?
                         #self.shared_resources.record_incident = True
-                        self.shared_resources.is_active_alert = True
+                        self.shared_resources.is_active_incident = True
                         self.shared_resources.was_alert = True
-                        print("\tLogicHandlerThread:\tSet Resource: Is Active Alert", self.shared_resources.is_active_alert)
+                        print("\tLogicHandlerThread:\tSet Resource: Is Active Alert", self.shared_resources.is_active_incident)
                         print("\tLogicHandlerThread:\tSet Resource: Was Alert", self.shared_resources.was_alert)
                         if ret_dict["face_match_flag"] is False:  # is no face match a high alert or a self escalating one???
-                            print("\LogicHandlerthread:\t the face match flag is ",ret_dict[face_match_flag])
+                            print("\LogicHandlerthread:\t the face match flag is ",ret_dict["face_match_flag"])
                             #self.shared_resorces.is_max_alert = True
-
-                elif self.shared_resources.is_panic is True:
-                    ret_dict = None
-                    r, w = os.pipe()
-                    pid = os.fork()
-                    if pid > 0:
-                        os.close(w)
-                        r = os.fdopen(r)
-                        ret_dict = ast.literal_eval(r.read())
-
-                        # parent process
-                        print('Parent done waiting')
-                        print("PARENT RET DICT : " + str(ret_dict))
-
-                    else:
-                        print('child running everything')
-                        os.close(r)
-                        # child process
-                        ret_dict = run_everything(11)
-                        w = os.fdopen(w, 'w')
-                        w.write(str(ret_dict))
-                        w.close()
-
-                        print("CHILD RET DICT : " + str(ret_dict))
-                        sys.exit(0)
-
-                    print('RET DICT FINAL : ' + str(ret_dict))
-
-                    record_incident = True
-                    panic = True
-                    print("\tLogicHandlerThread:\tCollected Data for Panic")
-                    self.shared_resources.was_alert = True
-                    print("\tLogicHandlerThread:\tSet Resource: Was Alert", self.shared_resources.was_alert)
+                        #self.shared_resources.q_lock.release()
+                        print("Logic Handler released lock after normal workflow")
 
 
-                self.shared_resources.q_lock.release()  # release lock
+            elif self.shared_resources.is_panic is True and self.shared_resources.is_active_incident is False:
+                ret_dict = None
+                r, w = os.pipe()
+                pid = os.fork()
+                if pid > 0:
+                    os.close(w)
+                    r = os.fdopen(r)
+                    ret_dict = ast.literal_eval(r.read())
+
+                    # parent process
+                    print('Parent done waiting')
+                    print("PARENT RET DICT : " + str(ret_dict))
+
+                else:
+                    print('child running everything')
+                    os.close(r)
+                    # child process
+                    ret_dict = run_everything(11)
+                    w = os.fdopen(w, 'w')
+                    w.write(str(ret_dict))
+                    w.close()
+
+                    print("CHILD RET DICT : " + str(ret_dict))
+                    sys.exit(0)
+
+                print('RET DICT FINAL : ' + str(ret_dict))
+
+                #self.shared_resources.q_lock.acquire()
+                #print("Logic Handler acquiring lock for panic")
+                record_incident = True
+                panic = True
+                print("\tLogicHandlerThread:\tCollected Data for Panic")
+                self.shared_resources.was_alert = True
+                self.shared_resources.is_active_incident = True
+                print("\tLogicHandlerThread:\tSet Resource: Was Alert", self.shared_resources.was_alert)
+                print("\tLogicHandlerThread:\tSet Resource: Is Active Alert", self.shared_resources.is_active_incident)
+                #self.shared_resources.q_lock.release()
+
+            self.shared_resources.q_lock.release()  # release lock
+            #if printCt%10 ==0:
+            #print("Logic Handler released lock")
             
-                if record_incident is True:
-                    incident_id = str(ret_dict["instance_id"])
-                    face_match_flag = str(ret_dict["face_match_flag"])
-                    image_path = ret_dict["camera"]
-                    mic_path = ret_dict["mic"][0]
-                    ultrasonic_path = ret_dict["ultrasonic"][0]
-                    temp = IncidentData(Constant.ACCOUNT_ID, incident_id, face_match_flag, image_path, mic_path,
-                                        ultrasonic_path)  # create incident data
-                    self.shared_resources.db_conn.connection = self.shared_resources.db_conn.connect()  # connect
-                    print(self.shared_resources.db_conn.insert_incident_data(temp))  # send to db and print
+            if record_incident is True:
+                print("recording incident in database")
+                incident_id = str(ret_dict["instance_id"])
+                if ret_dict["face_match_flag"] == True:
+                    face_match_flag = 1
+                else:
+                    face_match_flag = 0
+                image_path = ret_dict["camera"]
+                mic_path = ret_dict["mic"][0]
+                ultrasonic_path = ret_dict["ultrasonic"][0]
+                temp = IncidentData(Constant.ACCOUNT_ID, incident_id, face_match_flag, image_path, mic_path,
+                                    ultrasonic_path)  # create incident data
+                self.shared_resources.db_conn.connection = self.shared_resources.db_conn.connect()  # connect
+                print(self.shared_resources.db_conn.insert_incident_data(temp))  # send to db and print
 
-                    # self.shared_resources.db_conn.disconnect()  # disconnect is handled in dbConn
-
+                # self.shared_resources.db_conn.disconnect()  # disconnect is handled in dbConn
+            #printCt = printCt +1
                     
 """                  
     def run(self):

@@ -14,8 +14,8 @@ class Ultrasonic(sensor_interface):
     num_channels = 1
 
     #set GPIO Pins
-    GPIO_TRIGGER = 7
-    GPIO_ECHO = 11
+    GPIO_TRIGGER = 12
+    GPIO_ECHO = 18
 
     def distance(self):
         # set Trigger to HIGH
@@ -60,6 +60,7 @@ class Ultrasonic(sensor_interface):
         try:
             while total_time < self.duration:
                 dist = self.distance()
+                print(dist)
                 output += str(dist) + "\n"
                 time.sleep(self.frequency)
                 total_time += self.frequency

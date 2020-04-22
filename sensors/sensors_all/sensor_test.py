@@ -2,6 +2,7 @@
 from sensor_manager import Sensor_Manager
 from microphone import Microphone
 from camera import Camera
+from ultrasonic import Ultrasonic
 
 if __name__ == '__main__':
     '''
@@ -13,8 +14,9 @@ if __name__ == '__main__':
     '''
 
     sm = Sensor_Manager() # takes in acc iD
-    sm.add_sensor(Microphone(duration=60, frequency=44100))
-    sm.add_sensor(Camera(duration=60, frequency=1))
+    #sm.add_sensor(Microphone(duration=60, frequency=44100))
+    #sm.add_sensor(Camera(duration=60, frequency=1))
+    sm.add_sensor(Ultrasonic(duration=60,frequency=.1))
     sm.connect_all()
     sm.initiate_all()
 

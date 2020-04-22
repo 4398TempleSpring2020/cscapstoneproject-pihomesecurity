@@ -135,7 +135,10 @@ def facial_recognition(image_path_list, face_list):
     print('Embedding unknown faces')
     unknown_encs = []
     # get each unknown as np
-    for image_path in image_path_list: 
+    
+    for image_path in image_path_list:
+        #img = cv2.imread(image_path)
+        #img = cv2.rotate(img, cv2.ROTATE_180)
         unknown_image_list.append(face_recognition.load_image_file(image_path))
 
     for unknown_image in unknown_image_list:
@@ -178,7 +181,7 @@ def facial_recognition(image_path_list, face_list):
                 known_faces.append(cur_face)
                 print('Known Face Present')
                 with open(face_path, "wb") as ffile:
-                    known_faces.append(pickle.dump(cur_face, ffile))
+                    pickle.dump(cur_face, ffile)
 
                 user_face_present = True
             except IndexError:
@@ -194,13 +197,22 @@ def facial_recognition(image_path_list, face_list):
     print('Performing face matching')
 
     results_list = []
+    
+    print("len of unknown_encs: ",len(unknown_encs))
     for unknown_face_encoding in unknown_encs:
+        print("running through unknown_encs")
+        print("len of known_faces: ",len(known_faces))
+        print("known faces: ",known_faces)
+        for face in known_faces:
+            print("face shape: ",face.shape)
+        print("len unknown_face_encoding",len(unknown_face_encoding))
+        print("unknown_face_encoding.shape is ",unknown_face_encoding.shape)
         results = face_recognition.compare_faces(known_faces, unknown_face_encoding)
         for result in results:
             if(result):
                 print('user was recognized')
                 # return true if user recognized
-                return(True, True)        
+                return(False, True)        
 
     print('user was recognized')
                     

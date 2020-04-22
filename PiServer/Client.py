@@ -39,6 +39,7 @@ class ListenerThread(threading.Thread):
             try:
                 data = self.server_socket.recv(2048).decode()
                 if not data:
+                    print("not data, exiting listener thread")
                     break
             except:
                 print("connection error. closing connection")
@@ -46,9 +47,13 @@ class ListenerThread(threading.Thread):
                 break
 
             #print("received data: " + str(data))  # test
-            self.shared_resources.q_lock.acquire()  # get lock
+            #self.shared_resources.q_lock.acquire()  # get lock
+            #print("Listener thread acquired lock")
             self.shared_resources.message_q.appendleft(str(data))
-            self.shared_resources.q_lock.release()  # release lock
+            print("Listener thread added data to queue")
+            #self.shared_resources.q_lock.release()  # release lock
+            #print("Listener thread released lock")
+            time.sleep(3)
 
 
 
@@ -67,6 +72,7 @@ class Client:
         self.server_socket = socket.socket()
         self.server_socket.connect((host, port))  # connect
         new_thread = ListenerThread(self.host, self.port, self.server_socket, self.shared_resources)
+        print("starting a new listener thread in client connect() method")
         new_thread.start()
 
     def send(self, str_data):
@@ -74,6 +80,6 @@ class Client:
             self.server_socket.send(str_data.encode())  # send to server
             return True
         except:
-            print("Error sending data")
+            print("Error sending data in client send() method")
             return False
 

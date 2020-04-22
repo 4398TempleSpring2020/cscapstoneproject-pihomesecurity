@@ -54,7 +54,8 @@ class Camera(sensor_interface):
         anomaly_dict['cam'] = isAnomaly
         print('CAM ANOM : ' + str(isAnomaly))
         
-        # wait until every thread has processed their files
+        print("barrier in cam: ",barrier)
+       # wait until every thread has processed their files
         barrier.wait()
         print('cam passed barrier')
 
@@ -99,7 +100,7 @@ class Camera(sensor_interface):
         try:
             self.camera = PiCamera()
             # Take out this if no rotation is needed
-            self.camera.rotation = 180
+            #self.camera.rotation = 180
             self.isActive = True
             print('Cam success')
         except:

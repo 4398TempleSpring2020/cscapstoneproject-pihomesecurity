@@ -16,8 +16,8 @@ class Ultrasonic(sensor_interface):
     num_channels = 1
 
     #set GPIO Pins
-    GPIO_TRIGGER = 7
-    GPIO_ECHO = 11
+    GPIO_TRIGGER = 12
+    GPIO_ECHO = 18
 
     def distance(self):
         # set Trigger to HIGH
@@ -63,6 +63,7 @@ class Ultrasonic(sensor_interface):
             while total_time < self.duration:
                 dist = self.distance()
                 output += str(dist) + "\n"
+                #print("dist: ",dist)
                 time.sleep(self.frequency)
                 total_time += self.frequency
 
@@ -84,7 +85,7 @@ class Ultrasonic(sensor_interface):
         anomaly_dict['ultra'] = isAnomaly
         print('ULTRA ANOM : ' + str(isAnomaly))
 
-        
+        print("barrier in ultra: ",barrier)
         # wait until every thread has processed their files
         barrier.wait()
         print('ultra passed barrier')

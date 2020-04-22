@@ -164,7 +164,7 @@ class S3_Client():
         local_files = os.listdir("faces/")
         for lfile in local_files:
             lfile = 'faces/' + lfile
-            if(not(lfile in ret_files or lfile in meta_files or lfile in enb_files)):
+            if(not(lfile in ret_files or lfile in meta_files or lfile in emb_files)):
                 print('deleting [' + lfile + "]")
                 os.remove(lfile)
         return ret_files
