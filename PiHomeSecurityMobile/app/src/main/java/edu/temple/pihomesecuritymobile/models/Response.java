@@ -154,7 +154,13 @@ public class Response {
             String[] date_tokens = tokens_temp[0].split(", ");
             date_tokens[0] = date_tokens[0].substring(1);
             newDate = date_tokens[1] + "-" + date_tokens[2] + "-" + date_tokens[0];
-            newTime = date_tokens[3] + ":" + date_tokens[4] + ":" + date_tokens[5];
+            if (date_tokens.length>5) {
+                newTime = date_tokens[3] + ":" + date_tokens[4] + ":" + date_tokens[5];
+            } else if (date_tokens.length>4) {
+                newTime = date_tokens[3] + ":" + date_tokens[4] + ":" + "00";
+            } else {
+                newTime = date_tokens[3] + ":" + "00" + ":" + "00";
+            }
             newDateTime = newDate + " " + newTime;
             //now need to convert to local time....
             SimpleDateFormat df = new SimpleDateFormat("MM-dd-yyyy HH:mm:ss", Locale.ENGLISH);
