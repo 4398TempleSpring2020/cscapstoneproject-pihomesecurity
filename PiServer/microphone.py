@@ -51,11 +51,17 @@ class Microphone(sensor_interface):
 
         # check if any anomalies detected
         wasAnom = False
-        for anomaly in anomaly_dict.values():
+        for key,anomaly in zip(anomaly_dict.keys(),anomaly_dict.values()):
+            if key == 'face':
+                continue
             if(anomaly):
                 wasAnom = True
                 break
+            
+        if anomaly_dict['face']:
+            wasAnom = False
 
+      
         # list of objects
         obj_list = []
         if(wasAnom):

@@ -7,6 +7,7 @@ from Constant import Constant
 import pickle
 import ast
 import sys
+from pprint import pprint
 
 
 class LogicHandlerThread(threading.Thread):
@@ -44,7 +45,7 @@ class LogicHandlerThread(threading.Thread):
     
                         # parent process
                         print('Parent done waiting')
-                        print("PARENT RET DICT : " + str(ret_dict))
+                        pprint("PARENT RET DICT : " + str(ret_dict))
     
                     else:
                         print('child running everything')
@@ -55,12 +56,12 @@ class LogicHandlerThread(threading.Thread):
                         w.write(str(ret_dict))
                         w.close()
     
-                        print("CHILD RET DICT : " + str(ret_dict))
+                        pprint("CHILD RET DICT : " + str(ret_dict))
                         sys.exit(0)
                         print("***************child should have died***********")
                         
     
-                    print('RET DICT FINAL : ' + str(ret_dict))
+                    pprint('RET DICT FINAL : ' + str(ret_dict))
     
                     if ret_dict["wasAlert"] is True:  # reduce time holding lock
                         #self.shared_resources.q_lock.acquire()
@@ -78,43 +79,44 @@ class LogicHandlerThread(threading.Thread):
                         print("Logic Handler released lock after normal workflow")
 
 
-            elif self.shared_resources.is_panic is True and self.shared_resources.is_active_incident is False:
-                ret_dict = None
-                r, w = os.pipe()
-                pid = os.fork()
-                if pid > 0:
-                    os.close(w)
-                    r = os.fdopen(r)
-                    ret_dict = ast.literal_eval(r.read())
+            elif self.shared_resources.is_panic is True:
+                if self.shared_resources.is_active_incident is False:
+                    ret_dict = None
+                    r, w = os.pipe()
+                    pid = os.fork()
+                    if pid > 0:
+                        os.close(w)
+                        r = os.fdopen(r)
+                        ret_dict = ast.literal_eval(r.read())
 
-                    # parent process
-                    print('Parent done waiting')
-                    print("PARENT RET DICT : " + str(ret_dict))
+                        # parent process
+                        print('Parent done waiting')
+                        pprint("PARENT RET DICT : " + str(ret_dict))
 
-                else:
-                    print('child running everything')
-                    os.close(r)
-                    # child process
-                    ret_dict = run_everything(11)
-                    w = os.fdopen(w, 'w')
-                    w.write(str(ret_dict))
-                    w.close()
+                    else:
+                        print('child running everything')
+                        os.close(r)
+                        # child process
+                        ret_dict = run_everything(11)
+                        w = os.fdopen(w, 'w')
+                        w.write(str(ret_dict))
+                        w.close()
 
-                    print("CHILD RET DICT : " + str(ret_dict))
-                    sys.exit(0)
+                        pprint("CHILD RET DICT : " + str(ret_dict))
+                        sys.exit(0)
 
-                print('RET DICT FINAL : ' + str(ret_dict))
+                    pprint('RET DICT FINAL : ' + str(ret_dict))
 
-                #self.shared_resources.q_lock.acquire()
-                #print("Logic Handler acquiring lock for panic")
-                record_incident = True
-                panic = True
-                print("\tLogicHandlerThread:\tCollected Data for Panic")
-                self.shared_resources.was_alert = True
-                self.shared_resources.is_active_incident = True
-                print("\tLogicHandlerThread:\tSet Resource: Was Alert", self.shared_resources.was_alert)
-                print("\tLogicHandlerThread:\tSet Resource: Is Active Alert", self.shared_resources.is_active_incident)
-                #self.shared_resources.q_lock.release()
+                    #self.shared_resources.q_lock.acquire()
+                    #print("Logic Handler acquiring lock for panic")
+                    record_incident = True
+                    panic = True
+                    print("\tLogicHandlerThread:\tCollected Data for Panic")
+                    self.shared_resources.was_alert = True
+                    self.shared_resources.is_active_incident = True
+                    print("\tLogicHandlerThread:\tSet Resource: Was Alert", self.shared_resources.was_alert)
+                    print("\tLogicHandlerThread:\tSet Resource: Is Active Alert", self.shared_resources.is_active_incident)
+                    #self.shared_resources.q_lock.release()
 
             self.shared_resources.q_lock.release()  # release lock
             #if printCt%10 ==0:
@@ -133,7 +135,7 @@ class LogicHandlerThread(threading.Thread):
                 temp = IncidentData(Constant.ACCOUNT_ID, incident_id, face_match_flag, image_path, mic_path,
                                     ultrasonic_path)  # create incident data
                 self.shared_resources.db_conn.connection = self.shared_resources.db_conn.connect()  # connect
-                print(self.shared_resources.db_conn.insert_incident_data(temp))  # send to db and print
+                pprint(self.shared_resources.db_conn.insert_incident_data(temp))  # send to db and print
 
                 # self.shared_resources.db_conn.disconnect()  # disconnect is handled in dbConn
             #printCt = printCt +1

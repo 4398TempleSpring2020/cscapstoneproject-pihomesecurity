@@ -105,7 +105,7 @@ class MicProc():
             # establish upper and lower bounds that are 4 standard deviations away
             thresh_up = mean + std*4
             thresh_down = mean - std*4
-
+            sound_thresh = 200
             # at least x consecutive samples needed
             count_thresh = .5*sampling_rate
 
@@ -113,5 +113,8 @@ class MicProc():
             for chunk in chunks:
                 # if we exceed count for consec, there is an anomaly
                 if(len(chunk) >= count_thresh):
-                    isAnom = True
-        return isAnom
+                    for val in chunk:
+                        if val> sound_thresh:
+                            return True
+          
+        return False
