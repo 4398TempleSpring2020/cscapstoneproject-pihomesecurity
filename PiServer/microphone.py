@@ -58,8 +58,8 @@ class Microphone(sensor_interface):
                 wasAnom = True
                 break
             
-        if anomaly_dict['face']:
-            wasAnom = False
+        #if anomaly_dict['face']:
+        #    wasAnom = False
 
       
         # list of objects

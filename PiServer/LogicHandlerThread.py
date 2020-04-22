@@ -8,6 +8,8 @@ import pickle
 import ast
 import sys
 from pprint import pprint
+from TimerCountdownThread import TimerCountdownThread
+import requests
 
 
 class LogicHandlerThread(threading.Thread):
@@ -15,6 +17,7 @@ class LogicHandlerThread(threading.Thread):
     def __init__(self, shared_resources):
         threading.Thread.__init__(self)
         self.shared_resources = shared_resources    # get lock for shared resource is_armed
+        self.URL = "https://jlt49k4n90.execute-api.us-east-2.amazonaws.com/beta/incident-alert/"
 
     def run(self):
         #printCt = 0
@@ -24,10 +27,8 @@ class LogicHandlerThread(threading.Thread):
             #if printCt%30 ==0:
                 #print("Logic Handler Thread running")
          
-
             panic = False
             record_incident = False  # DOES THIS NEED TO BE THE LINE BELOW ?
-            #self.shared_resources.record_incident = False
             
             self.shared_resources.q_lock.acquire()  # get lock for shared resource is_armed
             #if printCt%30 ==0:
@@ -68,14 +69,17 @@ class LogicHandlerThread(threading.Thread):
                         #print("Logic Handler acquired lock for alert detected")
                         record_incident = True     # should this be the line below?
                         #self.shared_resources.record_incident = True
-                        self.shared_resources.is_active_incident = True
-                        self.shared_resources.was_alert = True
-                        print("\tLogicHandlerThread:\tSet Resource: Is Active Alert", self.shared_resources.is_active_incident)
-                        print("\tLogicHandlerThread:\tSet Resource: Was Alert", self.shared_resources.was_alert)
                         if ret_dict["face_match_flag"] is False:  # is no face match a high alert or a self escalating one???
                             print("\LogicHandlerthread:\t the face match flag is ",ret_dict["face_match_flag"])
-                            #self.shared_resorces.is_max_alert = True
-                        #self.shared_resources.q_lock.release()
+                            self.shared_resources.is_active_incident = True
+                            self.shared_resources.was_alert = True
+                            print("\tLogicHandlerThread:\tSet Resource: Is Active Incident", self.shared_resources.is_active_incident)
+                            print("\tLogicHandlerThread:\tSet Resource: Was Alert", self.shared_resources.was_alert)
+                        elif ret_dict["face_match_flag"] is True:
+                            print("\LogicHandlerthread:\t the face match flag is ",ret_dict["face_match_flag"])
+                            self.shared_resources.is_active_incident = False
+                            print("\tLogicHandlerThread:\tSet Resource: Is Active Incident", self.shared_resources.is_active_incident)
+
                         print("Logic Handler released lock after normal workflow")
 
 
@@ -107,8 +111,6 @@ class LogicHandlerThread(threading.Thread):
 
                     pprint('RET DICT FINAL : ' + str(ret_dict))
 
-                    #self.shared_resources.q_lock.acquire()
-                    #print("Logic Handler acquiring lock for panic")
                     record_incident = True
                     panic = True
                     print("\tLogicHandlerThread:\tCollected Data for Panic")
@@ -116,7 +118,6 @@ class LogicHandlerThread(threading.Thread):
                     self.shared_resources.is_active_incident = True
                     print("\tLogicHandlerThread:\tSet Resource: Was Alert", self.shared_resources.was_alert)
                     print("\tLogicHandlerThread:\tSet Resource: Is Active Alert", self.shared_resources.is_active_incident)
-                    #self.shared_resources.q_lock.release()
 
             self.shared_resources.q_lock.release()  # release lock
             #if printCt%10 ==0:
@@ -129,6 +130,20 @@ class LogicHandlerThread(threading.Thread):
                     face_match_flag = 1
                 else:
                     face_match_flag = 0
+                if ret_dict["face_match_flag"] == True and panic == False and self.shared_resources.is_active_incident==True:
+                    data = {'homeID': Constant.ACCOUNT_ID, 'incidentID': incident_id, 'type': "anomaly"}
+                    #response holds the string returned from POST, if there was an error it should be in here
+                    response = requests.post(self.URL, json = data)
+                    print("INCIDENT ALERT RESONSE: ",response.text) #this is the response text, should say it was successful in here
+                    #timer_thread = TimerCountdownThread(self.shared_resources)
+                    #timer_thread.start()
+                    #print("Timer has started for receiving responses")
+                elif panic==True:
+                    data = {'homeID': Constant.ACCOUNT_ID, 'incidentID': incident_id, 'type': "panic"}
+                    #response holds the string returned from POST, if there was an error it should be in here
+                    response = requests.post(self.URL, json = data)
+                    print("PANIC ALERT RESONSE: ",response.text) #this is the response text, should say it was successful in here
+
                 image_path = ret_dict["camera"]
                 mic_path = ret_dict["mic"][0]
                 ultrasonic_path = ret_dict["ultrasonic"][0]
@@ -140,29 +155,3 @@ class LogicHandlerThread(threading.Thread):
                 # self.shared_resources.db_conn.disconnect()  # disconnect is handled in dbConn
             #printCt = printCt +1
                     
-"""                  
-    def run(self):
-        while True:
-            record_incident = False
-            self.shared_resources.q_lock.acquire()  # get lock for shared resource is_armed
-            if self.shared_resources.is_armed is True:
-
-        if self.shared_resources.is_armed is True and self.shared_resources.is_ongoing_threat is False:
-                ret_dict = run_everything(11)
-                if ret_dict["wasAlert"] is True:  # reduce time holding lock
-                    self.shared_resources.record_incident = True
-                    self.shared_resources.was_alert = True
-            self.shared_resources.q_lock.release()  # release lock
-            if self.shared_resources.record_incident is True and self.shared_resources.is_ongoing_threat is False:
-                incident_id = str(ret_dict["instance_id"])
-                face_match_flag = str(ret_dict["face_match_flag"])
-                image_path = ret_dict["camera"]
-                mic_path = ret_dict["mic"][0]
-                ultrasonic_path = ret_dict["ultrasonic"][0]
-                temp = IncidentData(Constant.ACCOUNT_ID, incident_id, face_match_flag, image_path, mic_path,
-                                    ultrasonic_path)  # create incident data
-                self.shared_resources.db_conn.connection = self.shared_resources.db_conn.connect()  # connect
-                print(self.shared_resources.db_conn.insert_incident_data(temp))  # send to db and print
-                self.shared_resources.is_ongoing_threat = True
-                self.shared_resources.record_incident = False
-"""    

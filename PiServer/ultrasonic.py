@@ -104,8 +104,8 @@ class Ultrasonic(sensor_interface):
             if(anomaly):
                 wasAnom = True
                 break
-        if anomaly_dict['face']:
-            wasAnom = False
+        #if anomaly_dict['face']:
+        #    wasAnom = False
 
 
         # list of objects

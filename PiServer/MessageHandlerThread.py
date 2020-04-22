@@ -36,6 +36,7 @@ class MessageHandlerThread(threading.Thread):
                             print("\tResources Set:\tIs Active Incident: ", self.shared_resources.is_active_incident)
                             self.shared_resources.is_panic = False
                             print("\tResources Set:\tIs Panic: ", self.shared_resources.is_panic)
+                            self.shared_resources.response_received = False
                         elif self.shared_resources.is_armed is True:
                             print("** DISREGARD MESAGE ** system already was armed")
                             
@@ -49,6 +50,7 @@ class MessageHandlerThread(threading.Thread):
                             print("\tResources Set:\tIs Acive Incident: ", self.shared_resources.is_active_incident)
                             self.shared_resources.is_panic = False
                             print("\tResources Set:\tIs Panic: ", self.shared_resources.is_panic)
+                            self.shared_resources.response_received = False
                         elif self.shared_resources is_panic is True:
                             self.shared_resources.is_max_alert = False 
                             print("\tResources Set:\tIs Max Alert: ", self.shared_resources.is_max_alert)
@@ -69,6 +71,7 @@ class MessageHandlerThread(threading.Thread):
                             print("\tResources Set:\tIs Armed: ", self.shared_resources.is_armed)
                             self.shared_resources.is_panic = False
                             print("\tResources Set:\tIs Panic: ", self.shared_resources.is_panic)
+                            self.shared_resources.response_received = True
                         elif self.shared_resources.is_active_incident is False:
                             print("** DISREGARD MESAGE ** no active incident")
                         
@@ -77,6 +80,7 @@ class MessageHandlerThread(threading.Thread):
                         if self.shared_resources.is_active_incident is True:
                             if self.shared_resources.is_max_alert is False:
                                 if self.shared_resources.is_panic is False:
+                                    self.shared_resources.response_received = True
                                     self.shared_resources.is_max_alert = True
                                     print("\tResources Set:\tIs Max Alert: ", self.shared_resources.is_max_alert)
                                     #this is for contacting police

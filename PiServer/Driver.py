@@ -24,6 +24,7 @@ class Driver:
         self.is_max_alert = False       # is it already escalated / high alert
         self.is_panic = False           # was this a panic button alert
         self.record_incident = False    # should i record incident?
+        self.response_received = False
    
 
 if __name__ == '__main__':
