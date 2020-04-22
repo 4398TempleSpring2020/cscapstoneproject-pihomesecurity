@@ -118,24 +118,24 @@ public class DashboardFragment extends Fragment {
                                 //we need to check that more than the predetermined amount of time has not passed
                                 //and that authorities were not contacted already
                                 long seconds = getSecondsDiff();
-                                String result2 = mngr.selectIDStatement("IncidentData", "EmergencyContactedFlag, FriendlyMatchFlag", "IncidentID", IDstr);
+                                String result2 = mngr.selectIDStatement("IncidentData", "EmergencyContactedFlag, BadIncidentFlag", "IncidentID", IDstr);
                                 Response response2 = mngr.makeResponse(result2);
 
                                 int authoritiesContacted = 0;
-                                int friendly = 0;
+                                int badIncident = 1;
                                 try {
                                     authoritiesContacted = response2.getBody().getInt("EmergencyContactedFlag");
-                                    friendly = response2.getBody().getInt("FriendlyMatchFlag");
-                                    Log.d("friendly_flag", "" + friendly);
+                                    badIncident = response2.getBody().getInt("BadIncidentFlag");
+                                    Log.d("BadIncidentFlag", "" + badIncident);
                                     Log.d("authorities_flag", "" + authoritiesContacted);
                                 } catch (JSONException e) {
                                     e.printStackTrace();
                                 }
-                                if (seconds <= SECONDS_DIFF && seconds>=0 && authoritiesContacted==0 && friendly==0) {
+                                if (seconds <= SECONDS_DIFF && seconds>=0 && authoritiesContacted==0 && badIncident==1) {
                                     mList.escalateRsp();
                                     mngr.alertResponse(home_ID, "yes");
                                     Toast.makeText(parent.getApplicationContext(), "Sending escalation response.", Toast.LENGTH_SHORT).show();
-                                } else if (seconds > SECONDS_DIFF || authoritiesContacted == 1 || friendly == 1) {
+                                } else if (seconds > SECONDS_DIFF || authoritiesContacted == 1 || badIncident == 0) {
                                     resolveButton.setClickable(false);
                                     resolveButton.setAlpha(0.3f);
                                     escalateButton.setClickable(false);
@@ -177,24 +177,24 @@ public class DashboardFragment extends Fragment {
                                 //we need to check that more than the predetermined amount of time has not passed
                                 //and that authorities were not contacted already
                                 long seconds = getSecondsDiff();
-                                String result2 = mngr.selectIDStatement("IncidentData", "EmergencyContactedFlag, FriendlyMatchFlag", "IncidentID", IDstr);
+                                String result2 = mngr.selectIDStatement("IncidentData", "EmergencyContactedFlag, BadIncidentFlag", "IncidentID", IDstr);
                                 Response response2 = mngr.makeResponse(result2);
 
                                 int authoritiesContacted = 0;
-                                int friendly = 0;
+                                int badIncident = 1;
                                 try {
                                     authoritiesContacted = response2.getBody().getInt("EmergencyContactedFlag");
-                                    friendly = response2.getBody().getInt("FriendlyMatchFlag");
-                                    Log.d("friendly_flag", "" + friendly);
+                                    badIncident = response2.getBody().getInt("BadIncidentFlag");
+                                    Log.d("BadIncidentFlag", "" + badIncident);
                                     Log.d("authorities_flag", "" + authoritiesContacted);
                                 } catch (JSONException e) {
                                     e.printStackTrace();
                                 }
-                                if (seconds <= SECONDS_DIFF && seconds>=0 && authoritiesContacted==0 && friendly==0) {
+                                if (seconds <= SECONDS_DIFF && seconds>=0 && authoritiesContacted==0 && badIncident==1) {
                                     mList.resolveRsp();
                                     mngr.alertResponse(home_ID, "no");
                                     Toast.makeText(parent.getApplicationContext(), "Sending de-escalation response.", Toast.LENGTH_SHORT).show();
-                                } else if (seconds > SECONDS_DIFF || authoritiesContacted == 1 || friendly == 1) {
+                                } else if (seconds > SECONDS_DIFF || authoritiesContacted == 1 || badIncident == 0) {
                                     resolveButton.setClickable(false);
                                     resolveButton.setAlpha(0.3f);
                                     escalateButton.setClickable(false);
@@ -266,24 +266,24 @@ public class DashboardFragment extends Fragment {
 
                 //determine if we should let user click the response buttons
                 long seconds = getSecondsDiff();
-                String result2 = mngr.selectIDStatement("IncidentData", "EmergencyContactedFlag, FriendlyMatchFlag", "IncidentID", IDstr);
+                String result2 = mngr.selectIDStatement("IncidentData", "EmergencyContactedFlag, BadIncidentFlag", "IncidentID", IDstr);
                 Response response2 = mngr.makeResponse(result2);
 
                 int authoritiesContacted = 0;
-                int friendly = 0;
+                int badIncident = 1;
                 try {
                     authoritiesContacted = response2.getBody().getInt("EmergencyContactedFlag");
-                    friendly = response2.getBody().getInt("FriendlyMatchFlag");
+                    badIncident = response2.getBody().getInt("BadIncidentFlag");
 
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
-                if (seconds > SECONDS_DIFF || authoritiesContacted == 1 || friendly == 1) {
+                if (seconds > SECONDS_DIFF || authoritiesContacted == 1 || badIncident == 0) {
                     resolveButton.setClickable(false);
                     resolveButton.setAlpha(0.3f);
                     escalateButton.setClickable(false);
                     escalateButton.setAlpha(0.3f);
-                } else if (seconds <= SECONDS_DIFF && seconds >= 0 && authoritiesContacted==0 && friendly==0) {
+                } else if (seconds <= SECONDS_DIFF && seconds >= 0 && authoritiesContacted==0 && badIncident==1) {
                     resolveButton.setClickable(true);
                     resolveButton.setAlpha(1);
                     escalateButton.setClickable(true);
