@@ -40,54 +40,53 @@ class LogicHandlerThread(threading.Thread):
             #if printCt%30 ==0:
                 #print("Logic Handler Aquired Lock")   
             if self.shared_resources.is_armed is True:
+                if self.shared_resources.is_panic is False:
                 
-                if self.shared_resources.is_active_incident is False:
-                    print("Logic Handler has lock, is Armed,is not active incident")
-                    ret_dict = None
-                    r, w = os.pipe()
-                    pid = os.fork()
-                    if pid > 0:
-                        os.close(w)
-                        r = os.fdopen(r)
-                        ret_dict = ast.literal_eval(r.read())
-    
-                        # parent process
-                        print('Parent done waiting')
-                        pprint("PARENT RET DICT : " + str(ret_dict))
-    
-                    else:
-                        print('child running everything')
-                        os.close(r)
-                        # child process
-                        ret_dict = run_everything(11)
-                        w = os.fdopen(w, 'w')
-                        w.write(str(ret_dict))
-                        w.close()
-    
-                        pprint("CHILD RET DICT : " + str(ret_dict))
-                        sys.exit(0)
-                        print("***************child should have died***********")
+                    if self.shared_resources.is_active_incident is False:
+                        print("Logic Handler has lock, is Armed,is not active incident")
+                        ret_dict = None
+                        r, w = os.pipe()
+                        pid = os.fork()
+                        if pid > 0:
+                            os.close(w)
+                            r = os.fdopen(r)
+                            ret_dict = ast.literal_eval(r.read())
+        
+                            # parent process
+                            print('Parent done waiting')
+                            pprint("PARENT RET DICT : " + str(ret_dict))
+        
+                        else:
+                            print('child running everything')
+                            os.close(r)
+                            # child process
+                            ret_dict = run_everything(11)
+                            w = os.fdopen(w, 'w')
+                            w.write(str(ret_dict))
+                            w.close()
+        
+                            pprint("CHILD RET DICT : " + str(ret_dict))
+                            sys.exit(0)
+                            print("***************child should have died***********")
+                            
                         
-                    
-                    pprint('RET DICT FINAL : ' + str(ret_dict))
-    
-                    if ret_dict["wasAlert"] is True:  # reduce time holding lock
-                        #self.shared_resources.q_lock.acquire()
-                        #print("Logic Handler acquired lock for alert detected")
-                        record_incident = True     # should this be the line below?
-                        #self.shared_resources.record_incident = True
-                        if ret_dict["face_match_flag"] is False:  # is no face match a high alert or a self escalating one???
-                            print("\LogicHandlerthread:\t the face match flag is ",ret_dict["face_match_flag"])
-                            self.shared_resources.is_active_incident = True
-                            self.shared_resources.was_alert = True
-                            print("\tLogicHandlerThread:\tSet Resource: Is Active Incident", self.shared_resources.is_active_incident)
-                            print("\tLogicHandlerThread:\tSet Resource: Was Alert", self.shared_resources.was_alert)
-                        elif ret_dict["face_match_flag"] is True:
-                            print("\LogicHandlerthread:\t the face match flag is ",ret_dict["face_match_flag"])
-                            self.shared_resources.is_active_incident = False
-                            print("\tLogicHandlerThread:\tSet Resource: Is Active Incident", self.shared_resources.is_active_incident)
-
-                        print("Logic Handler released lock after normal workflow")
+                        pprint('RET DICT FINAL : ' + str(ret_dict))
+        
+                        if ret_dict["wasAlert"] is True:  # reduce time holding lock
+                            #self.shared_resources.q_lock.acquire()
+                            #print("Logic Handler acquired lock for alert detected")
+                            record_incident = True     # should this be the line below?
+                            #self.shared_resources.record_incident = True
+                            if ret_dict["face_match_flag"] is False:  # is no face match a high alert or a self escalating one???
+                                print("\LogicHandlerthread:\t the face match flag is ",ret_dict["face_match_flag"])
+                                self.shared_resources.is_active_incident = True
+                                self.shared_resources.was_alert = True
+                                print("\tLogicHandlerThread:\tSet Resource: Is Active Incident", self.shared_resources.is_active_incident)
+                                print("\tLogicHandlerThread:\tSet Resource: Was Alert", self.shared_resources.was_alert)
+                            elif ret_dict["face_match_flag"] is True:
+                                print("\LogicHandlerthread:\t the face match flag is ",ret_dict["face_match_flag"])
+                                self.shared_resources.is_active_incident = False
+                                print("\tLogicHandlerThread:\tSet Resource: Is Active Incident", self.shared_resources.is_active_incident)
 
 
             elif self.shared_resources.is_panic is True:
@@ -138,11 +137,16 @@ class LogicHandlerThread(threading.Thread):
                     face_match_flag = 1
                 else:
                     face_match_flag = 0
+                image_path = ret_dict["camera"]
+                mic_path = ret_dict["mic"][0]
+                ultrasonic_path = ret_dict["ultrasonic"][0]
+                temp = IncidentData(Constant.ACCOUNT_ID, incident_id, face_match_flag, image_path, mic_path,
+                                    ultrasonic_path)  # create incident data
+                self.shared_resources.db_conn.connection = self.shared_resources.db_conn.connect()  # connect
+                pprint(self.shared_resources.db_conn.insert_incident_data(temp))  # send to db and print
+                
                 if ret_dict["face_match_flag"] == False and panic == False and self.shared_resources.is_active_incident==True:
-                    
-                #*************************
-                #basecmd = ["mplayer", "-ao", "alsa:device=bluetooth"]
-                    
+                 
                     sound = Popen(["aplay", Constant.CHIMESIREN])
                     self.shared_resources.sound_pid = sound.pid
                     
@@ -159,14 +163,6 @@ class LogicHandlerThread(threading.Thread):
                     response = requests.post(self.URL, json = data)
                     print("PANIC ALERT RESONSE: ",response.text) #this is the response text, should say it was successful in here
                     
-                image_path = ret_dict["camera"]
-                mic_path = ret_dict["mic"][0]
-                ultrasonic_path = ret_dict["ultrasonic"][0]
-                temp = IncidentData(Constant.ACCOUNT_ID, incident_id, face_match_flag, image_path, mic_path,
-                                    ultrasonic_path)  # create incident data
-                self.shared_resources.db_conn.connection = self.shared_resources.db_conn.connect()  # connect
-                pprint(self.shared_resources.db_conn.insert_incident_data(temp))  # send to db and print
-
-                # self.shared_resources.db_conn.disconnect()  # disconnect is handled in dbConn
+             # self.shared_resources.db_conn.disconnect()  # disconnect is handled in dbConn
             #printCt = printCt +1
                     
