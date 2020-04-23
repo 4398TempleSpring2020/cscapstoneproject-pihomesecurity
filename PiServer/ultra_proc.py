@@ -63,10 +63,13 @@ class UltraProc():
         std_rat = std / mean
 
         if std_rat > .01:
+            if (std>10):
+                return True
+            print('std good')
             # find everything that is within 2 std of mean
             z = np.abs(stats.zscore(data))
             z_new = (z < 2)
-            
+            print('z_new')
             # find all points outside 2 std
             z_flip = []
             anom_indices = []

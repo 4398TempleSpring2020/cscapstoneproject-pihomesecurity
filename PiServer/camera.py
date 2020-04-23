@@ -52,29 +52,30 @@ class Camera(sensor_interface):
         camProc = CamProc()
         isAnomaly, face_match = camProc.isAnomaly(image_dict)
         anomaly_dict['cam'] = isAnomaly
+        anomaly_dict['face'] = face_match
         print('CAM ANOM : ' + str(isAnomaly))
         
         print("barrier in cam: ",barrier)
-       # wait until every thread has processed their files
+       #wait until every thread has processed their files
         barrier.wait()
         print('cam passed barrier')
 
         # check if any anomalies detected
         wasAnom = False
-        for anomaly in anomaly_dict.values():
+        for key,anomaly in zip(anomaly_dict.keys(),anomaly_dict.values()):
+            if key == 'face':
+                continue
             if(anomaly):
                 wasAnom = True
                 break
-
+        #if anomaly_dict['face']:
+        #    wasAnom = False
         # list of objects
         obj_list = []
 
-        anomaly_dict['face'] = False
         # upload to s3 on anomaly
         if(wasAnom):
-            # show if we got a face_match
-            anomaly_dict['face'] = face_match
-            
+                  
             client = S3_Client()
             # upload to s3
             for file_a in outfiles:

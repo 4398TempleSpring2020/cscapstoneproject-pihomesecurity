@@ -62,7 +62,13 @@ class Ultrasonic(sensor_interface):
         try:
             while total_time < self.duration:
                 dist = self.distance()
+                if (dist>170):
+                    continue
+                elif (dist<0):
+                    continue
+                
                 output += str(dist) + "\n"
+            
                 #print("dist: ",dist)
                 time.sleep(self.frequency)
                 total_time += self.frequency
@@ -92,10 +98,15 @@ class Ultrasonic(sensor_interface):
 
         # check if any anomalies detected
         wasAnom = False
-        for anomaly in anomaly_dict.values():
+        for key,anomaly in zip(anomaly_dict.keys(),anomaly_dict.values()):
+            if key == 'face':
+                continue
             if(anomaly):
                 wasAnom = True
                 break
+        #if anomaly_dict['face']:
+        #    wasAnom = False
+
 
         # list of objects
         obj_list = []

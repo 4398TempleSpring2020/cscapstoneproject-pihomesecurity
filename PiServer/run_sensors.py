@@ -8,13 +8,14 @@ from mic_proc import MicProc
 from cam_proc import CamProc
 from s3_client import S3_Client
 import time
+from pprint import pprint
 
 def run_sensors(duration, acc_id, bucket_name):
     sm = Sensor_Manager() # takes in acc iD
-    sm.add_sensor(Microphone(duration=duration, frequency=44100))
+    sm.add_sensor(Microphone(duration=60, frequency=44100))
     
-    sm.add_sensor(Camera(duration=1, frequency=.5))
-    sm.add_sensor(Ultrasonic(duration=10, frequency=.1))
+    sm.add_sensor(Camera(duration=5, frequency=.5))
+    sm.add_sensor(Ultrasonic(duration=60, frequency=.1))
     sm.connect_all()
     return(sm.initiate_all(acc_id, bucket_name))
     
@@ -36,11 +37,11 @@ def run_everything(acc_id):
     
     print('------------ Sensors Complete -----------------')
     for item in ret_list:
-        print(item)
+        pprint(item)
 
-    print (anomaly_dict)
-    print(instance_id)
-    print(acc_id)
+    pprint (anomaly_dict)
+    pprint(instance_id)
+    pprint(acc_id)
     
     print('------------ Data Acquired -----------------')
 
@@ -54,9 +55,7 @@ def run_everything(acc_id):
             wasAlert = True
             trig_type.append(sensor_type)
             
-    if face_match and wasAlert:
-        wasAlert = False
-            
+
     ret_dict = {}
     for files, src in ret_list:
         ret_dict[src] = files
@@ -69,7 +68,7 @@ def run_everything(acc_id):
     
     print('------------ RESPONSE CONSTRUCTED -----------------')
 
-    print(ret_dict)
+    pprint(ret_dict)
 
     return(ret_dict)
     # (ultra_bucket_filename[], mic_bucket_filename[], cam_bucket_filename[],

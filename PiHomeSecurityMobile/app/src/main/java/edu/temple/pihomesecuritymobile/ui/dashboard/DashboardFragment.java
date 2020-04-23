@@ -140,7 +140,7 @@ public class DashboardFragment extends Fragment {
                                     mList.escalateRsp();
                                     mngr.alertResponse(home_ID, "yes");
                                     Toast.makeText(parent.getApplicationContext(), "Sending escalation response.", Toast.LENGTH_SHORT).show();
-                                } else if (seconds > SECONDS_DIFF || authori tiesContacted == 1 || badIncident == 0 || friendly == 1) {
+                                } else if (seconds > SECONDS_DIFF || authoritiesContacted == 1 || badIncident == 0 || friendly == 1) {
                                     resolveButton.setClickable(false);
                                     resolveButton.setAlpha(0.3f);
                                     escalateButton.setClickable(false);
