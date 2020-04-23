@@ -1,7 +1,10 @@
 package edu.temple.pihomesecuritymobile.ui.home;
 
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,6 +24,7 @@ import org.json.JSONException;
 
 import edu.temple.pihomesecuritymobile.MainActivity;
 import edu.temple.pihomesecuritymobile.R;
+import edu.temple.pihomesecuritymobile.models.Response;
 
 public class HomeFragment extends Fragment {
 
@@ -70,7 +74,17 @@ public class HomeFragment extends Fragment {
         soundButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                mList.soundAlarm();
+                new AlertDialog.Builder(parent)
+                        .setTitle("Confirm Action")
+                        .setMessage("You are about to sound the panic alarm. Are you sure you want to continue?")
+                        .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                mList.soundAlarm();
+                            }
+                        })
+                        .setNegativeButton("Cancel", null)
+                        .show();
             }
         });
         return root;

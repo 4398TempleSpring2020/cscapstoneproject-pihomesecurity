@@ -1,5 +1,6 @@
 package edu.temple.pihomesecuritymobile;
 
+import android.os.SystemClock;
 import android.util.JsonWriter;
 import android.util.Log;
 
@@ -112,8 +113,11 @@ public class Client {
             this.buffer = new BufferedWriter(this.writer);
             this.buffer.flush();
             this.buffer.write("Pi_Mobile");
+            Log.d("sending Pi_Mobile", "Pi_Mobile sent");
             this.buffer.flush();
+            SystemClock.sleep(10);
             this.buffer.write(stuff);
+            Log.d("sending data", "" + stuff);
             this.buffer.flush();
 
 
