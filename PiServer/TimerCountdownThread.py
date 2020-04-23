@@ -17,5 +17,5 @@ class TimerCountdownThread(threading.Thread):
                 auto_escalate = False
                 break; 
             sleep(1)
-        if auto_escalate == True:
+        #if auto_escalate == True:
             #do auto-escalation stuff here

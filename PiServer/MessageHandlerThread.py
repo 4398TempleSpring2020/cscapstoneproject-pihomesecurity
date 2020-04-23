@@ -1,8 +1,11 @@
 import threading
+import os
 import time
+import signal
 import requests
+import subprocess
 from Constant import Constant
-
+from subprocess import Popen
 
 class MessageHandlerThread(threading.Thread):
 
@@ -17,7 +20,6 @@ class MessageHandlerThread(threading.Thread):
     def run(self):
         
         while True:
-            
             
             if len(self.shared_resources.message_q) > 0:
                 with self.shared_resources.q_lock:
@@ -37,10 +39,18 @@ class MessageHandlerThread(threading.Thread):
                             self.shared_resources.is_panic = False
                             print("\tResources Set:\tIs Panic: ", self.shared_resources.is_panic)
                             self.shared_resources.response_received = False
+                            self.shared_resources.sound_pid=-1
+                            print("\tSOUND PID RESET: ",self.shared_resources.sound_pid)
                         elif self.shared_resources.is_armed is True:
                             print("** DISREGARD MESAGE ** system already was armed")
                             
                     elif message == "DISARM":
+                        #see which of these works
+                        if self.shared_resources.sound_pid >0:
+                            os.kill(self.shared_resources.sound_pid, signal.SIGKILL)
+                            self.shared_resources.sound_pid = -1
+                            print("\tSOUND PID RESET: ",self.shared_resources.sound_pid)
+                        
                         if self.shared_resources.is_armed is True:
                             self.shared_resources.is_armed = False
                             print("\tResources Set:\tIs Armed: ", self.shared_resources.is_armed)
@@ -51,7 +61,7 @@ class MessageHandlerThread(threading.Thread):
                             self.shared_resources.is_panic = False
                             print("\tResources Set:\tIs Panic: ", self.shared_resources.is_panic)
                             self.shared_resources.response_received = False
-                        elif self.shared_resources is_panic is True:
+                        elif self.shared_resources.is_panic is True:
                             self.shared_resources.is_max_alert = False 
                             print("\tResources Set:\tIs Max Alert: ", self.shared_resources.is_max_alert)
                             self.shared_resources.is_active_incident = False
@@ -64,6 +74,10 @@ class MessageHandlerThread(threading.Thread):
                           
 
                     elif message == "RESOLVE":
+                        if(self.shared_resources.sound_pid>0):
+                            os.kill(self.shared_resources.sound_pid, signal.SIGKILL)
+                            self.shared_resources.sound_pid = -1
+                            print("\tSOUND PID RESET: ",self.shared_resources.sound_pid)
                         if self.shared_resources.is_active_incident is True:
                             self.shared_resources.is_active_incident = False
                             print("\tResources Set:\tIs Active Incident: ",self.shared_resources.is_active_incident)
@@ -77,6 +91,7 @@ class MessageHandlerThread(threading.Thread):
                         
 
                     elif message == "ESCALATE":
+                        
                         if self.shared_resources.is_active_incident is True:
                             if self.shared_resources.is_max_alert is False:
                                 if self.shared_resources.is_panic is False:
@@ -99,6 +114,9 @@ class MessageHandlerThread(threading.Thread):
                                                
 
                     elif message == "PANIC":
+                        sound = Popen(["aplay", Constant.SIREN])
+                        self.shared_resources.sound_pid = sound.pid
+                        print("\t\tSOUND PID: ",self.shared_resources.sound_pid)
                         self.shared_resources.is_active_incident = False
                         print("\tResources Set:\tIs Active Incident: ", self.shared_resources.is_max_alert)
                         self.shared_resources.is_max_alert = True

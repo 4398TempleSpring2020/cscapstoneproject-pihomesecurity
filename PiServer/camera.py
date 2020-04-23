@@ -56,7 +56,7 @@ class Camera(sensor_interface):
         print('CAM ANOM : ' + str(isAnomaly))
         
         print("barrier in cam: ",barrier)
-       # wait until every thread has processed their files
+       #wait until every thread has processed their files
         barrier.wait()
         print('cam passed barrier')
 

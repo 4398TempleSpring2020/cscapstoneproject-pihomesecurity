@@ -73,7 +73,7 @@ class Microphone(sensor_interface):
                 obj_list.append(object_name)
                 client.upload_file(file_a, bucket_name, object_name)
 
-        print('acquiring lock')
+        print('Mic: acquiring lock')
         with list_lock:
             response_list.append((obj_list, "mic"))
         

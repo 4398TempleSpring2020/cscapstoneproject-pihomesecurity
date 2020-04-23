@@ -4,6 +4,7 @@ import socket
 import threading
 import time
 from collections import deque
+import subprocess
 
 from DbConn import DbConn
 from Constant import Constant
@@ -25,6 +26,7 @@ class Driver:
         self.is_panic = False           # was this a panic button alert
         self.record_incident = False    # should i record incident?
         self.response_received = False
+        self.sound_pid = -1
    
 
 if __name__ == '__main__':
@@ -39,10 +41,11 @@ if __name__ == '__main__':
     message_handler_thread = MessageHandlerThread(shared_resources)
 
     logic_handler_thread = LogicHandlerThread(shared_resources)
-    print("both threads created in Driver")
+    print("threads created in Driver")
     message_handler_thread.start()
     print("started message handler thread")
     # comment out if you do not have sensors
     logic_handler_thread.start()
     print("started logic handler thread")
+    
     # comment out if you do not have sensors

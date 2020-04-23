@@ -1,5 +1,6 @@
 import threading
 import os
+import time
 
 from IncidentData import IncidentData
 from run_sensors import run_everything
@@ -10,7 +11,7 @@ import sys
 from pprint import pprint
 from TimerCountdownThread import TimerCountdownThread
 import requests
-
+from subprocess import Popen
 
 class LogicHandlerThread(threading.Thread):
 
@@ -31,9 +32,15 @@ class LogicHandlerThread(threading.Thread):
             record_incident = False  # DOES THIS NEED TO BE THE LINE BELOW ?
             
             self.shared_resources.q_lock.acquire()  # get lock for shared resource is_armed
+            #sound = Popen(["aplay", Constant.CHIME])
+            #self.shared_resources.sound_pid= sound.pid
+            #time.sleep(5)
+            #sound.kill()
+            #self.shared_resources.sound_pid.terminate()
             #if printCt%30 ==0:
                 #print("Logic Handler Aquired Lock")   
             if self.shared_resources.is_armed is True:
+                
                 if self.shared_resources.is_active_incident is False:
                     print("Logic Handler has lock, is Armed,is not active incident")
                     ret_dict = None
@@ -61,7 +68,7 @@ class LogicHandlerThread(threading.Thread):
                         sys.exit(0)
                         print("***************child should have died***********")
                         
-    
+                    
                     pprint('RET DICT FINAL : ' + str(ret_dict))
     
                     if ret_dict["wasAlert"] is True:  # reduce time holding lock
@@ -118,7 +125,8 @@ class LogicHandlerThread(threading.Thread):
                     self.shared_resources.is_active_incident = True
                     print("\tLogicHandlerThread:\tSet Resource: Was Alert", self.shared_resources.was_alert)
                     print("\tLogicHandlerThread:\tSet Resource: Is Active Alert", self.shared_resources.is_active_incident)
-
+            
+       
             self.shared_resources.q_lock.release()  # release lock
             #if printCt%10 ==0:
             #print("Logic Handler released lock")
@@ -130,7 +138,14 @@ class LogicHandlerThread(threading.Thread):
                     face_match_flag = 1
                 else:
                     face_match_flag = 0
-                if ret_dict["face_match_flag"] == True and panic == False and self.shared_resources.is_active_incident==True:
+                if ret_dict["face_match_flag"] == False and panic == False and self.shared_resources.is_active_incident==True:
+                    
+                #*************************
+                #basecmd = ["mplayer", "-ao", "alsa:device=bluetooth"]
+                    
+                    sound = Popen(["aplay", Constant.CHIMESIREN])
+                    self.shared_resources.sound_pid = sound.pid
+                    
                     data = {'homeID': Constant.ACCOUNT_ID, 'incidentID': incident_id, 'type': "anomaly"}
                     #response holds the string returned from POST, if there was an error it should be in here
                     response = requests.post(self.URL, json = data)
@@ -143,7 +158,7 @@ class LogicHandlerThread(threading.Thread):
                     #response holds the string returned from POST, if there was an error it should be in here
                     response = requests.post(self.URL, json = data)
                     print("PANIC ALERT RESONSE: ",response.text) #this is the response text, should say it was successful in here
-
+                    
                 image_path = ret_dict["camera"]
                 mic_path = ret_dict["mic"][0]
                 ultrasonic_path = ret_dict["ultrasonic"][0]

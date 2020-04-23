@@ -26,3 +26,9 @@ class Constant:
     # Pi server
     ACCOUNT_ID = 11
     port = 5002
+    
+    #SoundFilePaths
+    SIREN = "/home/pi/cscapstoneproject-pihomesecurity/PiServer/SIREN.wav"
+    CHIME = "/home/pi/cscapstoneproject-pihomesecurity/PiServer/CHIME.wav"
+    CHIMESIREN = "/home/pi/cscapstoneproject-pihomesecurity/PiServer/CHIMESIREN.wav"
+    
