@@ -163,6 +163,10 @@ class LogicHandlerThread(threading.Thread):
                     response = requests.post(self.URL, json = data)
                     print("PANIC ALERT RESONSE: ",response.text) #this is the response text, should say it was successful in here
                     
-             # self.shared_resources.db_conn.disconnect()  # disconnect is handled in dbConn
+            # self.shared_resources.db_conn.disconnect()  # disconnect is handled in dbConn
             #printCt = printCt +1
+            print("\t\t*******logic handler done loop********")
+            time.sleep(10)
+            print("\t\t*******logic handler resumes looping****")
+             
                     
