@@ -82,8 +82,10 @@ def lambda_handler(event, context):
         incidentID = result2[1]
         incidentDate = result2[0]
         query = "UPDATE IncidentData SET BadIncidentFlag=1 WHERE IncidentID=%s" % (incidentID)
+        query2 = "UPDATE IncidentData SET EmergencyContactedFlag=1 WHERE IncidentID=%s" % (incidentID)
         try:
             cur.execute(query)
+            cur.execute(quer)
         except Exception as e:
             cur.close()
             return {
