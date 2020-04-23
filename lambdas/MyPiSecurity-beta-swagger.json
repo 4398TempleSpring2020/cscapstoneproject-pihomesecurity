@@ -25,9 +25,6 @@
         }
       },
       "post": {
-        "consumes": [
-          "application/json"
-        ],
         "produces": [
           "application/json"
         ],
@@ -41,7 +38,7 @@
         }
       }
     },
-       "/alert-response": {
+    "/alert-response": {
       "post": {
         "produces": [
           "application/json"
@@ -101,6 +98,36 @@
         }
       }
     },
+    "/incident-alert": {
+      "post": {
+        "produces": [
+          "application/json"
+        ],
+        "responses": {
+          "200": {
+            "description": "200 response",
+            "schema": {
+              "$ref": "#/definitions/Empty"
+            }
+          }
+        }
+      }
+    },
+    "/incidents": {
+      "post": {
+        "produces": [
+          "application/json"
+        ],
+        "responses": {
+          "200": {
+            "description": "200 response",
+            "schema": {
+              "$ref": "#/definitions/Empty"
+            }
+          }
+        }
+      }
+    },
     "/insert": {
       "post": {
         "produces": [
@@ -145,11 +172,6 @@
           }
         }
       }
-    }
-  },
-    "Empty": {
-      "type": "object",
-      "title": "Empty Schema"
     }
   }
 }

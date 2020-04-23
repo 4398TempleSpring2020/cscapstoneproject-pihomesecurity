@@ -88,8 +88,10 @@ def lambda_handler(event, context):
         with conn:
             cur = conn.cursor()
             query = "UPDATE IncidentData SET BadIncidentFlag=1 WHERE IncidentID=%s" % (incidentID)
+            query2 = "UPDATE IncidentData SET EmergencyContactedFlag=1 WHERE IncidentID=%s" % (incidentID)
             try:
                 cur.execute(query)
+                cur.execute(query2)
             except Exception as e:
                 cur.close()
                 return {
@@ -102,8 +104,10 @@ def lambda_handler(event, context):
         with conn:
             cur = conn.cursor()
             query = "UPDATE IncidentData SET BadIncidentFlag=0 WHERE IncidentID=%s" % (incidentID)
+            #query2 = "UPDATE IncidentData SET FriendlyMatchFlag=1 WHERE IncidentID=%s" % (incidentID)
             try:
                 cur.execute(query)
+                #cur.execute(query2)
             except Exception as e:
                 cur.close()
                 return {
@@ -112,6 +116,9 @@ def lambda_handler(event, context):
             cur.close()
         incAlertMessage = "A user has responded to the incident detected by PiHomeSecurity at home address " + newAddress + ". "
         appNotMessage = "The incident has been marked as not a threat and authorities will not be contacted."
+    elif responseSelect == "panic":
+        incAlertMessage = "A user has hit the panic button for PiHomeSecurity at home address " + newAddress + ". "
+        appNotMessage = "Authorities will be contacted."
     else:
         return {
             "error": "Incorrect response recorded."

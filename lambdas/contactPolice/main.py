@@ -43,6 +43,7 @@ def lambda_handler(event, context):
             }
         result = cur.fetchone()
         incidentID = result[2]
+        '''
         query = "UPDATE IncidentData SET EmergencyContactedFlag=1 WHERE IncidentID=%s" % (incidentID)
         try:
             cur.execute(query)
@@ -50,7 +51,7 @@ def lambda_handler(event, context):
             cur.close()
             return {
                 "error" : str(e)
-            }
+            }'''
         #print(result)
         cur.close()
     homeAddress = result[0]
@@ -95,3 +96,4 @@ def convert_to_est(date_string):
     utc = utc.replace(tzinfo=from_zone)
     eastern = utc.astimezone(to_zone)
     return eastern.strftime('%m-%d-%Y %H:%M:%S')
+    
