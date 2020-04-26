@@ -26,7 +26,7 @@ namespace PiHomeSecurityWeb.Models
             if (!optionsBuilder.IsConfigured)
             {
 #warning To protect potentially sensitive information in your connection string, you should move it out of source code. See http://go.microsoft.com/fwlink/?LinkId=723263 for guidance on storing connection strings.
-                optionsBuilder.UseMySql("server=my-pi-database.cxfhfjn3ln5w.us-east-2.rds.amazonaws.com;port=3306;database=mypidb;uid=web_user;pwd=totallysecurepw#2!", x => x.ServerVersion("5.7.22-mysql"));
+                optionsBuilder.UseMySql("server=my-pi-database.cxfhfjn3ln5w.us-east-2.rds.amazonaws.com;port=3306;database=mypidb;uid=web_user;pwd=totallysecurepw#2!;AllowZeroDateTime=True", x => x.ServerVersion("5.7.22-mysql"));
             }
         }
 

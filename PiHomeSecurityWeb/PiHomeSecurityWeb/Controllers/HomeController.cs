@@ -128,18 +128,44 @@ namespace PiHomeSecurityWeb.Controllers
         [HttpPost]
         public ActionResult Register(HomeAccount account)
         {
-            try
+            Console.WriteLine("User input data, from register");
+            Console.WriteLine("Username: " + account.AccountUsername);
+            Console.WriteLine("Password: " + account.AccountPassword);
+            Console.WriteLine("Email: " + account.EmailAddress);
+            Console.WriteLine("First Name: " + account.FirstName);
+            Console.WriteLine("Last Name: " + account.LastName);
+            Console.WriteLine("Address: " + account.HomeAccountAddress);
+            Console.WriteLine("PIN: " + account.AccountPin);
+            Console.WriteLine("Phone Number: " + account.PhoneNumber);
+
+
+            if (account.AccountPin == 0)
             {
-                using (mypidbContext db = new mypidbContext())
-                {
-                    db.HomeAccount.Add(account);
-                    db.SaveChanges();
-                }
-                ViewBag.Message = account.EmailAddress + " successfully registered";
+                ViewBag.Message = "Unable to register, PIN must be a numerical value";
             }
-            catch
+            else if(account.PhoneNumber == 0 || account.PhoneNumber.ToString().Length != 10)
             {
-                ViewBag.message = "Unable to register user, please try again.";
+                ViewBag.Message = "Unable to register, phone number must be valid";
+            }
+            else if (!isValidEmail(account.EmailAddress))
+            {
+                ViewBag.Message = "Unable to register, invalid email address";
+            }
+            else
+            {
+                try
+                {
+                    using (mypidbContext db = new mypidbContext())
+                    {
+                        db.HomeAccount.Add(account);
+                        db.SaveChanges();
+                    }
+                    ViewBag.Message = account.EmailAddress + " successfully registered";
+                }
+                catch
+                {
+                    ViewBag.Message = "Unable to register user, please try again.";
+                }
             }
             return View();
         }
@@ -191,6 +217,19 @@ namespace PiHomeSecurityWeb.Controllers
         public IActionResult Error()
         {
             return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
+        }
+
+        public bool isValidEmail(string email)
+        {
+            try
+            {
+                var addr = new System.Net.Mail.MailAddress(email);
+                return addr.Address == email;
+            }
+            catch
+            {
+                return false;
+            }
         }
     }
 }

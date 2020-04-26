@@ -1,11 +1,15 @@
 ﻿var TableBuilder = {};
 
-TableBuilder.incidents = function (data, id) {
-    var keysToShow = ["incidentId", "dateRecorded", "badIncidentFlag", "lastAccessed", "adminComments",
-        "deletionBlockFlag", "microphonePath", "imagePaths", "friendlyMatchFlag", "ultrasonicPath"];
+TableBuilder.incidents = function (data, id, isEmployee) {
+    var jsonKeys = ["incidentId", "dateRecorded", "badIncidentFlag", "lastAccessed", "adminComments",
+        /*"deletionBlockFlag",*/ "microphonePath", "imagePaths", "friendlyMatchFlag", "ultrasonicPath"];
 
-    var keysToDisplay = ["Incident Id", "Date Recorded", "Bad Incident Flag", "Last Accessed", "Admin Comments",
-        "Deletion Block Flag", "Microphone Path", "Image Path", "Friendly Match Flag", "Ultrasonic Path"];
+    var keysToDisplay = ["Incident Id", "Date/Time (UTC)", "Bad Incident Flag", "Last Accessed", "Admin Comments",
+        /*"Deletion Block Flag",*/ "Microphone File", "Images", "Friendly Match Flag", "Ultrasonic Data"];
+
+    if (isEmployee) {
+        keysToDisplay.push("Delete");
+    }
 
     console.log("Keys: " + Object.keys(data[0]));
     console.log("Values: " + Object.values(data[0]));
@@ -22,7 +26,7 @@ TableBuilder.incidents = function (data, id) {
     var headerRow = document.createElement("tr");
     tableHead.appendChild(headerRow);
 
-    for (var i = 0; i < keysToShow.length; i++) {
+    for (var i = 0; i < keysToDisplay.length; i++) {
         var headerItem = document.createElement("th");
         headerItem.innerHTML = keysToDisplay[i];
         headerRow.appendChild(headerItem);
@@ -35,34 +39,101 @@ TableBuilder.incidents = function (data, id) {
         if (id == data[i].accountId) {
             var tableRow = document.createElement("tr");
             tableBody.appendChild(tableRow);
+
             for (var j = 0; j < Object.values(data[i]).length; j++) {
-                if (keysToShow.includes(Object.keys(data[i])[j])) {
+                if (jsonKeys.includes(Object.keys(data[i])[j])) {
                     console.log("Adding data to table:");
                     console.log("Row " + i + ", Key: " + Object.keys(data[i])[j] + ": " + Object.values(data[i])[j]);
                     var tableData = document.createElement("td");
-                    if (Object.keys(data[i])[j] == "imagePaths") {
-                        var tableLink = document.createElement("img");
-                        var imgArray = TableBuilder.createImgArray(Object.values(data[i])[j]);
-                        tableLink.src = TableBuilder.createImgLink(imgArray[0]);
-                        tableLink.style.width = "100px";
-                        tableData.appendChild(tableLink);
+
+                    switch (Object.keys(data[i])[j]) {
+                        case "incidentId":
+                            tableData.innerHTML = Object.values(data[i])[j];
+                            var incidentId = Object.values(data[i])[j];
+                            break;
+
+                        case "adminComments":
+                            if (isEmployee) {
+                                var text = document.createElement("a");
+                                text.className = "adminCommentText";
+                                text.innerHTML = Object.values(data[i])[j] + '<span class="adminCommentTip">Click to edit</span>';
+                                text.href = "EditComment?id=" + incidentId;
+                                tableData.appendChild(text);
+                            }
+                            else {
+                                tableData.innerHTML = Object.values(data[i])[j];
+                            }
+                            break;
+
+                        case "microphonePath":
+                            var tableLink = document.createElement("a");
+                            tableLink.href = TableBuilder.createLink(Object.values(data[i])[j]);
+                            tableLink.innerHTML = "Download";
+                            tableData.appendChild(tableLink);
+                            break;
+
+                        case "imagePaths":
+                            var imgArray = this.createImgArray(Object.values(data[i])[j]);
+                            console.log("IMG ARRAY LENGTH: " + imgArray.length);
+
+                            tableData.innerHTML = `
+                                <a href=`+ imgArray[0] + ` data-lightbox="mygallery` + i.toString() + `"><img src=` + imgArray[0] + ` style="width:100px;"></a>
+                                <div style="display:none;">
+                                    <a href=`+ imgArray[1] + ` data-lightbox="mygallery` + i.toString() + `"><img src=` + imgArray[1] + ` style="width:100px;"></a>
+                                    <a href=`+ imgArray[2] + ` data-lightbox="mygallery` + i.toString() + `"><img src=` + imgArray[2] + ` style="width:100px;"></a>
+                                    <a href=`+ imgArray[3] + ` data-lightbox="mygallery` + i.toString() + `"><img src=` + imgArray[3] + ` style="width:100px;"></a>
+                                    <a href=`+ imgArray[4] + ` data-lightbox="mygallery` + i.toString() + `"><img src=` + imgArray[4] + ` style="width:100px;"></a>
+                                </div>
+                            `;
+
+                            /*var HTMLcontent = ``;
+                            HTMLcontent.concat(`<a href=` + imgArray[0] + ` data-lightbox="mygallery` + i.toString() + `"><img src=` + imgArray[0] + ` style="width:100px;"></a>\n`);
+                            HTMLcontent.concat(`<div style="display:none;">\n`);
+                            for (var i = 1; i < imgArray.length; i++) {
+                                HTMLcontent.concat(`<a href=` + imgArray[i] + ` data - lightbox="mygallery` + i.toString() + `" > <img src=` + imgArray[i] + ` style = "width:100px;" ></a>\n`);
+                            }
+                            HTMLcontent.concat(`</div>`);
+
+                            tableData.innerHTML = HTMLcontent;*/
+                            break;
+
+                        case "ultrasonicPath":
+                            var tableLink = document.createElement("a");
+                            tableLink.href = TableBuilder.createLink(Object.values(data[i])[j]);
+                            tableLink.innerHTML = "Download";
+                            tableData.appendChild(tableLink);
+                            break;
+
+                        default:
+                            tableData.innerHTML = Object.values(data[i])[j];
                     }
-                    else if(Object.keys(data[i])[j] == "microphonePath"){
-                        var tableLink = document.createElement("a");
-                        tableLink.href = TableBuilder.createImgLink(Object.values(data[i])[j]);
-                        tableLink.innerHTML = "Click Here";
-                        tableData.appendChild(tableLink);
-                    }
-                    else if (Object.keys(data[i])[j] == "adminComments") {
-                        tableData.id = "editable";
-                        tableData.innerHTML = '<a asp-area="" asp-controller="Home" asp-action="EmpLogon">' + Object.values(data[i])[j] + '</a>';
-                    }
-                    else {
-                        tableData.innerHTML = Object.values(data[i])[j];
-                    }
+
                     tableRow.appendChild(tableData);
                 }
             }
+
+            if (isEmployee) {
+                var deleteTableData = document.createElement("td");
+                var deleteButton = document.createElement("button");
+                deleteButton.innerHTML = "Delete";
+                deleteButton.onclick = function () {
+                    var row = this.parentNode.parentNode;
+                    var id = row.cells[0].innerHTML;
+                    if (confirm("Would you like to delete incident: " + id)) {
+                        console.log("Running delete api");
+                        $.ajax({
+                            url: '/api/incidentdatas/' + id,
+                            method: 'DELETE'
+                        }).done(function () {
+                            row.parentNode.removeChild(row);
+                        });
+                    }
+                }
+                deleteTableData.appendChild(deleteButton);
+
+                tableRow.appendChild(deleteTableData);
+            }
+
         }
     }
 }
@@ -127,12 +198,37 @@ TableBuilder.useraccounts = function (data, id) {
     }
 }
 
-TableBuilder.createImgLink = function(urlTail){
+TableBuilder.createLink = function(urlTail){
     var urlHead = "https://d1uydrbc3kb9ug.cloudfront.net/";
     return (urlHead + urlTail);
 }
 
 TableBuilder.createImgArray = function (imgString) {
-    console.log("FROM IMAGE ARRAY: " + imgString.split(",")[0]);
-    return imgString.split(","); 
+    var returnArray = [];
+    var splitString = imgString.split(",");
+    for (i = 0; i < splitString.length; i++) {
+        returnArray[i] = this.createLink(splitString[i]);
+    }
+    return returnArray;
+}
+
+TableBuilder.buildLightBox = function (imgArray) {
+    var HTMLcontent = '';
+    if (arraySize === 0) {
+        return HTMLcontent;
+    }
+    else if (arraySize === 1) {
+        HTMLcontent += ' < a href = ' + imgArray[i] + ' data - lightbox="mygallery' + i.toString() + '" > <img src=' + imgArray[i] + ' style = "width:100px;" ></a >';
+    }
+    else {
+        HTMLcontent += ' < a href = ' + imgArray[0] + ' data - lightbox="mygallery' + i.toString() + '" > <img src=' + imgArray[0] + ' style = "width:100px;" ></a >';
+        HTMLcontent += '<div style="display:none;">';
+        for (i = 1; i < imgArray.length; i++) {
+            HTMLcontent += ' < a href = ' + imgArray[i] + ' data - lightbox="mygallery' + i.toString() + '" > <img src=' + imgArray[i] + ' style = "width:100px;" ></a >';
+        }
+        HTMLcontent += '</div>';
+
+    }
+    
+
 }

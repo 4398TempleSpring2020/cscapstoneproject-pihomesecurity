@@ -7,7 +7,7 @@ function ajax(params) {
     console.log(params.errorId);
 
     // expecting params properties url, successFn, and errorId
-    if (!params || !params.url || !params.successFn || !params.errorId) {
+    if (!params || !params.url || !params.successFn) {
         alert("function ajax requires an input parameter object with properties: url, successFn, and errorId");
         return;
     }
@@ -35,8 +35,7 @@ function ajax(params) {
                 params.successFn(obj);  // like the jQuery ajax call, pass back JSON already parsed to JS objecg
             } else {
                 // First use of property creates new (custom) property
-                document.getElementById(params.errorId).innerHTML = "Error (" + httpReq.status + " " + httpReq.statusText +
-                    ") while attempting to read '" + params.url + "'";
+                console.log("Error in ajax");
             }
         }
     }; // end of anonymous function
