@@ -1,13 +1,15 @@
 ﻿var TableBuilder = {};
 
-TableBuilder.incidents = function (data, id) {
+TableBuilder.incidents = function (data, id, isEmployee) {
     var jsonKeys = ["incidentId", "dateRecorded", "badIncidentFlag", "lastAccessed", "adminComments",
-        "deletionBlockFlag", "microphonePath", "imagePaths", "friendlyMatchFlag", "ultrasonicPath"];
+        /*"deletionBlockFlag",*/ "microphonePath", "imagePaths", "friendlyMatchFlag", "ultrasonicPath"];
 
-    var keysToDisplay = ["Incident Id", "Date Recorded", "Bad Incident Flag", "Last Accessed", "Admin Comments",
-        "Deletion Block Flag", "Microphone Path", "Image Path", "Friendly Match Flag", "Ultrasonic Path", "Delete"];
+    var keysToDisplay = ["Incident Id", "Date/Time (UTC)", "Bad Incident Flag", "Last Accessed (UTC)", "Admin Comments",
+        /*"Deletion Block Flag",*/ "Microphone File", "Images", "Friendly Match Flag", "Ultrasonic Data"];
 
-    SlideshowBuilder.modalBg();
+    if (isEmployee) {
+        keysToDisplay.push("Delete");
+    }
 
     console.log("Keys: " + Object.keys(data[0]));
     console.log("Values: " + Object.values(data[0]));
@@ -51,22 +53,29 @@ TableBuilder.incidents = function (data, id) {
                             break;
 
                         case "adminComments":
-                            var text = document.createElement("a");
-                            text.className = "adminCommentText";
-                            text.innerHTML = Object.values(data[i])[j] + '<span class="adminCommentTip">Click to edit</span>';
-                            text.href = "EditComment?id=" + incidentId;
-                            tableData.appendChild(text);
+                            if (isEmployee) {
+                                var text = document.createElement("a");
+                                text.className = "adminCommentText";
+                                text.innerHTML = Object.values(data[i])[j] + '<span class="adminCommentTip">Click to edit</span>';
+                                text.href = "EditComment?id=" + incidentId;
+                                tableData.appendChild(text);
+                            }
+                            else {
+                                tableData.innerHTML = Object.values(data[i])[j];
+                            }
                             break;
 
                         case "microphonePath":
                             var tableLink = document.createElement("a");
                             tableLink.href = TableBuilder.createLink(Object.values(data[i])[j]);
-                            tableLink.innerHTML = "Click Here";
+                            tableLink.innerHTML = "Download";
                             tableData.appendChild(tableLink);
                             break;
 
                         case "imagePaths":
                             var imgArray = this.createImgArray(Object.values(data[i])[j]);
+                            console.log("IMG ARRAY LENGTH: " + imgArray.length);
+
                             tableData.innerHTML = `
                                 <a href=`+ imgArray[0] + ` data-lightbox="mygallery` + i.toString() + `"><img src=` + imgArray[0] + ` style="width:100px;"></a>
                                 <div style="display:none;">
@@ -74,19 +83,24 @@ TableBuilder.incidents = function (data, id) {
                                     <a href=`+ imgArray[2] + ` data-lightbox="mygallery` + i.toString() + `"><img src=` + imgArray[2] + ` style="width:100px;"></a>
                                     <a href=`+ imgArray[3] + ` data-lightbox="mygallery` + i.toString() + `"><img src=` + imgArray[3] + ` style="width:100px;"></a>
                                     <a href=`+ imgArray[4] + ` data-lightbox="mygallery` + i.toString() + `"><img src=` + imgArray[4] + ` style="width:100px;"></a>
-                                    <a href=`+ imgArray[5] + ` data-lightbox="mygallery` + i.toString() + `"><img src=` + imgArray[5] + ` style="width:100px;"></a>
-                                    <a href=`+ imgArray[6] + ` data-lightbox="mygallery` + i.toString() + `"><img src=` + imgArray[6] + ` style="width:100px;"></a>
-                                    <a href=`+ imgArray[7] + ` data-lightbox="mygallery` + i.toString() + `"><img src=` + imgArray[7] + ` style="width:100px;"></a>
-                                    <a href=`+ imgArray[8] + ` data-lightbox="mygallery` + i.toString() + `"><img src=` + imgArray[8] + ` style="width:100px;"></a>
-                                    <a href=`+ imgArray[9] + ` data-lightbox="mygallery` + i.toString() + `"><img src=` + imgArray[9] + ` style="width:100px;"></a>
                                 </div>
                             `;
+
+                            /*var HTMLcontent = ``;
+                            HTMLcontent.concat(`<a href=` + imgArray[0] + ` data-lightbox="mygallery` + i.toString() + `"><img src=` + imgArray[0] + ` style="width:100px;"></a>\n`);
+                            HTMLcontent.concat(`<div style="display:none;">\n`);
+                            for (var i = 1; i < imgArray.length; i++) {
+                                HTMLcontent.concat(`<a href=` + imgArray[i] + ` data - lightbox="mygallery` + i.toString() + `" > <img src=` + imgArray[i] + ` style = "width:100px;" ></a>\n`);
+                            }
+                            HTMLcontent.concat(`</div>`);
+
+                            tableData.innerHTML = HTMLcontent;*/
                             break;
 
                         case "ultrasonicPath":
                             var tableLink = document.createElement("a");
                             tableLink.href = TableBuilder.createLink(Object.values(data[i])[j]);
-                            tableLink.innerHTML = "Click Here";
+                            tableLink.innerHTML = "Download";
                             tableData.appendChild(tableLink);
                             break;
 
@@ -98,25 +112,27 @@ TableBuilder.incidents = function (data, id) {
                 }
             }
 
-            var deleteTableData = document.createElement("td");
-            var deleteButton = document.createElement("button");
-            deleteButton.innerHTML = "Delete";
-            deleteButton.onclick = function () {
-                var row = this.parentNode.parentNode;
-                var id = row.cells[0].innerHTML;
-                if (confirm("Would you like to delete incident: " + id)) {
-                    console.log("Running delete api");
-                    $.ajax({
-                        url: '/api/incidentdatas/' + id,
-                        method: 'DELETE'
-                    }).done(function () {
-                        row.parentNode.removeChild(row);
-                    });
+            if (isEmployee) {
+                var deleteTableData = document.createElement("td");
+                var deleteButton = document.createElement("button");
+                deleteButton.innerHTML = "Delete";
+                deleteButton.onclick = function () {
+                    var row = this.parentNode.parentNode;
+                    var id = row.cells[0].innerHTML;
+                    if (confirm("Would you like to delete incident: " + id)) {
+                        console.log("Running delete api");
+                        $.ajax({
+                            url: '/api/incidentdatas/' + id,
+                            method: 'DELETE'
+                        }).done(function () {
+                            row.parentNode.removeChild(row);
+                        });
+                    }
                 }
-            }
-            deleteTableData.appendChild(deleteButton);
+                deleteTableData.appendChild(deleteButton);
 
-            tableRow.appendChild(deleteTableData);
+                tableRow.appendChild(deleteTableData);
+            }
 
         }
     }
@@ -125,7 +141,7 @@ TableBuilder.incidents = function (data, id) {
 TableBuilder.useraccounts = function (data, id) {
     var keysToShow = ["userId", "username", "masterUserFlag", "dateCreated", "lastLogin"];
 
-    var keysToDisplay = ["User Id", "Username", "Master User?", "Date Created", "Last Login"];
+    var keysToDisplay = ["User Id", "Username", "Master User?", "Date Created (UTC)", "Last Login"];
 
     console.log("Keys: " + Object.keys(data[0]));
     console.log("Values: " + Object.values(data[0]));
@@ -194,4 +210,25 @@ TableBuilder.createImgArray = function (imgString) {
         returnArray[i] = this.createLink(splitString[i]);
     }
     return returnArray;
+}
+
+TableBuilder.buildLightBox = function (imgArray) {
+    var HTMLcontent = '';
+    if (arraySize === 0) {
+        return HTMLcontent;
+    }
+    else if (arraySize === 1) {
+        HTMLcontent += ' < a href = ' + imgArray[i] + ' data - lightbox="mygallery' + i.toString() + '" > <img src=' + imgArray[i] + ' style = "width:100px;" ></a >';
+    }
+    else {
+        HTMLcontent += ' < a href = ' + imgArray[0] + ' data - lightbox="mygallery' + i.toString() + '" > <img src=' + imgArray[0] + ' style = "width:100px;" ></a >';
+        HTMLcontent += '<div style="display:none;">';
+        for (i = 1; i < imgArray.length; i++) {
+            HTMLcontent += ' < a href = ' + imgArray[i] + ' data - lightbox="mygallery' + i.toString() + '" > <img src=' + imgArray[i] + ' style = "width:100px;" ></a >';
+        }
+        HTMLcontent += '</div>';
+
+    }
+    
+
 }

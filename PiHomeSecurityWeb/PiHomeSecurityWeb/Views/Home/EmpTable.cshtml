@@ -53,7 +53,7 @@
         $.ajax({
             url: '/api/incidentdatas',
         }).done(function (data) {
-            TableBuilder.incidents(data, document.getElementById("accountIdDropDown").value);
+            TableBuilder.incidents(data, document.getElementById("accountIdDropDown").value, true);
         });
 
     }
